@@ -47,3 +47,30 @@ export function getDynamicColorForBackground(hex) {
 
     return `hsl(${newH}, ${newS}%, ${newL}%)`;
 }
+
+// --- NEW ALPHA BLENDING MATH ---
+export function hexToRgb(hex) {
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    return {
+        r: parseInt(h.substring(0, 2), 16),
+        g: parseInt(h.substring(2, 4), 16),
+        b: parseInt(h.substring(4, 6), 16)
+    };
+}
+
+export function rgbToHex(r, g, b) {
+    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+}
+
+export function blendColors(fgHex, bgHex, opacityPercent) {
+    const fg = hexToRgb(fgHex);
+    const bg = hexToRgb(bgHex);
+    const alpha = opacityPercent / 100;
+
+    const r = Math.round(fg.r * alpha + bg.r * (1 - alpha));
+    const g = Math.round(fg.g * alpha + bg.g * (1 - alpha));
+    const b = Math.round(fg.b * alpha + bg.b * (1 - alpha));
+
+    return rgbToHex(r, g, b);
+}

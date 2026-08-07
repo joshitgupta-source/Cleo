@@ -2,7 +2,9 @@
 #date-display { font-size: 1.25rem; text-shadow: 0 1px 4px rgba(0,0,0,.7); margin: 10px 0; color: var(--date-color, #e8eaed); transition: color 0.2s; }
 
 #search-box { display: flex; width: 100%; align-items: center; background-color: color-mix(in srgb, var(--search-bg) var(--search-opacity, 100%), transparent); border-radius: var(--search-radius); border: 1px solid rgba(255,255,255,.15); box-shadow: 0 4px 6px rgba(0,0,0,.2); backdrop-filter: blur(5px); transition: background-color .2s, border-color .2s, box-shadow .2s, border-radius .2s; box-sizing: border-box; }
-#search-box:focus-within { background-color: color-mix(in srgb, var(--search-bg) 98%, transparent); border-color: var(--accent-color); box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent); }
+
+/* THE SEARCH BAR FIX: Background-color override removed so it respects the user's opacity slider! */
+#search-box:focus-within { border-color: var(--accent-color); box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent); }
 
 body.search-border-off #search-box { border-color: transparent !important; }
 
@@ -17,10 +19,8 @@ body.search-border-off #search-box { border-color: transparent !important; }
 #engine-dropdown-menu { position: absolute; top: calc(100% + 10px); left: 0; width: 160px; background-color: color-mix(in srgb, var(--search-bg) 95%, transparent); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,.3); display: flex; flex-direction: column; z-index: 100; overflow: hidden; padding: 8px 0; backdrop-filter: blur(10px); }
 body.dark-search-text #engine-dropdown-menu { border: 1px solid rgba(0,0,0,.15); box-shadow: 0 8px 16px rgba(0,0,0,.1); }
 
-/* --- NEW DROPDOWN TEXT PROTECTION --- */
 .engine-opt { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; color: var(--search-dropdown-text, #fff); padding: 10px 16px; text-align: left; cursor: pointer; font-size: 14px; transition: background-color .2s; }
 .engine-opt:hover { background-color: color-mix(in srgb, var(--search-dropdown-text, #fff) 10%, transparent); }
-/* ------------------------------------ */
 
 .engine-opt img { width: 16px; height: 16px; border-radius: 50%; }
 
@@ -40,39 +40,31 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover { back
 .shortcut-tile, .add-shortcut-btn { width: 60px; height: 60px; background-color: color-mix(in srgb, var(--shortcut-bg) var(--shortcut-opacity, 80%), transparent); border-radius: var(--shortcut-radius, 12px); backdrop-filter: blur(5px); transition: background-color .2s, transform .2s; }
 .shortcut-tile { position: relative; display: flex; justify-content: center; align-items: center; text-decoration: none; }
 .add-shortcut-btn { border: none; color: var(--shortcut-text); font-size: 30px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-.shortcut-tile:hover, .add-shortcut-btn:hover { background-color: color-mix(in srgb, var(--shortcut-bg) 95%, transparent); }
+
+/* THE SHORTCUT FIX: Nested color-mix injects 15% of the contrasting text color perfectly! */
+.shortcut-tile:hover, .add-shortcut-btn:hover { background-color: color-mix(in srgb, var(--shortcut-text) 15%, color-mix(in srgb, var(--shortcut-bg) var(--shortcut-opacity, 80%), transparent)); transform: translateY(-2px); }
+
 .shortcut-tile img { width: 32px; height: 32px; }
 
 .shortcut-text, .add-shortcut-text { font-size: 12px; color: #fff; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
 .shortcut-text { overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
 
-/* --- CUSTOMIZE BUTTON (Bottom Right) --- */
 #customize-btn { position: fixed; bottom: 20px; right: 20px; width: 36px; height: 36px; background: transparent; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; opacity: 1; visibility: visible; transition: transform 0.2s, opacity 0.3s, visibility 0.3s; }
 #customize-btn svg { fill: var(--clock-color, #fff); filter: drop-shadow(0 1px 3px rgba(0,0,0,.8)); transition: fill 0.2s; }
 #customize-btn:hover { transform: scale(1.1); }
 
-/* --- NEW LOCK BUTTON UI & ANIMATION (Bottom Left) --- */
 #lock-btn { position: fixed; bottom: 20px; left: 20px; width: 36px; height: 36px; background: transparent; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; transition: transform 0.2s; }
 #lock-btn:hover { transform: scale(1.1); }
-
-/* Stack both SVG icons perfectly on top of each other */
 #lock-btn svg { position: absolute; fill: var(--clock-color, #fff); filter: drop-shadow(0 1px 3px rgba(0,0,0,.8)); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s; }
 
-/* 1. Unlocked State Animations (Default) */
 body:not(.is-locked) #icon-unlocked { opacity: 1; transform: scale(1) rotate(0deg); }
 body:not(.is-locked) #icon-locked { opacity: 0; transform: scale(0.5) rotate(-45deg); pointer-events: none; }
-
-/* 2. Locked State Animations */
 body.is-locked #customize-btn { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(0.8); }
 body.is-locked #icon-unlocked { opacity: 0; transform: scale(0.5) rotate(45deg); pointer-events: none; }
 body.is-locked #icon-locked { opacity: 1; transform: scale(1) rotate(0deg); }
-
-/* 3. Disable Editing UI while Locked */
 body.is-locked .menu-btn { display: none !important; }
 body.is-locked .draggable-item { cursor: default; }
 body.is-locked .draggable-item .shortcut-tile { cursor: pointer; }
-/* ---------------------------------------------------- */
-
 
 .menu-btn { position: absolute; top: 4px; right: 4px; background: transparent; color: var(--shortcut-text); border: none; font-size: 18px; cursor: pointer; display: none; z-index: 10; padding: 0 6px; border-radius: 4px; line-height: 1; }
 .menu-btn:hover { background-color: color-mix(in srgb, var(--shortcut-text) 10%, transparent); }
@@ -113,6 +105,4 @@ body.no-shadows .dropdown-menu, body.no-shadows #add-modal { box-shadow: none !i
 
 body.search-border-off #search-box,
 body.search-border-off.no-shadows #search-box,
-body.search-border-off.dark-search-text.no-shadows #search-box {
-    border-color: transparent !important;
-}
+body.search-border-off.dark-search-text.no-shadows #search-box { border-color: transparent !important; }
