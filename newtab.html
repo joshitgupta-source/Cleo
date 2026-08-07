@@ -40,8 +40,19 @@
         </div>
     </div>
 
+    <!-- LOCK BUTTON (Bottom Left) -->
+    <button id="lock-btn" title="Lock Layout">
+        <svg id="icon-unlocked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
+            <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>
+        </svg>
+        <svg id="icon-locked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+    </button>
+
+    <!-- CUSTOMIZE BUTTON (Bottom Right) -->
     <button id="customize-btn" title="Customize this page">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8eaed" width="18px" height="18px"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
     </button>
 
     <div id="side-panel">
@@ -51,7 +62,6 @@
         </div>
         <div class="panel-content">
             
-            <!-- 1. GLOBAL THEME -->
             <div class="panel-section">
                 <h3>Global Theme</h3>
                 <div class="bg-options">
@@ -110,7 +120,6 @@
                 </div>
             </div>
             
-            <!-- 2. SEARCH BAR -->
             <div class="panel-section">
                 <h3>Search Bar</h3>
                 <div class="toggle-row">
@@ -153,6 +162,14 @@
                         </div>
                         <span>Pick Color</span>
                     </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin-bottom: 0;">Background Opacity (%)</label>
+                            <input type="number" id="search-opacity-num" min="0" max="100" value="100" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                        </div>
+                        <input type="range" id="search-opacity-slider" min="0" max="100" value="100" style="width: 100%; margin-top: 10px;">
+                    </div>
                     
                     <div class="toggle-row" style="margin-top: 15px;">
                         <h3>Show border outline</h3>
@@ -172,7 +189,6 @@
                 </div>
             </div>
 
-            <!-- 3. WEB SHORTCUTS -->
             <div class="panel-section">
                 <h3>Web Shortcuts</h3>
                 <div class="toggle-row">
@@ -219,6 +235,14 @@
                         </div>
                         <span>Pick Color</span>
                     </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin-bottom: 0;">Background Opacity (%)</label>
+                            <input type="number" id="shortcut-opacity-num" min="0" max="100" value="80" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                        </div>
+                        <input type="range" id="shortcut-opacity-slider" min="0" max="100" value="80" style="width: 100%; margin-top: 10px;">
+                    </div>
                     
                     <div class="toggle-row" id="show-labels-row" style="margin-top: 15px;">
                         <h3>Show shortcut names</h3>
@@ -238,7 +262,6 @@
                 </div>
             </div>
 
-            <!-- 4. CLOCK & DATE -->
             <div class="panel-section">
                 <h3>Clock & Date</h3>
                 <div class="toggle-row">
@@ -273,10 +296,26 @@
                             <option value="above">Above clock</option>
                         </select>
                     </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Clock Color Theme</label>
+                        <select id="clock-color-mode-select" class="panel-select">
+                            <option value="monochrome">Monochrome Auto (Black/White)</option>
+                            <option value="dynamic">Dynamic Auto (Complementary Color)</option>
+                            <option value="custom">Custom Color...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-picker-wrapper" id="clock-color-wrapper" style="margin-top: 10px; display: none;">
+                        <div class="color-input-group">
+                            <input type="color" id="clock-color-picker" value="#ffffff">
+                            <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Pick Color</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 5. ADVANCED UI -->
             <div class="panel-section">
                 <h3>Advanced UI</h3>
                 <div class="input-group">
@@ -303,9 +342,16 @@
                     </div>
                     <span>Pick Color</span>
                 </div>
+                
+                <div class="toggle-row" style="margin-top: 20px; border-top: 1px solid #3c4043; padding-top: 15px;">
+                    <h3>Show layout lock button</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="show-lock-btn-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
 
-            <!-- 6. BACKUP & RESTORE -->
             <div class="panel-section">
                 <h3>Backup & Restore</h3>
                 <p style="font-size: 12px; color: #9aa0a6; margin-bottom: 15px; line-height: 1.4;">Export your layout, shortcuts, and colors to a file, or restore them from a previous backup.</p>

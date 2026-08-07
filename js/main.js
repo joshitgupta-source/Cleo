@@ -3,7 +3,7 @@ import { initClock, setTimeFormat } from './clock.js';
 import { initSearch, updateSearchIcon } from './search.js';
 import { initGrid, initContextMenu, renderGrid } from './grid.js';
 import { initUI, openModal, closeModal, applyBackground } from './ui.js';
-import { getTextColorForBackground } from './utils.js';
+import { getTextColorForBackground, getDynamicColorForBackground } from './utils.js';
 
 let currentMaxShortcuts = 50;
 let editingIndex = null;
@@ -53,6 +53,13 @@ initGrid(
     }
 );
 
+// Intercept Drag API to completely disable moving tiles when locked
+document.addEventListener('dragstart', (e) => {
+    if (document.body.classList.contains('is-locked')) {
+        e.preventDefault();
+    }
+});
+
 document.getElementById('done-btn').addEventListener('click', () => {
     const name = document.getElementById('site-name').value.trim();
     let url = document.getElementById('site-url').value.trim();
@@ -78,23 +85,19 @@ function saveAndApply(updates) {
     updateStorage(updates, applySettings);
 }
 
-// Custom function to perfectly sync the text box and the color circle
 function syncColorPicker(pickerId, textId, settingKey) {
     const picker = document.getElementById(pickerId);
     const text = document.getElementById(textId);
 
-    // When the user uses the color circle
     picker.addEventListener('input', (e) => {
         text.value = e.target.value.toUpperCase();
         if (settingKey === 'bgValue') saveAndApply({ bgType: 'color', bgValue: e.target.value });
         else saveAndApply({ [settingKey]: e.target.value });
     });
 
-    // When the user types or pastes a hex code
     text.addEventListener('input', (e) => {
         let val = e.target.value;
         if (!val.startsWith('#')) val = '#' + val;
-        // Only apply if it is a valid 6-character hex code
         if (/^#[0-9A-F]{6}$/i.test(val)) {
             picker.value = val;
             if (settingKey === 'bgValue') saveAndApply({ bgType: 'color', bgValue: val });
@@ -103,12 +106,12 @@ function syncColorPicker(pickerId, textId, settingKey) {
     });
 }
 
-// Hook up all 5 color pickers
 syncColorPicker('bg-color-picker', 'bg-color-text', 'bgValue');
 syncColorPicker('accent-color-picker', 'accent-color-text', 'accentColor');
 syncColorPicker('search-color-picker', 'search-color-text', 'searchColor');
 syncColorPicker('shortcut-color-picker', 'shortcut-color-text', 'shortcutColor');
 syncColorPicker('scrollbar-color-picker', 'scrollbar-color-text', 'scrollbarColor');
+syncColorPicker('clock-color-picker', 'clock-color-text', 'clockColor');
 
 document.getElementById('bg-image-btn').addEventListener('click', () => document.getElementById('bg-image-input').click());
 document.getElementById('bg-image-input').addEventListener('change', (e) => {
@@ -129,6 +132,7 @@ document.getElementById('show-search-border-toggle').addEventListener('change', 
 document.getElementById('search-engine-select').addEventListener('change', (e) => saveAndApply({ searchEngine: e.target.value }));
 document.getElementById('search-color-mode-select').addEventListener('change', (e) => saveAndApply({ searchMode: e.target.value }));
 
+// Search Radius Logic
 const searchRadiusSlider = document.getElementById('search-radius-slider');
 const searchRadiusNum = document.getElementById('search-radius-num');
 
@@ -148,6 +152,26 @@ searchRadiusNum.addEventListener('input', (e) => {
 });
 searchRadiusNum.addEventListener('blur', (e) => { if (e.target.value === '') handleRadiusUpdate(24); });
 
+// Search Opacity Logic
+const searchOpacitySlider = document.getElementById('search-opacity-slider');
+const searchOpacityNum = document.getElementById('search-opacity-num');
+
+function handleSearchOpacityUpdate(val) {
+    let num = parseInt(val, 10);
+    if (isNaN(num) || num < 0) num = 0;
+    if (num > 100) num = 100;
+    searchOpacitySlider.value = num;
+    searchOpacityNum.value = num;
+    saveAndApply({ searchOpacity: num.toString() });
+}
+
+searchOpacitySlider.addEventListener('input', (e) => handleSearchOpacityUpdate(e.target.value));
+searchOpacityNum.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    if (e.target.value !== '') handleSearchOpacityUpdate(e.target.value);
+});
+searchOpacityNum.addEventListener('blur', (e) => { if (e.target.value === '') handleSearchOpacityUpdate(100); });
+
 // Shortcut Settings Mapping
 document.getElementById('shortcut-type-select').addEventListener('change', (e) => saveAndApply({ shortcutType: e.target.value }));
 document.getElementById('shortcut-color-mode-select').addEventListener('change', (e) => saveAndApply({ shortcutMode: e.target.value }));
@@ -155,14 +179,14 @@ document.getElementById('show-shortcuts-toggle').addEventListener('change', (e) 
 document.getElementById('show-labels-toggle').addEventListener('change', (e) => saveAndApply({ showLabels: e.target.checked }));
 document.getElementById('max-shortcuts-select').addEventListener('change', (e) => saveAndApply({ maxShortcuts: parseInt(e.target.value, 10) }));
 
-// Shortcut Radius Slider Logic
+// Shortcut Radius Logic
 const shortcutRadiusSlider = document.getElementById('shortcut-radius-slider');
 const shortcutRadiusNum = document.getElementById('shortcut-radius-num');
 
 function handleShortcutRadiusUpdate(val) {
     let num = parseInt(val, 10);
     if (isNaN(num) || num < 0) num = 0;
-    if (num > 30) num = 30; // Max 30px makes a 60x60 tile a perfect circle
+    if (num > 30) num = 30;
     shortcutRadiusSlider.value = num;
     shortcutRadiusNum.value = num;
     saveAndApply({ shortcutRadius: num.toString() });
@@ -175,6 +199,26 @@ shortcutRadiusNum.addEventListener('input', (e) => {
 });
 shortcutRadiusNum.addEventListener('blur', (e) => { if (e.target.value === '') handleShortcutRadiusUpdate(12); });
 
+// Shortcut Opacity Logic
+const shortcutOpacitySlider = document.getElementById('shortcut-opacity-slider');
+const shortcutOpacityNum = document.getElementById('shortcut-opacity-num');
+
+function handleShortcutOpacityUpdate(val) {
+    let num = parseInt(val, 10);
+    if (isNaN(num) || num < 0) num = 0;
+    if (num > 100) num = 100;
+    shortcutOpacitySlider.value = num;
+    shortcutOpacityNum.value = num;
+    saveAndApply({ shortcutOpacity: num.toString() });
+}
+
+shortcutOpacitySlider.addEventListener('input', (e) => handleShortcutOpacityUpdate(e.target.value));
+shortcutOpacityNum.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    if (e.target.value !== '') handleShortcutOpacityUpdate(e.target.value);
+});
+shortcutOpacityNum.addEventListener('blur', (e) => { if (e.target.value === '') handleShortcutOpacityUpdate(80); });
+
 // Scrollbar Settings Mapping
 document.getElementById('scrollbar-visibility-select').addEventListener('change', (e) => saveAndApply({ scrollbarVis: e.target.value }));
 document.getElementById('scrollbar-color-mode-select').addEventListener('change', (e) => saveAndApply({ scrollbarMode: e.target.value }));
@@ -184,6 +228,21 @@ document.getElementById('show-clock-toggle').addEventListener('change', (e) => s
 document.getElementById('show-date-toggle').addEventListener('change', (e) => saveAndApply({ showDate: e.target.checked }));
 document.getElementById('time-format-select').addEventListener('change', (e) => saveAndApply({ timeFormat: e.target.value }));
 document.getElementById('date-position-select').addEventListener('change', (e) => saveAndApply({ datePosition: e.target.value }));
+document.getElementById('clock-color-mode-select').addEventListener('change', (e) => saveAndApply({ clockColorMode: e.target.value }));
+
+// Lock Layout Mapping
+document.getElementById('show-lock-btn-toggle').addEventListener('change', (e) => saveAndApply({ showLockBtn: e.target.checked }));
+document.getElementById('lock-btn').addEventListener('click', () => {
+    chrome.storage.local.get({ isLocked: false }, ({ isLocked }) => {
+        const newLockState = !isLocked;
+        saveAndApply({ isLocked: newLockState });
+        
+        // If the layout is being locked, smoothly close the customize panel
+        if (newLockState === true) {
+            document.getElementById('side-panel').classList.remove('open');
+        }
+    });
+});
 
 // Backup Mapping
 document.getElementById('export-btn').addEventListener('click', exportSettings);
@@ -252,6 +311,12 @@ function applySettings() {
         document.getElementById('search-radius-slider').value = result.searchRadius;
         document.getElementById('search-radius-num').value = result.searchRadius;
         document.documentElement.style.setProperty('--search-radius', result.searchRadius + 'px');
+
+        const currentSearchOpacity = result.searchOpacity !== undefined ? result.searchOpacity : '100';
+        document.getElementById('search-opacity-slider').value = currentSearchOpacity;
+        document.getElementById('search-opacity-num').value = currentSearchOpacity;
+        document.documentElement.style.setProperty('--search-opacity', currentSearchOpacity + '%');
+
         updateSearchIcon(result.searchEngine);
 
         // Shortcut UI
@@ -272,11 +337,15 @@ function applySettings() {
         document.documentElement.style.setProperty('--shortcut-text', shortcutTextColor === 'dark-text' ? '#000000' : '#ffffff');
         document.body.classList.toggle('dark-shortcut-text', shortcutTextColor === 'dark-text');
 
-        // Apply Shortcut Radius
         const currentShortcutRadius = result.shortcutRadius !== undefined ? result.shortcutRadius : '12';
         document.getElementById('shortcut-radius-slider').value = currentShortcutRadius;
         document.getElementById('shortcut-radius-num').value = currentShortcutRadius;
         document.documentElement.style.setProperty('--shortcut-radius', currentShortcutRadius + 'px');
+
+        const currentShortcutOpacity = result.shortcutOpacity !== undefined ? result.shortcutOpacity : '80';
+        document.getElementById('shortcut-opacity-slider').value = currentShortcutOpacity;
+        document.getElementById('shortcut-opacity-num').value = currentShortcutOpacity;
+        document.documentElement.style.setProperty('--shortcut-opacity', currentShortcutOpacity + '%');
 
         // Scrollbar UI
         document.getElementById('scrollbar-visibility-select').value = result.scrollbarVis;
@@ -292,7 +361,7 @@ function applySettings() {
         if (result.scrollbarMode === 'custom') document.documentElement.style.setProperty('--custom-sc-color', result.scrollbarColor);
         else document.documentElement.style.removeProperty('--custom-sc-color');
 
-        // Clock UI
+        // Clock & Date UI
         document.getElementById('show-clock-toggle').checked = result.showClock;
         document.body.classList.toggle('clock-off', !result.showClock);
         document.getElementById('show-date-toggle').checked = result.showDate;
@@ -313,7 +382,45 @@ function applySettings() {
             clockWidget.style.flexDirection = (result.datePosition === 'above') ? 'column-reverse' : 'column';
         }
 
-        // Grid Rendering safely catching Reference Errors
+        const clockMode = result.clockColorMode || 'monochrome'; 
+        document.getElementById('clock-color-mode-select').value = clockMode;
+        
+        const customClockColor = result.clockColor || '#ffffff';
+        document.getElementById('clock-color-picker').value = customClockColor;
+        document.getElementById('clock-color-text').value = customClockColor.toUpperCase();
+        document.getElementById('clock-color-wrapper').style.display = clockMode === 'custom' ? 'flex' : 'none';
+
+        let activeClockColor = '#ffffff';
+        let activeDateColor = '#e8eaed'; 
+
+        if (clockMode === 'monochrome') {
+            activeClockColor = isBgLight ? '#000000' : '#ffffff';
+            activeDateColor = isBgLight ? '#202124' : '#e8eaed';
+        } else if (clockMode === 'dynamic' && result.bgType === 'color') {
+            const dynamicColor = getDynamicColorForBackground(result.bgValue);
+            activeClockColor = dynamicColor;
+            activeDateColor = dynamicColor;
+        } else if (clockMode === 'custom') {
+            activeClockColor = customClockColor;
+            activeDateColor = customClockColor;
+        } else {
+            activeClockColor = isBgLight ? '#000000' : '#ffffff';
+            activeDateColor = isBgLight ? '#202124' : '#e8eaed';
+        }
+
+        document.documentElement.style.setProperty('--clock-color', activeClockColor);
+        document.documentElement.style.setProperty('--date-color', activeDateColor);
+
+        // --- NEW LOCK LOGIC ---
+        const showLock = result.showLockBtn !== undefined ? result.showLockBtn : true;
+        const isLocked = result.isLocked || false;
+        
+        document.getElementById('show-lock-btn-toggle').checked = showLock;
+        document.getElementById('lock-btn').style.display = showLock ? 'flex' : 'none';
+        document.body.classList.toggle('is-locked', isLocked);
+        // ----------------------
+
+        // Grid Rendering 
         currentMaxShortcuts = parseInt(result.maxShortcuts, 10) || 50;
         document.getElementById('max-shortcuts-select').value = currentMaxShortcuts;
         document.getElementById('show-shortcuts-toggle').checked = result.showShortcuts;
@@ -341,15 +448,12 @@ function applySettings() {
 
 applySettings();
 
-// Power-user shortcut: Press '/' to focus the search bar
 document.addEventListener('keydown', (e) => {
-    // If the user is already typing inside an input (like the search bar or modal), don't do anything
     const activeTag = document.activeElement.tagName.toLowerCase();
     if (activeTag === 'input' || activeTag === 'textarea') return;
 
-    // If the key pressed is '/', focus the search bar
     if (e.key === '/') {
-        e.preventDefault(); // Stops the '/' character from actually being typed into the box
+        e.preventDefault();
         const searchInput = document.getElementById('search-input');
         if (searchInput) searchInput.focus();
     }
