@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Cleo",
+  "description": "A lightning-fast, highly customizable, and private new tab page.",
+  "version": "1.0.0",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage",
+    "topSites",
+    "favicon"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

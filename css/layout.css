@@ -1,0 +1,82 @@
+#main-content {
+    position: relative;
+    width: 100%;
+    max-width: 1060px;
+    height: 100vh;
+    margin: 0 auto;
+}
+
+#clock-widget {
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: top .3s ease;
+    white-space: nowrap; 
+}
+
+#search-container {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 1060px;
+    z-index: 50;
+    padding: 0 20px;
+    box-sizing: border-box;
+    transition: top .3s ease;
+}
+
+#grid-container {
+    position: absolute;
+    top: 50%;
+    margin-top: 40px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    gap: 30px 45px; 
+    width: 100%;
+    max-width: 1060px;
+    max-height: calc(50vh - 60px);
+    padding: 0 20px 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    transition: top .3s ease, margin-top .3s ease, transform .3s ease, max-height .3s ease;
+}
+
+#modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+body.search-off #search-container { display: none; }
+body.search-off #clock-widget { top: 28%; }
+body.search-off.grid-off #clock-widget { top: 50%; }
+
+body.clock-off #search-container { top: 25%; }
+body.grid-off #clock-widget { top: 35%; }
+body.grid-off #search-container { top: 55%; }
+body.grid-off.clock-off #search-container { top: 50%; }
+
+body.search-off #grid-container { margin-top: 10px; }
+body.clock-off #grid-container { margin-top: -10px; }
+
+/* Perfect dynamic centering when both Search and Clock are off */
+body.search-off.clock-off #grid-container {
+    top: 50%;
+    margin-top: 0;
+    transform: translate(-50%, -50%);
+    max-height: 90vh;
+}

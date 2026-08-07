@@ -1,0 +1,47 @@
+:root {
+    --accent-color: #8ab4f8;
+    --sc-thumb: rgba(255,255,255,.2);
+    --sc-thumb-hover: rgba(255,255,255,.4);
+    
+    --search-bg: #202124;
+    --search-text: #ffffff;
+    --search-radius: 24px;
+
+    --shortcut-bg: #303134;
+    --shortcut-text: #ffffff;
+}
+
+html.light-bg {
+    --sc-thumb: rgba(0,0,0,.2);
+    --sc-thumb-hover: rgba(0,0,0,.4);
+}
+
+html.accent-scrollbar {
+    --sc-thumb: var(--accent-color);
+    --sc-thumb-hover: var(--accent-color);
+}
+
+html.custom-scrollbar {
+    --sc-thumb: var(--custom-sc-color);
+    --sc-thumb-hover: var(--custom-sc-color);
+}
+
+body {
+    background-color: #000;
+    color: #e8eaed;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background .3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none !important;
+}

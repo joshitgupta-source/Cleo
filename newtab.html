@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Tab</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' data-name='Layer 1' viewBox='0 0 24 24' fill='%23ffffff'><path d='M12 14.685c-1.149 0-2.085.985-2.085 2.196v6.076a50 50 0 0 0 4.17 0v-6.076c0-1.211-.936-2.196-2.085-2.196'/><path d='M21.085 6.758a1 1 0 0 0-.308-.377l-.564-.418V3.505a1.5 1.5 0 1 0-3 0v.315C14.939 2.26 12.842 1 12 1c-1.299 0-5.49 2.927-8.778 5.382-.133.1-.24.231-.31.383-.047.102-1.154 2.562-1.154 7.578 0 2.165.202 5.37.432 6.858a1 1 0 0 0 .698.804c.098.03 1.842.548 5.027.825v-5.948c0-2.314 1.832-4.196 4.085-4.196s4.085 1.882 4.085 4.196v5.948c3.185-.276 4.928-.795 5.025-.824a1 1 0 0 0 .697-.804c.231-1.498.435-4.703.435-6.858 0-5.059-1.11-7.483-1.157-7.584Z'/></svg>">
+    <script src="preload.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/panel.css">
+</head>
+<body>
+    <div id="main-content">
+        
+        <div id="clock-widget">
+            <div id="time-display"></div>
+            <div id="date-display"></div>
+        </div>
+
+        <div id="search-container">
+            <div id="search-box">
+                <div class="engine-selector-wrapper">
+                    <button id="search-engine-btn" title="Change Search Engine">
+                        <img id="current-engine-icon" src="" alt="Engine">
+                        <span class="engine-dropdown-icon">▼</span>
+                    </button>
+                    <div id="engine-dropdown-menu" class="hidden"></div>
+                </div>
+                <div class="search-divider"></div>
+                <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off" spellcheck="false" autofocus>
+            </div>
+        </div>
+        
+        <div id="grid-container">
+            <div class="add-shortcut-container" id="add-btn-container">
+                <button class="add-shortcut-btn" id="add-btn">+</button>
+                <span class="add-shortcut-text">Add shortcut</span>
+            </div>
+        </div>
+    </div>
+
+    <button id="customize-btn" title="Customize this page">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8eaed" width="18px" height="18px"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </button>
+
+    <div id="side-panel">
+        <div class="panel-header">
+            <h2 id="panel-title">Customize</h2>
+            <button id="close-panel-btn">&times;</button>
+        </div>
+        <div class="panel-content">
+            
+            <!-- 1. GLOBAL THEME -->
+            <div class="panel-section">
+                <h3>Global Theme</h3>
+                <div class="bg-options">
+                    <div class="color-picker-wrapper">
+                        <div class="color-input-group">
+                            <input type="color" id="bg-color-picker" value="#000000">
+                            <input type="text" id="bg-color-text" class="hex-input" value="#000000" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Background</span>
+                    </div>
+                    <button id="bg-image-btn" class="panel-btn">Change wallpaper</button>
+                    <input type="file" id="bg-image-input" accept="image/*" style="display: none;">
+                    <button id="bg-reset-btn" class="panel-btn" style="margin-bottom: 20px;">Reset to default</button>
+                </div>
+                
+                <div class="color-picker-wrapper">
+                    <div class="color-input-group">
+                        <input type="color" id="accent-color-picker" value="#8ab4f8">
+                        <input type="text" id="accent-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false">
+                    </div>
+                    <span>Accent Color</span>
+                </div>
+                
+                <div class="input-group" style="margin-top: 15px;">
+                    <label>Font Style</label>
+                    <select id="global-font-select" class="panel-select">
+                        <optgroup label="Modern & Clean (Sans-Serif)">
+                            <option value="system-ui, -apple-system, sans-serif">System Default</option>
+                            <option value="Arial, Helvetica, sans-serif">Arial / Helvetica</option>
+                            <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                            <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+                            <option value="'Trebuchet MS', Helvetica, sans-serif">Trebuchet MS</option>
+                        </optgroup>
+                        <optgroup label="Classic & Elegant (Serif)">
+                            <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                            <option value="Georgia, serif">Georgia</option>
+                            <option value="Garamond, serif">Garamond</option>
+                        </optgroup>
+                        <optgroup label="Code & Typewriter (Monospace)">
+                            <option value="Consolas, Monaco, monospace">Consolas / Monaco</option>
+                            <option value="'Courier New', Courier, monospace">Courier New</option>
+                        </optgroup>
+                        <optgroup label="Decorative">
+                            <option value="Impact, Charcoal, sans-serif">Impact</option>
+                            <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="toggle-row" style="margin-top: 20px;">
+                    <h3>Show UI shadows</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="show-shadows-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- 2. SEARCH BAR -->
+            <div class="panel-section">
+                <h3>Search Bar</h3>
+                <div class="toggle-row">
+                    <h3>Enable Search</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="show-search-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div id="search-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+                    <div class="input-group">
+                        <label>Search Engine</label>
+                        <select id="search-engine-select" class="panel-select">
+                            <option value="https://www.google.com/search?q=">Google</option>
+                            <option value="https://www.bing.com/search?q=">Bing</option>
+                            <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+                            <option value="https://search.yahoo.com/search?p=">Yahoo</option>
+                            <option value="https://search.brave.com/search?q=">Brave</option>
+                            <option value="https://www.startpage.com/sp/search?query=">Startpage</option>
+                            <option value="https://kagi.com/search?q=">Kagi</option>
+                            <option value="https://www.qwant.com/?q=">Qwant</option>
+                            <option value="https://www.ecosia.org/search?q=">Ecosia</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Bar Color Theme</label>
+                        <select id="search-color-mode-select" class="panel-select">
+                            <option value="auto">Auto (Matches Background)</option>
+                            <option value="accent">Matches Accent Color</option>
+                            <option value="custom">Custom Color...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-picker-wrapper" id="search-color-wrapper" style="margin-top: 10px; display: none;">
+                        <div class="color-input-group">
+                            <input type="color" id="search-color-picker" value="#202124">
+                            <input type="text" id="search-color-text" class="hex-input" value="#202124" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Pick Color</span>
+                    </div>
+                    
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Show border outline</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="show-search-border-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin-bottom: 0;">Corner Radius (px)</label>
+                            <input type="number" id="search-radius-num" min="0" max="40" value="24" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                        </div>
+                        <input type="range" id="search-radius-slider" min="0" max="40" value="24" style="width: 100%; margin-top: 10px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. WEB SHORTCUTS -->
+            <div class="panel-section">
+                <h3>Web Shortcuts</h3>
+                <div class="toggle-row">
+                    <h3>Enable Shortcuts</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="show-shortcuts-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div id="shortcut-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+                    <div class="input-group">
+                        <label>Shortcut Source</label>
+                        <select id="shortcut-type-select" class="panel-select">
+                            <option value="custom">My Curated Shortcuts</option>
+                            <option value="topSites">Most Visited Sites</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" id="max-shortcuts-group" style="margin-top: 15px;">
+                        <label>Grid Size Limit</label>
+                        <select id="max-shortcuts-select" class="panel-select">
+                            <option value="10">1 Row (10 max)</option>
+                            <option value="20">2 Rows (20 max)</option>
+                            <option value="30">3 Rows (30 max)</option>
+                            <option value="40">4 Rows (40 max)</option>
+                            <option value="50">5 Rows (50 max)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Tile Color Theme</label>
+                        <select id="shortcut-color-mode-select" class="panel-select">
+                            <option value="auto">Auto (Matches Background)</option>
+                            <option value="accent">Matches Accent Color</option>
+                            <option value="custom">Custom Color...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-picker-wrapper" id="shortcut-color-wrapper" style="margin-top: 10px; display: none;">
+                        <div class="color-input-group">
+                            <input type="color" id="shortcut-color-picker" value="#303134">
+                            <input type="text" id="shortcut-color-text" class="hex-input" value="#303134" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Pick Color</span>
+                    </div>
+                    
+                    <div class="toggle-row" id="show-labels-row" style="margin-top: 15px;">
+                        <h3>Show shortcut names</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="show-labels-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin-bottom: 0;">Corner Radius (px)</label>
+                            <input type="number" id="shortcut-radius-num" min="0" max="30" value="12" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                        </div>
+                        <input type="range" id="shortcut-radius-slider" min="0" max="30" value="12" style="width: 100%; margin-top: 10px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. CLOCK & DATE -->
+            <div class="panel-section">
+                <h3>Clock & Date</h3>
+                <div class="toggle-row">
+                    <h3>Enable Clock</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="show-clock-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div id="clock-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+                    <div class="input-group">
+                        <label>Time Format</label>
+                        <select id="time-format-select" class="panel-select">
+                            <option value="12hr">12-hour</option>
+                            <option value="24hr">24-hour</option>
+                        </select>
+                    </div>
+                    
+                    <div class="toggle-row" id="show-date-row" style="margin-top: 15px;">
+                        <h3>Show date</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="show-date-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Date Position</label>
+                        <select id="date-position-select" class="panel-select">
+                            <option value="below">Below clock</option>
+                            <option value="above">Above clock</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. ADVANCED UI -->
+            <div class="panel-section">
+                <h3>Advanced UI</h3>
+                <div class="input-group">
+                    <label>Scrollbar Visibility</label>
+                    <select id="scrollbar-visibility-select" class="panel-select">
+                        <option value="always">Always Show</option>
+                        <option value="hover">Show on Hover</option>
+                    </select>
+                </div>
+                
+                <div class="input-group" style="margin-top: 15px;">
+                    <label>Scrollbar Color Theme</label>
+                    <select id="scrollbar-color-mode-select" class="panel-select">
+                        <option value="auto">Auto (Matches Background)</option>
+                        <option value="accent">Matches Accent Color</option>
+                        <option value="custom">Custom Color...</option>
+                    </select>
+                </div>
+                
+                <div class="color-picker-wrapper" id="scrollbar-color-wrapper" style="margin-top: 10px; display: none;">
+                    <div class="color-input-group">
+                        <input type="color" id="scrollbar-color-picker" value="#8ab4f8">
+                        <input type="text" id="scrollbar-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false">
+                    </div>
+                    <span>Pick Color</span>
+                </div>
+            </div>
+
+            <!-- 6. BACKUP & RESTORE -->
+            <div class="panel-section">
+                <h3>Backup & Restore</h3>
+                <p style="font-size: 12px; color: #9aa0a6; margin-bottom: 15px; line-height: 1.4;">Export your layout, shortcuts, and colors to a file, or restore them from a previous backup.</p>
+                <button id="export-btn" class="panel-btn">Export Settings</button>
+                <button id="import-btn" class="panel-btn" style="margin-bottom: 0;">Import Settings</button>
+                <input type="file" id="import-input" accept=".json" style="display: none;">
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-backdrop" class="hidden">
+        <div id="add-modal">
+            <h2 id="modal-title">Add shortcut</h2>
+            <div class="input-group">
+                <label for="site-name">Name</label>
+                <input type="text" id="site-name" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="input-group">
+                <label for="site-url">URL</label>
+                <input type="text" id="site-url" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="modal-actions">
+                <button id="cancel-btn">Cancel</button>
+                <button id="done-btn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

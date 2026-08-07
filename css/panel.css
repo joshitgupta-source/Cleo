@@ -1,0 +1,54 @@
+#side-panel { position: fixed; top: 0; right: 0; transform: translateX(100%); width: 340px; height: 100vh; background-color: #292a2d; box-shadow: -4px 0 15px rgba(0,0,0,.5); transition: transform .3s ease; z-index: 2000; box-sizing: border-box; display: flex; flex-direction: column; }
+#side-panel.open { transform: translateX(0); }
+body.no-shadows #side-panel { box-shadow: none !important; border-left: 1px solid #3c4043; }
+
+.panel-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #3c4043; }
+.panel-header h2, .panel-section h3, .toggle-row h3 { margin: 0; font-weight: normal; }
+.panel-header h2 { font-size: 16px; }
+.panel-section h3 { font-size: 14px; margin-bottom: 15px; }
+
+#close-panel-btn { background: transparent; border: none; color: #e8eaed; font-size: 24px; cursor: pointer; line-height: 1; }
+.panel-content { flex: 1; overflow-y: auto; }
+.panel-section { padding: 20px; border-bottom: 1px solid #3c4043; }
+
+.panel-btn { width: 100%; background-color: transparent; color: var(--accent-color); border: 1px solid #5f6368; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 13px; margin-bottom: 10px; transition: background-color .2s; }
+.panel-btn:hover, #cancel-btn:hover { background-color: color-mix(in srgb, var(--accent-color) 8%, transparent); }
+
+.panel-select, .panel-input { width: 100%; background-color: #202124; color: #e8eaed; border: 1px solid #3c4043; padding: 8px 12px; border-radius: 4px; outline: none; font-size: 13px; box-sizing: border-box; font-family: inherit; }
+.panel-select { cursor: pointer; appearance: none; }
+.panel-select:focus, .panel-input:focus, .input-group input:focus { border-color: var(--accent-color); }
+
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.disabled-row { opacity: .4; pointer-events: none; }
+
+.color-picker-wrapper, .toggle-row { display: flex; align-items: center; margin-bottom: 20px; }
+.color-picker-wrapper { gap: 15px; }
+.toggle-row { justify-content: space-between; }
+
+#bg-color-picker, #scrollbar-color-picker, #accent-color-picker, #search-bg-picker { appearance: none; width: 40px; height: 40px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
+#bg-color-picker::-webkit-color-swatch-wrapper, #scrollbar-color-picker::-webkit-color-swatch-wrapper, #accent-color-picker::-webkit-color-swatch-wrapper, #search-bg-picker::-webkit-color-swatch-wrapper { padding: 0; }
+#bg-color-picker::-webkit-color-swatch, #scrollbar-color-picker::-webkit-color-swatch, #accent-color-picker::-webkit-color-swatch, #search-bg-picker::-webkit-color-swatch { border: 1px solid #5f6368; border-radius: 4px; }
+
+.switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; inset: 0; background-color: #5f6368; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: #9aa0a6; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--accent-color); }
+input:checked + .slider:before { transform: translateX(14px); background-color: #202124; }
+
+.radio-group { display: flex; flex-direction: column; gap: 15px; }
+.radio-row { display: flex; align-items: flex-start; gap: 15px; cursor: pointer; }
+.radio-row input[type="radio"], input[type="range"] { margin-top: 3px; accent-color: var(--accent-color); }
+
+input[type="range"] { appearance: none; background: #5f6368; height: 4px; border-radius: 2px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; }
+
+.radio-text { display: flex; flex-direction: column; gap: 4px; }
+.radio-text strong { font-size: 13px; font-weight: normal; }
+.radio-text span { font-size: 12px; color: #9aa0a6; }
+
+/* Custom HEX Input Styling */
+.color-input-group { display: flex; align-items: center; gap: 8px; }
+.hex-input { width: 70px; background-color: #303134; border: 1px solid #5f6368; color: #fff; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 12px; outline: none; text-transform: uppercase; transition: border-color 0.2s; }
+.hex-input:focus { border-color: var(--accent-color); }
