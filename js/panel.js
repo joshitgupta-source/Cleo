@@ -1,6 +1,8 @@
 import { saveAndApply } from './theme.js';
 import { exportSettings, importSettings } from './state.js';
 
+// --- UNIVERSAL HELPER MODULES ---
+
 function syncColorPicker(pickerId, textId, settingKey) {
     const picker = document.getElementById(pickerId);
     const text = document.getElementById(textId);
@@ -22,6 +24,33 @@ function syncColorPicker(pickerId, textId, settingKey) {
     });
 }
 
+function syncSlider(sliderId, numId, settingKey, min, max, defaultVal) {
+    const slider = document.getElementById(sliderId);
+    const numInput = document.getElementById(numId);
+
+    function updateValues(val) {
+        let num = parseInt(val, 10);
+        if (isNaN(num) || num < min) num = min;
+        if (num > max) num = max;
+        slider.value = num;
+        numInput.value = num;
+        saveAndApply({ [settingKey]: num.toString() });
+    }
+
+    slider.addEventListener('input', (e) => updateValues(e.target.value));
+    
+    numInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        if (e.target.value !== '') updateValues(e.target.value);
+    });
+    
+    numInput.addEventListener('blur', (e) => {
+        if (e.target.value === '') updateValues(defaultVal);
+    });
+}
+
+// --- INITIALIZE UI LISTENERS ---
+
 // Map Color Pickers
 syncColorPicker('bg-color-picker', 'bg-color-text', 'bgValue');
 syncColorPicker('accent-color-picker', 'accent-color-text', 'accentColor');
@@ -29,6 +58,12 @@ syncColorPicker('search-color-picker', 'search-color-text', 'searchColor');
 syncColorPicker('shortcut-color-picker', 'shortcut-color-text', 'shortcutColor');
 syncColorPicker('scrollbar-color-picker', 'scrollbar-color-text', 'scrollbarColor');
 syncColorPicker('clock-color-picker', 'clock-color-text', 'clockColor');
+
+// Map Sliders (Using your DRY logic!)
+syncSlider('search-radius-slider', 'search-radius-num', 'searchRadius', 0, 40, 24);
+syncSlider('search-opacity-slider', 'search-opacity-num', 'searchOpacity', 0, 100, 100);
+syncSlider('shortcut-radius-slider', 'shortcut-radius-num', 'shortcutRadius', 0, 30, 12);
+syncSlider('shortcut-opacity-slider', 'shortcut-opacity-num', 'shortcutOpacity', 0, 100, 80);
 
 // Global Themes
 document.getElementById('bg-image-btn').addEventListener('click', () => document.getElementById('bg-image-input').click());
@@ -41,45 +76,14 @@ document.getElementById('bg-image-input').addEventListener('change', (e) => {
     }
 });
 document.getElementById('bg-reset-btn').addEventListener('click', () => saveAndApply({ bgType: 'color', bgValue: '#000000' }));
-document.getElementById('show-shadows-toggle').addEventListener('change', (e) => saveAndApply({ showShadows: e.target.checked }));
 document.getElementById('global-font-select').addEventListener('change', (e) => saveAndApply({ globalFont: e.target.value }));
 
 // Search Settings
 document.getElementById('show-search-toggle').addEventListener('change', (e) => saveAndApply({ showSearch: e.target.checked }));
 document.getElementById('show-search-border-toggle').addEventListener('change', (e) => saveAndApply({ showSearchBorder: e.target.checked }));
+document.getElementById('search-glass-toggle').addEventListener('change', (e) => saveAndApply({ searchGlass: e.target.checked }));
 document.getElementById('search-engine-select').addEventListener('change', (e) => saveAndApply({ searchEngine: e.target.value }));
 document.getElementById('search-color-mode-select').addEventListener('change', (e) => saveAndApply({ searchMode: e.target.value }));
-
-// Search Sliders
-function handleRadiusUpdate(val) {
-    let num = parseInt(val, 10);
-    if (isNaN(num) || num < 0) num = 0;
-    if (num > 40) num = 40;
-    document.getElementById('search-radius-slider').value = num;
-    document.getElementById('search-radius-num').value = num;
-    saveAndApply({ searchRadius: num.toString() });
-}
-document.getElementById('search-radius-slider').addEventListener('input', (e) => handleRadiusUpdate(e.target.value));
-document.getElementById('search-radius-num').addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
-    if (e.target.value !== '') handleRadiusUpdate(e.target.value);
-});
-document.getElementById('search-radius-num').addEventListener('blur', (e) => { if (e.target.value === '') handleRadiusUpdate(24); });
-
-function handleSearchOpacityUpdate(val) {
-    let num = parseInt(val, 10);
-    if (isNaN(num) || num < 0) num = 0;
-    if (num > 100) num = 100;
-    document.getElementById('search-opacity-slider').value = num;
-    document.getElementById('search-opacity-num').value = num;
-    saveAndApply({ searchOpacity: num.toString() });
-}
-document.getElementById('search-opacity-slider').addEventListener('input', (e) => handleSearchOpacityUpdate(e.target.value));
-document.getElementById('search-opacity-num').addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
-    if (e.target.value !== '') handleSearchOpacityUpdate(e.target.value);
-});
-document.getElementById('search-opacity-num').addEventListener('blur', (e) => { if (e.target.value === '') handleSearchOpacityUpdate(100); });
 
 // Shortcut Settings
 document.getElementById('shortcut-type-select').addEventListener('change', (e) => saveAndApply({ shortcutType: e.target.value }));
@@ -88,41 +92,11 @@ document.getElementById('show-shortcuts-toggle').addEventListener('change', (e) 
 document.getElementById('show-labels-toggle').addEventListener('change', (e) => saveAndApply({ showLabels: e.target.checked }));
 document.getElementById('max-shortcuts-select').addEventListener('change', (e) => saveAndApply({ maxShortcuts: parseInt(e.target.value, 10) }));
 
-// Shortcut Sliders
-function handleShortcutRadiusUpdate(val) {
-    let num = parseInt(val, 10);
-    if (isNaN(num) || num < 0) num = 0;
-    if (num > 30) num = 30;
-    document.getElementById('shortcut-radius-slider').value = num;
-    document.getElementById('shortcut-radius-num').value = num;
-    saveAndApply({ shortcutRadius: num.toString() });
-}
-document.getElementById('shortcut-radius-slider').addEventListener('input', (e) => handleShortcutRadiusUpdate(e.target.value));
-document.getElementById('shortcut-radius-num').addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
-    if (e.target.value !== '') handleShortcutRadiusUpdate(e.target.value);
-});
-document.getElementById('shortcut-radius-num').addEventListener('blur', (e) => { if (e.target.value === '') handleShortcutRadiusUpdate(12); });
-
-function handleShortcutOpacityUpdate(val) {
-    let num = parseInt(val, 10);
-    if (isNaN(num) || num < 0) num = 0;
-    if (num > 100) num = 100;
-    document.getElementById('shortcut-opacity-slider').value = num;
-    document.getElementById('shortcut-opacity-num').value = num;
-    saveAndApply({ shortcutOpacity: num.toString() });
-}
-document.getElementById('shortcut-opacity-slider').addEventListener('input', (e) => handleShortcutOpacityUpdate(e.target.value));
-document.getElementById('shortcut-opacity-num').addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
-    if (e.target.value !== '') handleShortcutOpacityUpdate(e.target.value);
-});
-document.getElementById('shortcut-opacity-num').addEventListener('blur', (e) => { if (e.target.value === '') handleShortcutOpacityUpdate(80); });
-
 // Advanced UI
 document.getElementById('scrollbar-visibility-select').addEventListener('change', (e) => saveAndApply({ scrollbarVis: e.target.value }));
 document.getElementById('scrollbar-color-mode-select').addEventListener('change', (e) => saveAndApply({ scrollbarMode: e.target.value }));
 document.getElementById('show-lock-btn-toggle').addEventListener('change', (e) => saveAndApply({ showLockBtn: e.target.checked }));
+document.getElementById('show-shadows-toggle').addEventListener('change', (e) => saveAndApply({ showShadows: e.target.checked }));
 
 // Clock Settings
 document.getElementById('show-clock-toggle').addEventListener('change', (e) => saveAndApply({ showClock: e.target.checked }));

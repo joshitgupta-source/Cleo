@@ -2,7 +2,7 @@ export const defaultSettings = {
     shortcuts: [], showShortcuts: true, showLabels: true, shortcutType: 'custom', maxShortcuts: 50,
     accentColor: '#8ab4f8', bgType: 'color', bgValue: '#000000', 
     showSearch: true, showSearchBorder: true, searchEngine: 'https://www.google.com/search?q=', 
-    searchMode: 'auto', searchColor: '#202124', searchRadius: '24', searchOpacity: '100',
+    searchMode: 'auto', searchColor: '#202124', searchRadius: '24', searchOpacity: '100', searchGlass: true,
     shortcutMode: 'auto', shortcutColor: '#303134', shortcutRadius: '12', shortcutOpacity: '80',
     showClock: true, showDate: true, timeFormat: '12hr', datePosition: 'below', 
     clockColorMode: 'monochrome', clockColor: '#ffffff',

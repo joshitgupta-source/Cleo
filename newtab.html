@@ -62,6 +62,7 @@
         </div>
         <div class="panel-content">
             
+            <!-- SECTION 1: GLOBAL THEME -->
             <div class="panel-section">
                 <h3>Global Theme</h3>
                 <div class="bg-options">
@@ -110,16 +111,64 @@
                         </optgroup>
                     </select>
                 </div>
+            </div>
 
-                <div class="toggle-row" style="margin-top: 20px;">
-                    <h3>Show UI shadows</h3>
+            <!-- SECTION 2: CLOCK & DATE -->
+            <div class="panel-section">
+                <h3>Clock & Date</h3>
+                <div class="toggle-row">
+                    <h3>Enable Clock</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-shadows-toggle" checked>
+                        <input type="checkbox" id="show-clock-toggle" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
+                
+                <div id="clock-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+                    <div class="input-group">
+                        <label>Time Format</label>
+                        <select id="time-format-select" class="panel-select">
+                            <option value="12hr">12-hour</option>
+                            <option value="24hr">24-hour</option>
+                        </select>
+                    </div>
+                    
+                    <div class="toggle-row" id="show-date-row" style="margin-top: 15px;">
+                        <h3>Show date</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="show-date-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Date Position</label>
+                        <select id="date-position-select" class="panel-select">
+                            <option value="below">Below clock</option>
+                            <option value="above">Above clock</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Clock Color Theme</label>
+                        <select id="clock-color-mode-select" class="panel-select">
+                            <option value="monochrome">Monochrome Auto (Black/White)</option>
+                            <option value="dynamic">Dynamic Auto (Complementary Color)</option>
+                            <option value="custom">Custom Color...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-picker-wrapper" id="clock-color-wrapper" style="margin-top: 10px; display: none;">
+                        <div class="color-input-group">
+                            <input type="color" id="clock-color-picker" value="#ffffff">
+                            <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Pick Color</span>
+                    </div>
+                </div>
             </div>
             
+            <!-- SECTION 3: SEARCH BAR -->
             <div class="panel-section">
                 <h3>Search Bar</h3>
                 <div class="toggle-row">
@@ -171,6 +220,15 @@
                         <input type="range" id="search-opacity-slider" min="0" max="100" value="100" style="width: 100%; margin-top: 10px;">
                     </div>
                     
+                    <!-- NEW FROSTED GLASS TOGGLE -->
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Frosted glass effect (Blur)</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="search-glass-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
                     <div class="toggle-row" style="margin-top: 15px;">
                         <h3>Show border outline</h3>
                         <label class="switch">
@@ -189,6 +247,7 @@
                 </div>
             </div>
 
+            <!-- SECTION 4: WEB SHORTCUTS -->
             <div class="panel-section">
                 <h3>Web Shortcuts</h3>
                 <div class="toggle-row">
@@ -262,62 +321,17 @@
                 </div>
             </div>
 
+            <!-- SECTION 5: ADVANCED UI -->
             <div class="panel-section">
-                <h3>Clock & Date</h3>
-                <div class="toggle-row">
-                    <h3>Enable Clock</h3>
+                <h3>Advanced UI</h3>
+                <div class="toggle-row" style="margin-bottom: 20px;">
+                    <h3>Show UI shadows</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-clock-toggle" checked>
+                        <input type="checkbox" id="show-shadows-toggle" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
-                
-                <div id="clock-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
-                    <div class="input-group">
-                        <label>Time Format</label>
-                        <select id="time-format-select" class="panel-select">
-                            <option value="12hr">12-hour</option>
-                            <option value="24hr">24-hour</option>
-                        </select>
-                    </div>
-                    
-                    <div class="toggle-row" id="show-date-row" style="margin-top: 15px;">
-                        <h3>Show date</h3>
-                        <label class="switch">
-                            <input type="checkbox" id="show-date-toggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label>Date Position</label>
-                        <select id="date-position-select" class="panel-select">
-                            <option value="below">Below clock</option>
-                            <option value="above">Above clock</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label>Clock Color Theme</label>
-                        <select id="clock-color-mode-select" class="panel-select">
-                            <option value="monochrome">Monochrome Auto (Black/White)</option>
-                            <option value="dynamic">Dynamic Auto (Complementary Color)</option>
-                            <option value="custom">Custom Color...</option>
-                        </select>
-                    </div>
-                    
-                    <div class="color-picker-wrapper" id="clock-color-wrapper" style="margin-top: 10px; display: none;">
-                        <div class="color-input-group">
-                            <input type="color" id="clock-color-picker" value="#ffffff">
-                            <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false">
-                        </div>
-                        <span>Pick Color</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="panel-section">
-                <h3>Advanced UI</h3>
                 <div class="input-group">
                     <label>Scrollbar Visibility</label>
                     <select id="scrollbar-visibility-select" class="panel-select">
@@ -352,6 +366,7 @@
                 </div>
             </div>
 
+            <!-- SECTION 6: BACKUP & RESTORE -->
             <div class="panel-section">
                 <h3>Backup & Restore</h3>
                 <p style="font-size: 12px; color: #9aa0a6; margin-bottom: 15px; line-height: 1.4;">Export your layout, shortcuts, and colors to a file, or restore them from a previous backup.</p>

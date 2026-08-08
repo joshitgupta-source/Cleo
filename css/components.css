@@ -2,12 +2,15 @@
 #date-display { font-size: 1.25rem; text-shadow: 0 1px 4px rgba(0,0,0,.7); margin: 10px 0; color: var(--date-color, #e8eaed); transition: color 0.2s; }
 
 #search-box { display: flex; width: 100%; align-items: center; background-color: color-mix(in srgb, var(--search-bg) var(--search-opacity, 100%), transparent); border-radius: var(--search-radius); border: 1px solid rgba(255,255,255,.15); box-shadow: 0 4px 6px rgba(0,0,0,.2); backdrop-filter: blur(5px); transition: background-color .2s, border-color .2s, box-shadow .2s, border-radius .2s; box-sizing: border-box; }
-
-/* THE SEARCH BAR FIX: Background-color override removed so it respects the user's opacity slider! */
 #search-box:focus-within { border-color: var(--accent-color); box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent); }
+
+/* --- NEW GLASS OVERRIDE --- */
+body.search-glass-off #search-box { backdrop-filter: none !important; }
+/* -------------------------- */
 
 body.search-border-off #search-box { border-color: transparent !important; }
 
+/* The rest of your components.css stays exactly the same... */
 .engine-selector-wrapper { position: relative; display: flex; align-items: center; padding-left: 10px; height: 100%; }
 
 #search-engine-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 20px; transition: background-color .2s; outline: none; }
@@ -41,7 +44,6 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover { back
 .shortcut-tile { position: relative; display: flex; justify-content: center; align-items: center; text-decoration: none; }
 .add-shortcut-btn { border: none; color: var(--shortcut-text); font-size: 30px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 
-/* THE SHORTCUT FIX: Nested color-mix injects 15% of the contrasting text color perfectly! */
 .shortcut-tile:hover, .add-shortcut-btn:hover { background-color: color-mix(in srgb, var(--shortcut-text) 15%, color-mix(in srgb, var(--shortcut-bg) var(--shortcut-opacity, 80%), transparent)); transform: translateY(-2px); }
 
 .shortcut-tile img { width: 32px; height: 32px; }
@@ -91,10 +93,8 @@ body.is-locked .draggable-item .shortcut-tile { cursor: pointer; }
 .shortcut-container.drag-over .shortcut-tile, .add-shortcut-container.drag-over .add-shortcut-btn { background-color: color-mix(in srgb, var(--accent-color) 40%, transparent) !important; transform: scale(1.08); border: 2px solid var(--accent-color); }
 
 body.hide-labels .shortcut-text, body.hide-labels .add-shortcut-text { display: none !important; }
-
 html.light-bg .shortcut-text, html.light-bg .add-shortcut-text { color: #000; text-shadow: none; }
 html.light-bg #customize-btn svg, html.light-bg #lock-btn svg { filter: none; }
-
 body.dark-search-text #search-box { border: 1px solid rgba(0,0,0,.15); }
 
 body.no-shadows #time-display, body.no-shadows #date-display, body.no-shadows .shortcut-text, body.no-shadows .add-shortcut-text { text-shadow: none !important; }
