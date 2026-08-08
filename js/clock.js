@@ -1,6 +1,3 @@
-/* =========================================
-   STATE & DOM CACHE
-   ========================================= */
 let use24Hour = false;
 let showSeconds = false;
 let dateFormat = 'full';
@@ -13,23 +10,15 @@ let lastDateStr = '';
 let lastDay = -1;
 let timerId = null;
 
-// ==========================================
-// INITIALIZATION & PRECISION TIMER
-// ==========================================
 export function initClock() {
     timeEl = document.getElementById('time-display');
     dateEl = document.getElementById('date-display');
     runClock();
 }
 
-/**
- * Self-correcting precision timer.
- * Aligns the execution exactly with the system's millisecond rollover.
- */
 function runClock() {
     updateClock();
     
-    // Calculate exact ms until the next full second to prevent clock drift
     const now = new Date();
     const msUntilNextSecond = 1000 - now.getMilliseconds();
     
@@ -37,15 +26,11 @@ function runClock() {
     timerId = setTimeout(runClock, msUntilNextSecond);
 }
 
-// ==========================================
-// RENDER LOGIC
-// ==========================================
 function updateClock() {
     if (!timeEl) return;
     
     const now = new Date();
     
-    // 1. TIME FORMATTING
     let hours = now.getHours();
     let minutes = now.getMinutes();
     let seconds = now.getSeconds();
@@ -65,16 +50,13 @@ function updateClock() {
     }
     timeString += ampm;
 
-    // Smart DOM Write: Only update if the string actually changed
     if (timeString !== lastTimeStr) {
         timeEl.textContent = timeString;
         lastTimeStr = timeString;
     }
 
-    // 2. DATE FORMATTING (Memoized)
     if (dateEl) {
         const currentDay = now.getDate();
-        // Only run expensive locale string calculation once per day
         if (currentDay !== lastDay) {
             forceDateUpdate(now);
             lastDay = currentDay;
@@ -82,10 +64,6 @@ function updateClock() {
     }
 }
 
-/**
- * Extracted date formatter so it can be manually triggered by settings changes
- * without needing to wait for midnight.
- */
 function forceDateUpdate(dateObj = new Date()) {
     if (!dateEl) return;
     let dateStr = '';
@@ -100,7 +78,7 @@ function forceDateUpdate(dateObj = new Date()) {
         case 'mmdd':
             dateStr = dateObj.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
             break;
-        default: // 'full'
+        default: 
             dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     }
 
@@ -110,9 +88,6 @@ function forceDateUpdate(dateObj = new Date()) {
     }
 }
 
-// ==========================================
-// SETTINGS EXPORTS
-// ==========================================
 export function setTimeFormat(format) {
     use24Hour = (format === '24hr');
     updateClock();
@@ -125,5 +100,5 @@ export function setSecondsVisible(visible) {
 
 export function setDateFormat(format) {
     dateFormat = format;
-    forceDateUpdate(); // Instantly visually update without waiting for a clock tick
+    forceDateUpdate(); 
 }

@@ -1,6 +1,3 @@
-/* =========================================
-   SEARCH ENGINE CONFIGURATION
-   ========================================= */
 const ENGINES = [
     { name: 'Google', url: 'https://www.google.com/search?q=', domain: 'https://www.google.com' },
     { name: 'Bing', url: 'https://www.bing.com/search?q=', domain: 'https://www.bing.com' },
@@ -13,12 +10,8 @@ const ENGINES = [
     { name: 'Ecosia', url: 'https://www.ecosia.org/search?q=', domain: 'https://www.ecosia.org' }
 ];
 
-// Helper for dynamic safe DOM element lookups
 const getEl = (id) => document.getElementById(id);
 
-/**
- * Generates the Chrome Favicon API URL with a fallback SVG placeholder
- */
 function getEngineFaviconUrl(domain) {
     try {
         return `${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(domain)}&size=32`;
@@ -27,9 +20,6 @@ function getEngineFaviconUrl(domain) {
     }
 }
 
-/* =========================================
-   SEARCH INITIALIZATION
-   ========================================= */
 export function initSearch(onEngineChange) {
     const searchInput = getEl('search-input');
     const searchEngineSelect = getEl('search-engine-select'); 
@@ -38,7 +28,6 @@ export function initSearch(onEngineChange) {
 
     if (!searchInput || !engineBtn || !engineMenu) return;
 
-    // 1. Build Dropdown Options using DocumentFragment for 1-step DOM insertion
     const fragment = document.createDocumentFragment();
 
     ENGINES.forEach(eng => {
@@ -65,7 +54,6 @@ export function initSearch(onEngineChange) {
     engineMenu.innerHTML = '';
     engineMenu.appendChild(fragment);
 
-    // 2. Event Delegation on Menu Container (Single Listener instead of 9)
     engineMenu.addEventListener('click', (e) => {
         const optionBtn = e.target.closest('.engine-opt');
         if (optionBtn && optionBtn.dataset.url) {
@@ -77,13 +65,11 @@ export function initSearch(onEngineChange) {
         }
     });
 
-    // 3. Dropdown Toggle Controls
     engineBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         engineMenu.classList.toggle('hidden');
     });
 
-    // 4. Outside Click & Keyboard Escape Listener
     document.addEventListener('click', (e) => {
         if (!engineBtn.contains(e.target) && !engineMenu.contains(e.target)) {
             engineMenu.classList.add('hidden');
@@ -96,13 +82,11 @@ export function initSearch(onEngineChange) {
         }
     });
 
-    // 5. Search Execution (Supports standard queries & direct URL navigation)
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const query = searchInput.value.trim();
             if (!query) return;
 
-            // Smart URL detector: navigate directly if query looks like a valid URL
             const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
             if (urlPattern.test(query)) {
                 const targetUrl = query.startsWith('http://') || query.startsWith('https://') 
@@ -117,9 +101,6 @@ export function initSearch(onEngineChange) {
     });
 }
 
-/**
- * Updates the visual icon in the search bar header
- */
 export function updateSearchIcon(engineUrl) {
     const engineIcon = getEl('current-engine-icon');
     if (!engineIcon) return;

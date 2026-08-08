@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Cleo",
+  "name": "Cleo - Custom New Tab",
+  "short_name": "Cleo",
   "description": "A lightning-fast, highly customizable, and private new tab page.",
   "version": "1.0.0",
+  "offline_enabled": true,
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },

@@ -1,14 +1,9 @@
-// Helper for dynamic safe DOM element lookups
 const getEl = (id) => document.getElementById(id);
 
-// ==========================================
-// CONTEXT MENU SETUP (Singleton)
-// ==========================================
 const globalMenu = document.createElement('div');
 globalMenu.className = 'dropdown-menu';
 globalMenu.style.display = 'none';
 
-// Stop event bubbling to prevent underlying <a> tags from triggering navigation
 globalMenu.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); });
 globalMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
 
@@ -53,7 +48,6 @@ export function initContextMenu(onEdit, onDelete) {
         }
     });
 
-    // UX Polish: Close menu with Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && globalMenu.style.display === 'flex') {
             globalMenu.style.display = 'none';
@@ -61,9 +55,6 @@ export function initContextMenu(onEdit, onDelete) {
     });
 }
 
-// ==========================================
-// DRAG & DROP ENGINE
-// ==========================================
 export function initGrid(onReorder, onDropFromAdd, onAddClick) {
     getEl('add-btn')?.addEventListener('click', onAddClick);
 
@@ -78,7 +69,6 @@ export function initGrid(onReorder, onDropFromAdd, onAddClick) {
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', item.dataset.index);
         
-        // Push class addition to next frame to ensure the drag ghost renders properly
         requestAnimationFrame(() => item.classList.add('dragging'));
     });
 
@@ -124,16 +114,12 @@ export function initGrid(onReorder, onDropFromAdd, onAddClick) {
     });
 }
 
-// ==========================================
-// GRID RENDERER
-// ==========================================
 export function renderGrid(sites, isEditable, currentMaxShortcuts) {
     const gridContainer = getEl('grid-container');
     const addBtnContainer = getEl('add-btn-container');
     
     if (!gridContainer) return;
 
-    // Flush existing tiles (except the add button)
     gridContainer.querySelectorAll('.shortcut-container').forEach(c => c.remove());
     
     const frag = document.createDocumentFragment();
@@ -151,17 +137,17 @@ export function renderGrid(sites, isEditable, currentMaxShortcuts) {
         link.className = 'shortcut-tile';
         link.href = siteData.url;
         link.title = siteData.name;
-        link.draggable = false; // Prevent native browser link dragging
+        link.draggable = false;
 
         const img = document.createElement('img');
         img.src = `${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(siteData.url)}&size=32`;
-        img.onerror = () => { img.src = fallbackSvg; }; // Fallback for broken favicons
+        img.onerror = () => { img.src = fallbackSvg; };
         link.appendChild(img);
 
         if (isEditable) {
             const menuBtn = document.createElement('button');
             menuBtn.className = 'menu-btn';
-            menuBtn.innerHTML = '&#8942;'; // Vertical ellipsis
+            menuBtn.innerHTML = '&#8942;';
             link.appendChild(menuBtn);
         }
 
@@ -173,12 +159,11 @@ export function renderGrid(sites, isEditable, currentMaxShortcuts) {
         frag.appendChild(container);
     });
 
-    // Handle Add Button Visibility and Positioning
     if (addBtnContainer) {
         if (isEditable) {
             addBtnContainer.classList.toggle('hidden', sites.length >= currentMaxShortcuts);
             gridContainer.insertBefore(frag, addBtnContainer);
-            gridContainer.appendChild(addBtnContainer); // Force to end of grid
+            gridContainer.appendChild(addBtnContainer);
         } else {
             addBtnContainer.classList.add('hidden');
             gridContainer.appendChild(frag);

@@ -1,17 +1,14 @@
 try {
     const doc = document.documentElement;
     
-    // Optimization: Cached getter to minimize localStorage latency
     const getV = (k, d) => localStorage.getItem(k) || d;
     
-    // 1. Batch Read Critical Layout Variables
     const bT = getV('bgType', 'color');
-    const bV = getV('bgValue', '#000000');
+    const bV = getV('bgValue', '#F0EEE9');
     const aC = getV('accentColor', '#8ab4f8');
-    const srM = getV('searchMode', 'auto');
-    const stM = getV('shortcutMode', 'auto');
+    const srM = getV('searchMode', 'custom');
+    const stM = getV('shortcutMode', 'custom');
     
-    // 2. Ultra-Fast Bitwise Lightness Calculator (Assumes standard #RRGGBB)
     const isL = (h) => {
         if (!h || h[0] !== '#' || h.length !== 7) return false;
         const x = parseInt(h.slice(1), 16);
@@ -20,21 +17,24 @@ try {
 
     const bgL = bT === 'color' && isL(bV);
 
-    // 3. Pre-calculate Conditional Colors
-    const actSr = srM === 'accent' ? aC : (srM === 'custom' ? getV('searchColor', '#202124') : (bgL ? '#ffffff' : '#202124'));
-    const actSt = stM === 'accent' ? aC : (stM === 'custom' ? getV('shortcutColor', '#303134') : (bgL ? '#ffffff' : '#303134'));
+    const actSr = srM === 'accent' ? aC : (srM === 'custom' ? getV('searchColor', '#F6EBC8') : (bgL ? '#ffffff' : '#202124'));
+    const actSt = stM === 'accent' ? aC : (stM === 'custom' ? getV('shortcutColor', '#D3E4F1') : (bgL ? '#ffffff' : '#303134'));
     const srL = isL(actSr);
     const stL = isL(actSt);
 
-    // 4. Batch CSS Variable Injections (Minimizes DOM recalculations)
     doc.style.setProperty('--accent-color', aC);
-    doc.style.setProperty('--search-radius', getV('searchRadius', '24') + 'px');
+    doc.style.setProperty('--search-radius', getV('searchRadius', '10') + 'px');
+    doc.style.setProperty('--shortcut-radius', getV('shortcutRadius', '10') + 'px');
+    
+    const searchPadY = getV('searchPadY', '14');
+    doc.style.setProperty('--search-pad-y', searchPadY + 'px');
+    doc.style.setProperty('--search-font-size', Math.max(13, parseInt(searchPadY) * 1.05) + 'px');
+
     doc.style.setProperty('--search-bg', actSr);
     doc.style.setProperty('--search-text', srL ? '#000000' : '#ffffff');
     doc.style.setProperty('--shortcut-bg', actSt);
     doc.style.setProperty('--shortcut-text', stL ? '#000000' : '#ffffff');
 
-    // 5. Instantly Apply HTML-Level Classes
     const scV = getV('scrollbarVis', 'always');
     const scM = getV('scrollbarMode', 'auto');
     
@@ -48,7 +48,6 @@ try {
     doc.classList.toggle('light-bg', bgL);
     doc.classList.toggle('dark-bg', !bgL); 
 
-    // 6. Inject Critical Background Style Tag (Hardware forced to prevent white flashes)
     const s = document.createElement('style');
     if (bT === 'color') {
         s.textContent = `body{background-color:${bV}!important;background-image:none!important;transition:none!important;}`;
@@ -57,9 +56,8 @@ try {
     }
     doc.appendChild(s);
 
-    // 7. Defer Body-Level Classes until the DOM tree actually exists
     document.addEventListener('DOMContentLoaded', () => {
-        const cls = document.body.classList; // Cache object for faster reads
+        const cls = document.body.classList; 
         
         if (srL) cls.add('dark-search-text');
         if (stL) cls.add('dark-shortcut-text');

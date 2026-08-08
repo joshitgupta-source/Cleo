@@ -1,24 +1,16 @@
 import { saveAndApply } from './theme.js';
 import { exportSettings, importSettings } from './state.js';
 
-// ==========================================
-// PERFORMANCE OPTIMIZATION: Throttling
-// ==========================================
-// Limits rapid-firing UI events (sliders/color pickers) to ~60FPS.
-// This prevents Chrome storage from choking during drag actions.
 let saveTimeout;
 const throttledSave = (payload) => {
     if (saveTimeout) cancelAnimationFrame(saveTimeout);
     saveTimeout = requestAnimationFrame(() => saveAndApply(payload));
 };
 
-// ==========================================
-// COMPLEX SYNC FUNCTIONS
-// ==========================================
 function syncColorPicker(pickerId, textId, settingKey) {
     const picker = document.getElementById(pickerId);
     const text = document.getElementById(textId);
-    if (!picker || !text) return; // Safety guard
+    if (!picker || !text) return; 
 
     const updateColor = (val) => {
         const payload = settingKey === 'bgValue' ? { bgType: 'color', bgValue: val } : { [settingKey]: val };
@@ -44,7 +36,7 @@ function syncColorPicker(pickerId, textId, settingKey) {
 function syncSlider(sliderId, numId, settingKey, min, max, defaultVal) {
     const slider = document.getElementById(sliderId);
     const numInput = document.getElementById(numId);
-    if (!slider || !numInput) return; // Safety guard
+    if (!slider || !numInput) return; 
 
     const updateValues = (val) => {
         let num = parseInt(val, 10);
@@ -69,7 +61,6 @@ function syncSlider(sliderId, numId, settingKey, min, max, defaultVal) {
     });
 }
 
-// Initialize Pickers & Sliders
 syncColorPicker('bg-color-picker', 'bg-color-text', 'bgValue');
 syncColorPicker('accent-color-picker', 'accent-color-text', 'accentColor');
 syncColorPicker('search-color-picker', 'search-color-text', 'searchColor');
@@ -77,15 +68,12 @@ syncColorPicker('shortcut-color-picker', 'shortcut-color-text', 'shortcutColor')
 syncColorPicker('scrollbar-color-picker', 'scrollbar-color-text', 'scrollbarColor');
 syncColorPicker('clock-color-picker', 'clock-color-text', 'clockColor');
 
-syncSlider('search-radius-slider', 'search-radius-num', 'searchRadius', 0, 40, 24);
+syncSlider('search-radius-slider', 'search-radius-num', 'searchRadius', 0, 40, 10);
 syncSlider('search-opacity-slider', 'search-opacity-num', 'searchOpacity', 0, 100, 100);
-syncSlider('shortcut-radius-slider', 'shortcut-radius-num', 'shortcutRadius', 0, 30, 12);
-syncSlider('shortcut-opacity-slider', 'shortcut-opacity-num', 'shortcutOpacity', 0, 100, 80);
+syncSlider('search-height-slider', 'search-height-num', 'searchPadY', 8, 32, 14);
+syncSlider('shortcut-radius-slider', 'shortcut-radius-num', 'shortcutRadius', 0, 30, 10);
+syncSlider('shortcut-opacity-slider', 'shortcut-opacity-num', 'shortcutOpacity', 0, 100, 100);
 
-// ==========================================
-// DRY EVENT BINDING HELPERS
-// ==========================================
-// Replaces 20+ lines of repetitive addEventListeners with a clean map
 const bindSetting = (id, key, isNumber = false) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -96,31 +84,22 @@ const bindSetting = (id, key, isNumber = false) => {
     });
 };
 
-// Global Theme
 bindSetting('global-font-select', 'globalFont');
-
-// Search
 bindSetting('show-search-toggle', 'showSearch');
 bindSetting('show-search-border-toggle', 'showSearchBorder');
 bindSetting('search-glass-toggle', 'searchGlass');
 bindSetting('search-engine-select', 'searchEngine');
 bindSetting('search-color-mode-select', 'searchMode');
-
-// Shortcuts
 bindSetting('shortcut-type-select', 'shortcutType');
 bindSetting('shortcut-color-mode-select', 'shortcutMode');
 bindSetting('show-shortcuts-toggle', 'showShortcuts');
 bindSetting('shortcut-glass-toggle', 'shortcutGlass');
 bindSetting('show-labels-toggle', 'showLabels');
 bindSetting('max-shortcuts-select', 'maxShortcuts', true);
-
-// Advanced UI
 bindSetting('scrollbar-visibility-select', 'scrollbarVis');
 bindSetting('scrollbar-color-mode-select', 'scrollbarMode');
 bindSetting('show-lock-btn-toggle', 'showLockBtn');
 bindSetting('show-shadows-toggle', 'showShadows');
-
-// Clock
 bindSetting('show-clock-toggle', 'showClock');
 bindSetting('time-format-select', 'timeFormat');
 bindSetting('show-seconds-toggle', 'showSeconds');
@@ -129,9 +108,6 @@ bindSetting('date-format-select', 'dateFormat');
 bindSetting('date-position-select', 'datePosition');
 bindSetting('clock-color-mode-select', 'clockColorMode');
 
-// ==========================================
-// SPECIAL ACTIONS (Backgrounds, Locks, Backups)
-// ==========================================
 document.getElementById('bg-image-btn')?.addEventListener('click', () => document.getElementById('bg-image-input').click());
 document.getElementById('bg-image-input')?.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -141,9 +117,8 @@ document.getElementById('bg-image-input')?.addEventListener('change', (e) => {
         reader.readAsDataURL(file);
     }
 });
-document.getElementById('bg-reset-btn')?.addEventListener('click', () => saveAndApply({ bgType: 'color', bgValue: '#000000' }));
+document.getElementById('bg-reset-btn')?.addEventListener('click', () => saveAndApply({ bgType: 'color', bgValue: '#F0EEE9' }));
 
-// Lock Logic
 document.getElementById('lock-btn')?.addEventListener('click', () => {
     chrome.storage.local.get({ isLocked: false }, ({ isLocked }) => {
         const newLockState = !isLocked;
@@ -152,7 +127,6 @@ document.getElementById('lock-btn')?.addEventListener('click', () => {
     });
 });
 
-// Backup UI
 document.getElementById('export-btn')?.addEventListener('click', exportSettings);
 document.getElementById('import-btn')?.addEventListener('click', () => document.getElementById('import-input').click());
 document.getElementById('import-input')?.addEventListener('change', (e) => {

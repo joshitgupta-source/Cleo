@@ -9,11 +9,6 @@ export function saveAndApply(updates) {
     updateStorage(updates, applySettings);
 }
 
-// ==========================================
-// PERFORMANCE FIX: Safe Input Syncing
-// ==========================================
-// Prevents updating an element if the user is currently interacting with it.
-// This stops color pickers and sliders from stuttering/freezing while dragging.
 const syncInput = (id, value) => {
     const el = document.getElementById(id);
     if (el && document.activeElement !== el) {
@@ -24,14 +19,10 @@ const syncInput = (id, value) => {
 
 export function applySettings() {
     getSettings((result) => {
-        // 1. Core Theming 
         applyThemeColors(result);
         
-        // NOTE: If the background STILL isn't updating in real-time after this, 
-        // the bug is inside this applyBackground function in ui.js!
         applyBackground(result.bgType, result.bgValue); 
 
-        // 2. Sync Color Pickers (Safely)
         syncInput('accent-color-picker', result.accentColor);
         syncInput('accent-color-text', result.accentColor.toUpperCase());
         
@@ -51,7 +42,6 @@ export function applySettings() {
         syncInput('clock-color-picker', clockCustom);
         syncInput('clock-color-text', clockCustom.toUpperCase());
 
-        // 3. Environment & Fonts
         syncInput('show-shadows-toggle', result.showShadows);
         document.body.classList.toggle('no-shadows', !result.showShadows);
         
@@ -60,7 +50,6 @@ export function applySettings() {
             document.body.style.fontFamily = result.globalFont;
         }
 
-        // 4. Search UI
         syncInput('show-search-toggle', result.showSearch);
         document.body.classList.toggle('search-off', !result.showSearch);
         
@@ -86,10 +75,17 @@ export function applySettings() {
         syncInput('search-opacity-slider', searchOpacity);
         syncInput('search-opacity-num', searchOpacity);
         document.documentElement.style.setProperty('--search-opacity', searchOpacity + '%');
+
+        const searchPadY = result.searchPadY !== undefined ? result.searchPadY : '14';
+        syncInput('search-height-slider', searchPadY);
+        syncInput('search-height-num', searchPadY);
+        document.documentElement.style.setProperty('--search-pad-y', searchPadY + 'px');
+        
+        const calcFontSize = Math.max(13, parseInt(searchPadY) * 1.05);
+        document.documentElement.style.setProperty('--search-font-size', calcFontSize + 'px');
         
         updateSearchIcon(result.searchEngine);
 
-        // 5. Shortcuts UI
         syncInput('shortcut-type-select', result.shortcutType);
         syncInput('shortcut-color-mode-select', result.shortcutMode);
         document.getElementById('shortcut-color-wrapper').style.display = result.shortcutMode === 'custom' ? 'flex' : 'none';
@@ -108,7 +104,6 @@ export function applySettings() {
         syncInput('shortcut-opacity-num', shortcutOpacity);
         document.documentElement.style.setProperty('--shortcut-opacity', shortcutOpacity + '%');
 
-        // 6. Scrollbar UI
         syncInput('scrollbar-visibility-select', result.scrollbarVis);
         syncInput('scrollbar-color-mode-select', result.scrollbarMode);
         document.documentElement.classList.toggle('hover-scrollbar', result.scrollbarVis === 'hover');
@@ -116,7 +111,6 @@ export function applySettings() {
         document.documentElement.classList.toggle('custom-scrollbar', result.scrollbarMode === 'custom');
         document.getElementById('scrollbar-color-wrapper').style.display = result.scrollbarMode === 'custom' ? 'flex' : 'none';
 
-        // 7. Clock & Date UI
         syncInput('show-clock-toggle', result.showClock);
         document.body.classList.toggle('clock-off', !result.showClock);
         
@@ -152,15 +146,11 @@ export function applySettings() {
             clockWidget.style.flexDirection = (result.datePosition === 'above') ? 'column-reverse' : 'column';
         }
 
-        // 8. Locking UI
         const showLock = result.showLockBtn !== undefined ? result.showLockBtn : true;
         syncInput('show-lock-btn-toggle', showLock);
         document.getElementById('lock-btn').style.display = showLock ? 'flex' : 'none';
         document.body.classList.toggle('is-locked', result.isLocked || false);
 
-        // ==========================================
-        // PERFORMANCE FIX: Stop Grid Thrashing
-        // ==========================================
         const currentMaxShortcuts = parseInt(result.maxShortcuts, 10) || 50;
         syncInput('max-shortcuts-select', currentMaxShortcuts);
         syncInput('show-shortcuts-toggle', result.showShortcuts);
@@ -176,8 +166,6 @@ export function applySettings() {
             document.getElementById('grid-container').style.display = 'flex';
             if (shortcutOptionsGroup) shortcutOptionsGroup.style.display = 'block';
 
-            // We check if a color picker or slider is active. 
-            // If it is, SKIP rendering the grid to prevent severe UI lag!
             const activeEl = document.activeElement;
             const isDraggingUI = activeEl && (activeEl.type === 'color' || activeEl.type === 'range');
             

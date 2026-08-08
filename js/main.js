@@ -4,23 +4,16 @@ import { initSearch } from './search.js';
 import { initGrid, initContextMenu } from './grid.js';
 import { initUI, openModal, closeModal } from './ui.js';
 import { applySettings, saveAndApply } from './theme.js';
-import './panel.js'; // Imports all settings UI listeners
+import './panel.js'; 
 
 let editingIndex = null;
 
-// Helper for safe DOM lookups
 const getEl = (id) => document.getElementById(id);
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
 initClock();
 initSearch((newEngine) => saveAndApply({ searchEngine: newEngine }));
 initUI(() => { editingIndex = null; });
 
-// ==========================================
-// GRID & CONTEXT MENU HANDLERS
-// ==========================================
 initContextMenu(
     async (index) => {
         const { shortcuts = [] } = await getSettings();
@@ -58,18 +51,12 @@ initGrid(
     }
 );
 
-// ==========================================
-// GLOBAL EVENT LISTENERS
-// ==========================================
-
-// Intercept Drag API to disable moving tiles when locked
 document.addEventListener('dragstart', (e) => {
     if (document.body.classList.contains('is-locked')) {
         e.preventDefault();
     }
 });
 
-// Global Keyboard Shortcut: '/' to focus search
 document.addEventListener('keydown', (e) => {
     const activeTag = document.activeElement.tagName.toLowerCase();
     if (activeTag === 'input' || activeTag === 'textarea') return;
@@ -80,9 +67,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ==========================================
-// MODAL LOGIC (With UX Enhancements)
-// ==========================================
 const handleShortcutSave = async () => {
     const nameInput = getEl('site-name');
     const urlInput = getEl('site-url');
@@ -92,9 +76,8 @@ const handleShortcutSave = async () => {
     const name = nameInput.value.trim();
     let url = urlInput.value.trim();
     
-    if (!name || !url) return; // Prevent empty submissions
+    if (!name || !url) return; 
     
-    // Auto-append HTTPS if missing
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
     
     const data = await getSettings();
@@ -119,14 +102,10 @@ const handleShortcutSave = async () => {
 
 getEl('done-btn')?.addEventListener('click', handleShortcutSave);
 
-// UX Polish: Allow pressing 'Enter' in the modal inputs to save instantly
 const submitOnEnter = (e) => {
     if (e.key === 'Enter') handleShortcutSave();
 };
 getEl('site-name')?.addEventListener('keydown', submitOnEnter);
 getEl('site-url')?.addEventListener('keydown', submitOnEnter);
 
-// ==========================================
-// BOOTSTRAP
-// ==========================================
 applySettings();

@@ -1,14 +1,7 @@
-/* =========================================
-   HIGH-PERFORMANCE COLOR MATH ENGINE
-   Using bitwise operations (>>) instead of slow string parsing
-   ========================================= */
-
 export function hexToRgb(hex) {
     let h = hex.startsWith('#') ? hex.slice(1) : hex;
-    // Handle 3-digit shorthand hex (#FFF)
     if (h.length === 3) h = h.split('').map(c => c + c).join('');
     
-    // Parse once as a base-16 integer, then use bitwise shifts for insane speed
     const num = parseInt(h, 16);
     return {
         r: (num >> 16) & 255,
@@ -23,7 +16,6 @@ export function getTextColorForBackground(hexColor) {
     if (h.length !== 6 && h.length !== 3) return 'light-text';
 
     const rgb = hexToRgb(h);
-    // Standard YIQ equation for calculating color contrast
     const yiq = ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000;
     return yiq >= 128 ? 'dark-text' : 'light-text';
 }
@@ -58,7 +50,6 @@ export function getDynamicColorForBackground(hex) {
 }
 
 export function rgbToHex(r, g, b) {
-    // Bitwise shift reverse-conversion
     return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
 }
 
@@ -74,20 +65,12 @@ export function blendColors(fgHex, bgHex, opacityPercent) {
     return rgbToHex(r, g, b);
 }
 
-/* =========================================
-   CENTRALIZED COLOR INJECTION (BUG FIXED)
-   ========================================= */
-
 export function applyThemeColors(result) {
     const root = document.documentElement;
     const body = document.body;
 
-    // 1. Accent Color
     root.style.setProperty('--accent-color', result.accentColor || '#4285f4');
 
-    // =========================================
-    // THE FIX: Actually apply the background to the DOM
-    // =========================================
     if (result.bgType === 'color') {
         body.style.backgroundImage = 'none';
         body.style.backgroundColor = result.bgValue || '#000000';
@@ -95,14 +78,12 @@ export function applyThemeColors(result) {
         body.style.backgroundImage = `url("${result.bgValue}")`;
         body.style.backgroundSize = 'cover';
         body.style.backgroundPosition = 'center';
-        body.style.backgroundColor = '#000000'; // Fallback
+        body.style.backgroundColor = '#000000';
     }
 
-    // Global background context for math
     const globalBgHex = (result.bgType === 'color' && result.bgValue) ? result.bgValue : '#000000';
     const isBgLight = result.bgType === 'color' && getTextColorForBackground(globalBgHex) === 'dark-text';
 
-    // 2. Search Bar Colors
     let searchBg = '#202124';
     if (result.searchMode === 'accent') searchBg = result.accentColor;
     else if (result.searchMode === 'custom') searchBg = result.searchColor;
@@ -119,7 +100,6 @@ export function applyThemeColors(result) {
     root.style.setProperty('--search-dropdown-text', searchDropdownIsDark ? '#000000' : '#ffffff');
     body.classList.toggle('dark-search-text', searchIsDark);
 
-    // 3. Web Shortcut Colors
     let shortcutBg = '#303134';
     if (result.shortcutMode === 'accent') shortcutBg = result.accentColor;
     else if (result.shortcutMode === 'custom') shortcutBg = result.shortcutColor;
@@ -133,7 +113,6 @@ export function applyThemeColors(result) {
     root.style.setProperty('--shortcut-text', shortcutIsDark ? '#000000' : '#ffffff');
     body.classList.toggle('dark-shortcut-text', shortcutIsDark);
 
-    // 4. Clock & Date Colors
     let clockColor = '#ffffff';
     let dateColor = '#e8eaed'; 
     const clockMode = result.clockColorMode || 'monochrome';
@@ -156,7 +135,6 @@ export function applyThemeColors(result) {
     root.style.setProperty('--clock-color', clockColor);
     root.style.setProperty('--date-color', dateColor);
 
-    // 5. Scrollbar Custom Color
     if (result.scrollbarMode === 'custom') {
         root.style.setProperty('--custom-sc-color', result.scrollbarColor || '#5f6368');
     } else {

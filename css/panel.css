@@ -1,6 +1,3 @@
-/* =========================================
-   PANEL LAYOUT & ANIMATION
-   ========================================= */
 #side-panel { 
     position: fixed; 
     top: 0; 
@@ -17,6 +14,7 @@
     flex-direction: column; 
     will-change: transform;
 }
+
 #side-panel.open { transform: translate3d(0, 0, 0); }
 
 body.no-shadows #side-panel { 
@@ -24,20 +22,24 @@ body.no-shadows #side-panel {
     border-left: 1px solid #3c4043; 
 }
 
-/* Custom Scrollbar for Panel Content */
 .panel-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
+
 .panel-content::-webkit-scrollbar { width: 6px; }
+
 .panel-content::-webkit-scrollbar-track { background: transparent; }
+
 .panel-content::-webkit-scrollbar-thumb { background: #5f6368; border-radius: 3px; }
+
 .panel-content::-webkit-scrollbar-thumb:hover { background: #9aa0a6; }
 
-/* =========================================
-   TYPOGRAPHY & SECTIONS
-   ========================================= */
 .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #3c4043; }
+
 .panel-header h2, .panel-section h3, .toggle-row h3 { margin: 0; font-weight: normal; }
+
 .panel-header h2 { font-size: 16px; }
+
 .panel-section h3 { font-size: 14px; margin-bottom: 15px; }
+
 .panel-section { padding: 20px; border-bottom: 1px solid #3c4043; }
 
 #close-panel-btn { 
@@ -45,17 +47,16 @@ body.no-shadows #side-panel {
     font-size: 24px; cursor: pointer; line-height: 1; 
     transition: color 0.2s;
 }
+
 #close-panel-btn:hover { color: var(--accent-color); }
 
-/* =========================================
-   BUTTONS & INPUTS
-   ========================================= */
 .panel-btn { 
     width: 100%; background-color: transparent; color: var(--accent-color); 
     border: 1px solid #5f6368; padding: 10px; border-radius: 4px; 
     cursor: pointer; font-size: 13px; margin-bottom: 10px; 
     transition: background-color 0.2s ease-out, border-color 0.2s ease-out; 
 }
+
 .panel-btn:hover, #cancel-btn:hover { 
     background-color: color-mix(in srgb, var(--accent-color) 8%, transparent);
     border-color: var(--accent-color);
@@ -67,29 +68,30 @@ body.no-shadows #side-panel {
     outline: none; font-size: 13px; box-sizing: border-box; font-family: inherit; 
     transition: border-color 0.2s ease;
 }
+
 .panel-select { cursor: pointer; }
+
 .panel-select:focus, .panel-input:focus, .input-group input:focus { border-color: var(--accent-color); }
 
-/* Remove Number Input Spinners */
 input[type="number"]::-webkit-inner-spin-button, 
 input[type="number"]::-webkit-outer-spin-button { 
     -webkit-appearance: none; margin: 0; 
 }
 
-/* =========================================
-   COLOR PICKERS & HEX INPUTS
-   ========================================= */
 .color-picker-wrapper { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+
 .color-input-group { display: flex; align-items: center; gap: 8px; }
 
-/* DRY Color Picker Selector */
 input[type="color"] { 
     appearance: none; width: 40px; height: 40px; 
     border: none; border-radius: 4px; cursor: pointer; 
     background: transparent; padding: 0;
 }
+
 input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+
 input[type="color"]::-webkit-color-swatch { border: 1px solid #5f6368; border-radius: 4px; transition: border-color 0.2s; }
+
 input[type="color"]:focus-visible::-webkit-color-swatch { border-color: var(--accent-color); }
 
 .hex-input { 
@@ -98,20 +100,21 @@ input[type="color"]:focus-visible::-webkit-color-swatch { border-color: var(--ac
     font-family: monospace; font-size: 12px; outline: none; 
     text-transform: uppercase; transition: border-color 0.2s; 
 }
+
 .hex-input:focus { border-color: var(--accent-color); }
 
-/* =========================================
-   TOGGLE SWITCHES & SLIDERS
-   ========================================= */
 .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 
 .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+
 .switch input { opacity: 0; width: 0; height: 0; }
+
 .slider { 
     position: absolute; cursor: pointer; inset: 0; 
     background-color: #5f6368; border-radius: 34px;
     transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);  
 }
+
 .slider:before { 
     position: absolute; content: ""; height: 16px; width: 16px; 
     left: 2px; bottom: 2px; background-color: #9aa0a6; border-radius: 50%;
@@ -119,20 +122,19 @@ input[type="color"]:focus-visible::-webkit-color-swatch { border-color: var(--ac
 }
 
 input:checked + .slider { background-color: var(--accent-color); }
+
 input:checked + .slider:before { transform: translateX(14px); background-color: #202124; }
 
-/* Accessibility Focus Ring */
 input:focus-visible + .slider { outline: 2px solid var(--accent-color); outline-offset: 2px; }
 
 input[type="range"] { appearance: none; background: #5f6368; height: 4px; border-radius: 2px; outline: none; accent-color: var(--accent-color); }
+
 input[type="range"]::-webkit-slider-thumb { 
     appearance: none; width: 16px; height: 16px; 
     border-radius: 50%; background: var(--accent-color); cursor: pointer; 
     transition: transform 0.1s ease;
 }
+
 input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
 
-/* =========================================
-   UTILITIES
-   ========================================= */
 .disabled-row { opacity: 0.4; pointer-events: none; }
