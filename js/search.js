@@ -1,10 +1,7 @@
-const searchInput = document.getElementById('search-input');
-const searchEngineSelect = document.getElementById('search-engine-select'); 
-const engineBtn = document.getElementById('search-engine-btn');
-const engineIcon = document.getElementById('current-engine-icon');
-const engineMenu = document.getElementById('engine-dropdown-menu');
-
-const engines = [
+/* =========================================
+   SEARCH ENGINE CONFIGURATION
+   ========================================= */
+const ENGINES = [
     { name: 'Google', url: 'https://www.google.com/search?q=', domain: 'https://www.google.com' },
     { name: 'Bing', url: 'https://www.bing.com/search?q=', domain: 'https://www.bing.com' },
     { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=', domain: 'https://duckduckgo.com' },
@@ -16,40 +13,121 @@ const engines = [
     { name: 'Ecosia', url: 'https://www.ecosia.org/search?q=', domain: 'https://www.ecosia.org' }
 ];
 
+// Helper for dynamic safe DOM element lookups
+const getEl = (id) => document.getElementById(id);
+
+/**
+ * Generates the Chrome Favicon API URL with a fallback SVG placeholder
+ */
+function getEngineFaviconUrl(domain) {
+    try {
+        return `${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(domain)}&size=32`;
+    } catch (e) {
+        return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%238ab4f8"><circle cx="12" cy="12" r="10"/></svg>';
+    }
+}
+
+/* =========================================
+   SEARCH INITIALIZATION
+   ========================================= */
 export function initSearch(onEngineChange) {
-    engines.forEach(eng => {
+    const searchInput = getEl('search-input');
+    const searchEngineSelect = getEl('search-engine-select'); 
+    const engineBtn = getEl('search-engine-btn');
+    const engineMenu = getEl('engine-dropdown-menu');
+
+    if (!searchInput || !engineBtn || !engineMenu) return;
+
+    // 1. Build Dropdown Options using DocumentFragment for 1-step DOM insertion
+    const fragment = document.createDocumentFragment();
+
+    ENGINES.forEach(eng => {
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'engine-opt';
-        btn.innerHTML = `<img src="${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(eng.domain)}&size=32" alt="${eng.name}"> <span>${eng.name}</span>`;
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            engineMenu.classList.add('hidden');
-            onEngineChange(eng.url);
-        });
-        engineMenu.appendChild(btn);
+        btn.dataset.url = eng.url;
+
+        const img = document.createElement('img');
+        img.src = getEngineFaviconUrl(eng.domain);
+        img.alt = eng.name;
+        img.onerror = () => {
+            img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%238ab4f8"><circle cx="12" cy="12" r="10"/></svg>';
+        };
+
+        const span = document.createElement('span');
+        span.textContent = eng.name;
+
+        btn.appendChild(img);
+        btn.appendChild(span);
+        fragment.appendChild(btn);
     });
 
+    engineMenu.innerHTML = '';
+    engineMenu.appendChild(fragment);
+
+    // 2. Event Delegation on Menu Container (Single Listener instead of 9)
+    engineMenu.addEventListener('click', (e) => {
+        const optionBtn = e.target.closest('.engine-opt');
+        if (optionBtn && optionBtn.dataset.url) {
+            e.stopPropagation();
+            engineMenu.classList.add('hidden');
+            if (typeof onEngineChange === 'function') {
+                onEngineChange(optionBtn.dataset.url);
+            }
+        }
+    });
+
+    // 3. Dropdown Toggle Controls
     engineBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         engineMenu.classList.toggle('hidden');
     });
 
+    // 4. Outside Click & Keyboard Escape Listener
     document.addEventListener('click', (e) => {
         if (!engineBtn.contains(e.target) && !engineMenu.contains(e.target)) {
             engineMenu.classList.add('hidden');
         }
     });
 
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !engineMenu.classList.contains('hidden')) {
+            engineMenu.classList.add('hidden');
+        }
+    });
+
+    // 5. Search Execution (Supports standard queries & direct URL navigation)
     searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && searchInput.value.trim() !== '') {
-            const url = searchEngineSelect.value + encodeURIComponent(searchInput.value.trim());
-            window.location.href = url;
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            // Smart URL detector: navigate directly if query looks like a valid URL
+            const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
+            if (urlPattern.test(query)) {
+                const targetUrl = query.startsWith('http://') || query.startsWith('https://') 
+                    ? query 
+                    : `https://${query}`;
+                window.location.href = targetUrl;
+            } else {
+                const engineBase = searchEngineSelect ? searchEngineSelect.value : ENGINES[0].url;
+                window.location.href = engineBase + encodeURIComponent(query);
+            }
         }
     });
 }
 
+/**
+ * Updates the visual icon in the search bar header
+ */
 export function updateSearchIcon(engineUrl) {
-    const activeEngine = engines.find(e => e.url === engineUrl) || engines[0];
-    engineIcon.src = `${chrome.runtime.getURL("/_favicon/")}?pageUrl=${encodeURIComponent(activeEngine.domain)}&size=32`;
+    const engineIcon = getEl('current-engine-icon');
+    if (!engineIcon) return;
+
+    const activeEngine = ENGINES.find(e => e.url === engineUrl) || ENGINES[0];
+    engineIcon.src = getEngineFaviconUrl(activeEngine.domain);
     engineIcon.alt = activeEngine.name;
+    engineIcon.onerror = () => {
+        engineIcon.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%238ab4f8"><circle cx="12" cy="12" r="10"/></svg>';
+    };
 }

@@ -1,45 +1,96 @@
 import { getTextColorForBackground } from './utils.js';
 
-const customizeBtn = document.getElementById('customize-btn');
-const sidePanel = document.getElementById('side-panel');
-const closePanelBtn = document.getElementById('close-panel-btn');
-const modal = document.getElementById('modal-backdrop');
-const cancelBtn = document.getElementById('cancel-btn');
-const nameInput = document.getElementById('site-name');
-const urlInput = document.getElementById('site-url');
-const modalTitle = document.getElementById('modal-title');
+// ==========================================
+// PERFORMANCE FIX: Dynamic Getters
+// ==========================================
+// Grabbing elements at the top of the file can cause the module to crash
+// if the DOM isn't fully parsed yet. Dynamic getters prevent initialization errors.
+const getEl = (id) => document.getElementById(id);
 
-export function initUI(onCancel) {
-    document.getElementById('panel-title').textContent = `Customize ${chrome.runtime.getManifest().name}`;
-    customizeBtn.addEventListener('click', () => sidePanel.classList.add('open'));
-    closePanelBtn.addEventListener('click', () => sidePanel.classList.remove('open'));
-    cancelBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        onCancel();
+export function initUI(onModalClose) {
+    // Open panel
+    getEl('customize-btn')?.addEventListener('click', () => {
+        getEl('side-panel')?.classList.add('open');
+    });
+
+    // Close panel
+    getEl('close-panel-btn')?.addEventListener('click', () => {
+        getEl('side-panel')?.classList.remove('open');
+    });
+
+    // DRY Modal close helper
+    const handleClose = () => {
+        closeModal();
+        if (onModalClose) onModalClose();
+    };
+
+    getEl('cancel-btn')?.addEventListener('click', handleClose);
+
+    getEl('modal-backdrop')?.addEventListener('click', (e) => {
+        if (e.target === getEl('modal-backdrop')) {
+            handleClose();
+        }
     });
 }
 
-export function openModal(title, name, url) {
-    modalTitle.textContent = title;
-    nameInput.value = name;
-    urlInput.value = url;
-    modal.classList.remove('hidden');
-    nameInput.focus();
+export function openModal(title, name = '', url = '') {
+    const titleEl = getEl('modal-title');
+    const nameEl = getEl('site-name');
+    const urlEl = getEl('site-url');
+    const modal = getEl('modal-backdrop');
+
+    if (titleEl) titleEl.textContent = title;
+    if (nameEl) nameEl.value = name;
+    if (urlEl) urlEl.value = url;
+    if (modal) modal.classList.remove('hidden');
+    
+    // Ensure display:block is rendered by the GPU before focusing the input
+    requestAnimationFrame(() => nameEl?.focus());
 }
 
 export function closeModal() {
-    modal.classList.add('hidden');
+    getEl('modal-backdrop')?.classList.add('hidden');
+    const nameEl = getEl('site-name');
+    const urlEl = getEl('site-url');
+    if (nameEl) nameEl.value = '';
+    if (urlEl) urlEl.value = '';
 }
 
-export function applyBackground(bgType, bgValue) {
-    const isDarkText = getTextColorForBackground(bgValue || '#000000') === 'dark-text';
-    if (bgType === 'color') {
-        document.body.style.setProperty('background-image', 'none', 'important');
-        document.body.style.setProperty('background-color', bgValue || '#000000', 'important');
-        document.documentElement.classList.toggle('light-bg', isDarkText);
-    } else if (bgType === 'image') {
-        document.body.style.setProperty('background-color', '#000000', 'important');
-        document.body.style.setProperty('background-image', `url(${bgValue})`, 'important');
-        document.documentElement.classList.remove('light-bg');
-    }
+// ==========================================
+// THE FIX: Hardware-Forced Repainting
+// ==========================================
+export function applyBackground(type, value) {
+    const root = document.documentElement;
+    const body = document.body;
+
+    // requestAnimationFrame forces Chrome's compositor to paint the frame immediately.
+    // This stops the browser from dropping visual updates while dragging a color picker.
+    requestAnimationFrame(() => {
+        
+        // Safety Net: We inject the color as a CSS variable just in case 
+        // your HTML uses a separate overlay <div> for the background.
+        root.style.setProperty('--bg-color', value);
+
+        if (type === 'image') {
+            // Using setProperty with 'important' obliterates any rogue CSS rules blocking the change
+            body.style.setProperty('background-image', `url("${value}")`, 'important');
+            body.style.setProperty('background-color', '#000000', 'important');
+            
+            root.classList.add('dark-bg');
+            root.classList.remove('light-bg');
+        } else {
+            body.style.setProperty('background-image', 'none', 'important');
+            body.style.setProperty('background-color', value, 'important');
+            
+            // Use our high-speed math engine from utils.js
+            const textColor = getTextColorForBackground(value);
+            if (textColor === 'dark-text') {
+                root.classList.add('light-bg');
+                root.classList.remove('dark-bg');
+            } else {
+                root.classList.add('dark-bg');
+                root.classList.remove('light-bg');
+            }
+        }
+    });
 }

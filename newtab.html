@@ -41,12 +41,10 @@
     </div>
 
     <!-- LOCK BUTTON (Bottom Left) -->
-    <button id="lock-btn" title="Lock Layout">
-        <svg id="icon-unlocked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
-            <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>
-        </svg>
-        <svg id="icon-locked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
-            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+    <button id="lock-btn" title="Lock Layout" aria-label="Toggle Layout Lock">
+        <svg id="animated-lock" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+            <path class="lock-shackle" d="M17 8V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2h1.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H17z"/>
+            <path class="lock-body" d="M18 8H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
         </svg>
     </button>
 
@@ -133,12 +131,30 @@
                         </select>
                     </div>
                     
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Show seconds</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="show-seconds-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
                     <div class="toggle-row" id="show-date-row" style="margin-top: 15px;">
                         <h3>Show date</h3>
                         <label class="switch">
                             <input type="checkbox" id="show-date-toggle" checked>
                             <span class="slider"></span>
                         </label>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Date Format</label>
+                        <select id="date-format-select" class="panel-select">
+                            <option value="full">Weekday, Month Date (Friday, August 7)</option>
+                            <option value="short">Short (Aug 7, 2026)</option>
+                            <option value="ddmm">DD/MM/YYYY (07/08/2026)</option>
+                            <option value="mmdd">MM/DD/YYYY (08/07/2026)</option>
+                        </select>
                     </div>
                     
                     <div class="input-group" style="margin-top: 15px;">
@@ -301,6 +317,14 @@
                             <input type="number" id="shortcut-opacity-num" min="0" max="100" value="80" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
                         </div>
                         <input type="range" id="shortcut-opacity-slider" min="0" max="100" value="80" style="width: 100%; margin-top: 10px;">
+                    </div>
+                    
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Frosted glass effect (Blur)</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="shortcut-glass-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
                     
                     <div class="toggle-row" id="show-labels-row" style="margin-top: 15px;">

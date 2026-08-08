@@ -1,19 +1,35 @@
+/* =========================================
+   UNIVERSAL RESETS
+   ========================================= */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* =========================================
+   CSS VARIABLE ENGINE (THEMING)
+   ========================================= */
 :root {
+    /* Theme Variables injected by JS */
     --accent-color: #8ab4f8;
-    --sc-thumb: rgba(255,255,255,.2);
-    --sc-thumb-hover: rgba(255,255,255,.4);
     
+    /* Scrollbar Default */
+    --sc-thumb: rgba(255, 255, 255, 0.2);
+    --sc-thumb-hover: rgba(255, 255, 255, 0.4);
+    
+    /* Search Bar Defaults */
     --search-bg: #202124;
     --search-text: #ffffff;
     --search-radius: 24px;
 
+    /* Shortcut Defaults */
     --shortcut-bg: #303134;
     --shortcut-text: #ffffff;
 }
 
+/* Scrollbar State Modifiers */
 html.light-bg {
-    --sc-thumb: rgba(0,0,0,.2);
-    --sc-thumb-hover: rgba(0,0,0,.4);
+    --sc-thumb: rgba(0, 0, 0, 0.2);
+    --sc-thumb-hover: rgba(0, 0, 0, 0.4);
 }
 
 html.accent-scrollbar {
@@ -26,22 +42,40 @@ html.custom-scrollbar {
     --sc-thumb-hover: var(--custom-sc-color);
 }
 
+/* =========================================
+   CORE BODY STYLES
+   ========================================= */
 body {
-    background-color: #000;
+    background-color: #000000;
     color: #e8eaed;
-    font-family: Arial, sans-serif;
+    /* Matches JS default state and modern OS fonts */
+    font-family: system-ui, -apple-system, sans-serif;
+    
+    /* Crisp text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    
     display: flex;
     justify-content: center;
     height: 100vh;
     margin: 0;
+    
+    /* Background Properties */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transition: background .3s;
+    
+    /* ONLY transition color. Transitioning images causes severe CPU lag. */
+    transition: background-color 0.3s ease;
+    
     position: relative;
     overflow: hidden;
 }
 
+/* =========================================
+   GLOBAL UTILITIES
+   ========================================= */
 .hidden {
     display: none !important;
 }

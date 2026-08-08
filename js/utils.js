@@ -1,24 +1,46 @@
+/* =========================================
+   HIGH-PERFORMANCE COLOR MATH ENGINE
+   Using bitwise operations (>>) instead of slow string parsing
+   ========================================= */
+
+export function hexToRgb(hex) {
+    let h = hex.startsWith('#') ? hex.slice(1) : hex;
+    // Handle 3-digit shorthand hex (#FFF)
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    
+    // Parse once as a base-16 integer, then use bitwise shifts for insane speed
+    const num = parseInt(h, 16);
+    return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+    };
+}
+
 export function getTextColorForBackground(hexColor) {
-    const cleanHex = hexColor.replace('#', '');
-    if (cleanHex.length !== 6) return 'light-text'; 
-    const r = parseInt(cleanHex.substring(0, 2), 16);
-    const g = parseInt(cleanHex.substring(2, 4), 16);
-    const b = parseInt(cleanHex.substring(4, 6), 16);
-    return (((r * 299) + (g * 587) + (b * 114)) / 1000 >= 128) ? 'dark-text' : 'light-text';
+    if (!hexColor || typeof hexColor !== 'string') return 'light-text';
+    let h = hexColor.startsWith('#') ? hexColor.slice(1) : hexColor;
+    if (h.length !== 6 && h.length !== 3) return 'light-text';
+
+    const rgb = hexToRgb(h);
+    // Standard YIQ equation for calculating color contrast
+    const yiq = ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000;
+    return yiq >= 128 ? 'dark-text' : 'light-text';
 }
 
 export function getDynamicColorForBackground(hex) {
-    let r = parseInt(hex.slice(1, 3), 16) / 255;
-    let g = parseInt(hex.slice(3, 5), 16) / 255;
-    let b = parseInt(hex.slice(5, 7), 16) / 255;
+    const rgb = hexToRgb(hex);
+    const r = rgb.r / 255;
+    const g = rgb.g / 255;
+    const b = rgb.b / 255;
 
-    let max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0, s = 0;
+    let l = (max + min) / 2;
 
-    if (max === min) {
-        h = s = 0; 
-    } else {
-        let d = max - min;
+    if (max !== min) {
+        const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
@@ -28,28 +50,15 @@ export function getDynamicColorForBackground(hex) {
         h /= 6;
     }
 
-    h = Math.round(h * 360);
-    s = Math.round(s * 100);
-    l = Math.round(l * 100);
-
-    let newH = (h + 180) % 360;
-    let newL = l > 50 ? 15 : 85; 
-    let newS = s === 0 ? 0 : 80;
+    const newH = Math.round(((h * 360) + 180) % 360);
+    const newS = s === 0 ? 0 : 80;
+    const newL = Math.round(l * 100) > 50 ? 15 : 85; 
 
     return `hsl(${newH}, ${newS}%, ${newL}%)`;
 }
 
-export function hexToRgb(hex) {
-    let h = hex.replace('#', '');
-    if (h.length === 3) h = h.split('').map(c => c + c).join('');
-    return {
-        r: parseInt(h.substring(0, 2), 16),
-        g: parseInt(h.substring(2, 4), 16),
-        b: parseInt(h.substring(4, 6), 16)
-    };
-}
-
 export function rgbToHex(r, g, b) {
+    // Bitwise shift reverse-conversion
     return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
 }
 
@@ -58,24 +67,40 @@ export function blendColors(fgHex, bgHex, opacityPercent) {
     const bg = hexToRgb(bgHex);
     const alpha = opacityPercent / 100;
 
-    const r = Math.round(fg.r * alpha + bg.r * (1 - alpha));
-    const g = Math.round(fg.g * alpha + bg.g * (1 - alpha));
-    const b = Math.round(fg.b * alpha + bg.b * (1 - alpha));
+    const r = Math.round((fg.r * alpha) + (bg.r * (1 - alpha)));
+    const g = Math.round((fg.g * alpha) + (bg.g * (1 - alpha)));
+    const b = Math.round((fg.b * alpha) + (bg.b * (1 - alpha)));
 
     return rgbToHex(r, g, b);
 }
 
-// --- NEW CENTRALIZED COLOR INJECTION ---
+/* =========================================
+   CENTRALIZED COLOR INJECTION (BUG FIXED)
+   ========================================= */
+
 export function applyThemeColors(result) {
     const root = document.documentElement;
     const body = document.body;
 
     // 1. Accent Color
-    root.style.setProperty('--accent-color', result.accentColor);
+    root.style.setProperty('--accent-color', result.accentColor || '#4285f4');
 
-    // Global background context
-    const globalBgHex = (result.bgType === 'color') ? result.bgValue : '#000000';
-    const isBgLight = result.bgType === 'color' && getTextColorForBackground(result.bgValue) === 'dark-text';
+    // =========================================
+    // THE FIX: Actually apply the background to the DOM
+    // =========================================
+    if (result.bgType === 'color') {
+        body.style.backgroundImage = 'none';
+        body.style.backgroundColor = result.bgValue || '#000000';
+    } else if (result.bgType === 'image' && result.bgValue) {
+        body.style.backgroundImage = `url("${result.bgValue}")`;
+        body.style.backgroundSize = 'cover';
+        body.style.backgroundPosition = 'center';
+        body.style.backgroundColor = '#000000'; // Fallback
+    }
+
+    // Global background context for math
+    const globalBgHex = (result.bgType === 'color' && result.bgValue) ? result.bgValue : '#000000';
+    const isBgLight = result.bgType === 'color' && getTextColorForBackground(globalBgHex) === 'dark-text';
 
     // 2. Search Bar Colors
     let searchBg = '#202124';
@@ -117,7 +142,7 @@ export function applyThemeColors(result) {
         clockColor = isBgLight ? '#000000' : '#ffffff';
         dateColor = isBgLight ? '#202124' : '#e8eaed';
     } else if (clockMode === 'dynamic' && result.bgType === 'color') {
-        const dynamicColor = getDynamicColorForBackground(result.bgValue);
+        const dynamicColor = getDynamicColorForBackground(globalBgHex);
         clockColor = dynamicColor;
         dateColor = dynamicColor;
     } else if (clockMode === 'custom') {
@@ -133,7 +158,7 @@ export function applyThemeColors(result) {
 
     // 5. Scrollbar Custom Color
     if (result.scrollbarMode === 'custom') {
-        root.style.setProperty('--custom-sc-color', result.scrollbarColor);
+        root.style.setProperty('--custom-sc-color', result.scrollbarColor || '#5f6368');
     } else {
         root.style.removeProperty('--custom-sc-color');
     }

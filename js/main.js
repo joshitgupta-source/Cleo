@@ -1,3 +1,4 @@
+import { getSettings, updateStorage } from './state.js';
 import { initClock } from './clock.js';
 import { initSearch } from './search.js';
 import { initGrid, initContextMenu } from './grid.js';
@@ -7,45 +8,49 @@ import './panel.js'; // Imports all settings UI listeners
 
 let editingIndex = null;
 
-// Initialize core components
+// Helper for safe DOM lookups
+const getEl = (id) => document.getElementById(id);
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
 initClock();
 initSearch((newEngine) => saveAndApply({ searchEngine: newEngine }));
 initUI(() => { editingIndex = null; });
 
+// ==========================================
+// GRID & CONTEXT MENU HANDLERS
+// ==========================================
 initContextMenu(
-    (index) => {
-        chrome.storage.local.get({ shortcuts: [] }, ({ shortcuts }) => {
-            const site = shortcuts[index];
-            if (site) {
-                editingIndex = index;
-                openModal('Edit shortcut', site.name, site.url);
-            }
-        });
+    async (index) => {
+        const { shortcuts = [] } = await getSettings();
+        const site = shortcuts[index];
+        if (site) {
+            editingIndex = index;
+            openModal('Edit shortcut', site.name, site.url);
+        }
     },
-    (index) => {
-        chrome.storage.local.get({ shortcuts: [] }, ({ shortcuts }) => {
-            shortcuts.splice(index, 1);
-            chrome.storage.local.set({ shortcuts }, applySettings);
-        });
+    async (index) => {
+        const { shortcuts = [] } = await getSettings();
+        shortcuts.splice(index, 1);
+        updateStorage({ shortcuts }, applySettings);
     }
 );
 
 initGrid(
-    (from, to) => {
-        chrome.storage.local.get({ shortcuts: [] }, ({ shortcuts }) => {
-            const [moved] = shortcuts.splice(from, 1);
-            shortcuts.splice(to, 0, moved);
-            chrome.storage.local.set({ shortcuts }, applySettings);
-        });
+    async (from, to) => {
+        const { shortcuts = [] } = await getSettings();
+        const [moved] = shortcuts.splice(from, 1);
+        shortcuts.splice(to, 0, moved);
+        updateStorage({ shortcuts }, applySettings);
     },
-    (fromIndex) => {
-        chrome.storage.local.get({ shortcuts: [] }, ({ shortcuts }) => {
-            if (fromIndex >= 0 && fromIndex < shortcuts.length) {
-                const [moved] = shortcuts.splice(fromIndex, 1);
-                shortcuts.push(moved);
-                chrome.storage.local.set({ shortcuts }, applySettings);
-            }
-        });
+    async (fromIndex) => {
+        const { shortcuts = [] } = await getSettings();
+        if (fromIndex >= 0 && fromIndex < shortcuts.length) {
+            const [moved] = shortcuts.splice(fromIndex, 1);
+            shortcuts.push(moved);
+            updateStorage({ shortcuts }, applySettings);
+        }
     },
     () => {
         editingIndex = null;
@@ -53,37 +58,14 @@ initGrid(
     }
 );
 
+// ==========================================
+// GLOBAL EVENT LISTENERS
+// ==========================================
+
 // Intercept Drag API to disable moving tiles when locked
 document.addEventListener('dragstart', (e) => {
     if (document.body.classList.contains('is-locked')) {
         e.preventDefault();
-    }
-});
-
-// Add Shortcut Modal Logic
-document.getElementById('done-btn').addEventListener('click', () => {
-    const name = document.getElementById('site-name').value.trim();
-    let url = document.getElementById('site-url').value.trim();
-    
-    if (name && url) {
-        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-        
-        chrome.storage.local.get({ shortcuts: [], maxShortcuts: 50 }, (data) => {
-            if (editingIndex !== null) {
-                data.shortcuts[editingIndex] = { name, url };
-            } else {
-                if (data.shortcuts.length >= data.maxShortcuts) {
-                    return alert(`You've reached your custom limit of ${data.maxShortcuts} shortcuts.`);
-                }
-                data.shortcuts.push({ name, url });
-            }
-            
-            chrome.storage.local.set({ shortcuts: data.shortcuts }, () => {
-                applySettings();
-                editingIndex = null;
-                closeModal();
-            });
-        });
     }
 });
 
@@ -94,10 +76,57 @@ document.addEventListener('keydown', (e) => {
 
     if (e.key === '/') {
         e.preventDefault();
-        const searchInput = document.getElementById('search-input');
-        if (searchInput) searchInput.focus();
+        getEl('search-input')?.focus();
     }
 });
 
-// Boot the application layout
+// ==========================================
+// MODAL LOGIC (With UX Enhancements)
+// ==========================================
+const handleShortcutSave = async () => {
+    const nameInput = getEl('site-name');
+    const urlInput = getEl('site-url');
+    
+    if (!nameInput || !urlInput) return;
+
+    const name = nameInput.value.trim();
+    let url = urlInput.value.trim();
+    
+    if (!name || !url) return; // Prevent empty submissions
+    
+    // Auto-append HTTPS if missing
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    
+    const data = await getSettings();
+    const shortcuts = data.shortcuts || [];
+    const maxShortcuts = data.maxShortcuts || 50;
+
+    if (editingIndex !== null) {
+        shortcuts[editingIndex] = { name, url };
+    } else {
+        if (shortcuts.length >= maxShortcuts) {
+            return alert(`You've reached your custom limit of ${maxShortcuts} shortcuts.`);
+        }
+        shortcuts.push({ name, url });
+    }
+    
+    updateStorage({ shortcuts }, () => {
+        applySettings();
+        editingIndex = null;
+        closeModal();
+    });
+};
+
+getEl('done-btn')?.addEventListener('click', handleShortcutSave);
+
+// UX Polish: Allow pressing 'Enter' in the modal inputs to save instantly
+const submitOnEnter = (e) => {
+    if (e.key === 'Enter') handleShortcutSave();
+};
+getEl('site-name')?.addEventListener('keydown', submitOnEnter);
+getEl('site-url')?.addEventListener('keydown', submitOnEnter);
+
+// ==========================================
+// BOOTSTRAP
+// ==========================================
 applySettings();
