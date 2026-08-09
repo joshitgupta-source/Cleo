@@ -11,7 +11,8 @@
   "permissions": [
     "storage",
     "topSites",
-    "favicon"
+    "favicon",
+    "downloads"
   ],
   "icons": {
     "16": "icons/icon16.png",

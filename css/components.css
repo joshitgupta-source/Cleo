@@ -33,7 +33,7 @@
   background-color: color-mix(in srgb, var(--search-bg) var(--search-opacity, 100%), transparent);
   border-radius: var(--search-radius);
   border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   backdrop-filter: blur(16px);
   transform: translateZ(0);
   will-change: border-color, box-shadow;
@@ -42,7 +42,7 @@
 
 #search-box:focus-within::before {
   border-color: var(--accent-color);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
 #search-input {
@@ -107,7 +107,7 @@
   background-color: color-mix(in srgb, var(--search-bg) var(--search-opacity, 100%), transparent);
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
   z-index: 100;
@@ -179,11 +179,17 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover {
 }
 
 .shortcut-container, .add-shortcut-container {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  width: 60px;
+  width: 80px;
+}
+
+.shortcut-container:hover, .add-shortcut-container:hover {
+  z-index: 100;
 }
 
 .shortcut-tile, .add-shortcut-btn {
@@ -192,7 +198,7 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover {
   background-color: color-mix(in srgb, var(--shortcut-bg) var(--shortcut-opacity, 80%), transparent);
   border-radius: var(--shortcut-radius, 12px);
   backdrop-filter: blur(16px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   will-change: transform, background-color, box-shadow;
   transform: translateZ(0);
   transition: background-color 0.2s ease-out, transform 0.2s ease-out, box-shadow 0.2s ease-out;
@@ -219,7 +225,7 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover {
 .shortcut-tile:hover, .add-shortcut-btn:hover {
   background-color: color-mix(in srgb, var(--shortcut-text) 15%, color-mix(in srgb, var(--shortcut-bg) var(--shortcut-opacity, 80%), transparent));
   transform: translateY(-2px) translateZ(0);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
 }
 
 .shortcut-tile img {
@@ -267,16 +273,21 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover {
 
 .dropdown-menu {
   position: absolute;
-  top: 25px;
-  left: 45px;
+  top: calc(100% + 28px) !important;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #202124;
   border: 1px solid #3c4043;
   border-radius: 6px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
-  z-index: 20;
+  z-index: 99999 !important;
   overflow: hidden;
+}
+
+.shortcut-container.menu-active {
+  z-index: 99999 !important;
 }
 
 .dropdown-menu button {
@@ -363,7 +374,7 @@ html.hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover {
   border-radius: 8px;
   padding: 20px;
   width: 400px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 #add-modal h2 {
@@ -491,7 +502,7 @@ body.no-shadows .dropdown-menu, body.no-shadows #add-modal {
 
 body.dark-search-text #engine-dropdown-menu {
   border: 1px solid rgba(0,0,0,0.15);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 body.dark-search-text #search-box::before {
@@ -517,4 +528,30 @@ html.light-bg .shortcut-text, html.light-bg .add-shortcut-text {
 
 html.light-bg #customize-btn svg, html.light-bg #animated-lock {
   filter: none;
+}
+
+.toast-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #202124;
+  color: #e8eaed;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 1px solid #3c4043;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 100000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.toast-message.show {
+  opacity: 1;
+  visibility: visible;
 }

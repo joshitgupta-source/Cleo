@@ -170,10 +170,21 @@ export function applySettings() {
             const isDraggingUI = activeEl && (activeEl.type === 'color' || activeEl.type === 'range');
             
             if (!isDraggingUI) {
+                const customShortcuts = result.shortcuts || [];
+                const hiddenTopSites = result.hiddenTopSites || [];
+                
                 if (result.shortcutType === 'topSites') {
-                    chrome.topSites.get((topSites) => renderGrid(topSites.slice(0, 10).map(s => ({ name: s.title, url: s.url })), false, currentMaxShortcuts));
+                    chrome.topSites.get((topSites) => {
+                        const customUrls = new Set(customShortcuts.map(s => s.url));
+                        const dynamicSites = topSites
+                            .filter(s => !customUrls.has(s.url) && !hiddenTopSites.includes(s.url))
+                            .map(s => ({ name: s.title, url: s.url, isTopSite: true }));
+                        
+                        const hybrid = [...dynamicSites, ...customShortcuts.map(s => ({...s, isCustom: true}))].slice(0, currentMaxShortcuts);
+                        renderGrid(hybrid, true, currentMaxShortcuts);
+                    });
                 } else {
-                    renderGrid(result.shortcuts, true, currentMaxShortcuts);
+                    renderGrid(customShortcuts, true, currentMaxShortcuts);
                 }
             }
         }

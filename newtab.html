@@ -59,23 +59,50 @@
         <div class="panel-content">
             
             <div class="panel-section">
+                <h3>Theme Presets</h3>
+                <div class="theme-preset-grid">
+                    <button class="theme-preset-btn" data-theme="default">
+                        <div class="swatches"><span style="background:#F0EEE9"></span><span style="background:#D3E4F1"></span></div>
+                        <span>Cleo Default</span>
+                    </button>
+                    <button class="theme-preset-btn" data-theme="slate">
+                        <div class="swatches"><span style="background:#0F172A"></span><span style="background:#8AB4F8"></span></div>
+                        <span>Midnight Slate</span>
+                    </button>
+                    <button class="theme-preset-btn" data-theme="obsidian">
+                        <div class="swatches"><span style="background:#1C1917"></span><span style="background:#D97706"></span></div>
+                        <span>Warm Obsidian</span>
+                    </button>
+                    <button class="theme-preset-btn" data-theme="oled">
+                        <div class="swatches"><span style="background:#000000"></span><span style="background:#C58AF9"></span></div>
+                        <span>OLED Void</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
                 <h3>Global Theme</h3>
                 <div class="bg-options">
                     <div class="color-picker-wrapper">
                         <div class="color-input-group">
-                            <input type="color" id="bg-color-picker" value="#000000">
+                            <div class="color-picker-container">
+                                <input type="color" id="bg-color-picker" value="#000000">
+                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </div>
                             <input type="text" id="bg-color-text" class="hex-input" value="#000000" maxlength="7" spellcheck="false">
                         </div>
                         <span>Background</span>
                     </div>
-                    <button id="bg-image-btn" class="panel-btn">Change wallpaper</button>
+                    <button id="bg-image-btn" class="panel-btn" style="margin-bottom: 20px;">Change wallpaper</button>
                     <input type="file" id="bg-image-input" accept="image/*" style="display: none;">
-                    <button id="bg-reset-btn" class="panel-btn" style="margin-bottom: 20px;">Reset to default</button>
                 </div>
                 
                 <div class="color-picker-wrapper">
                     <div class="color-input-group">
-                        <input type="color" id="accent-color-picker" value="#8ab4f8">
+                        <div class="color-picker-container">
+                            <input type="color" id="accent-color-picker" value="#8ab4f8">
+                            <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </div>
                         <input type="text" id="accent-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false">
                     </div>
                     <span>Accent Color</span>
@@ -172,7 +199,10 @@
                     
                     <div class="color-picker-wrapper" id="clock-color-wrapper" style="margin-top: 10px; display: none;">
                         <div class="color-input-group">
-                            <input type="color" id="clock-color-picker" value="#ffffff">
+                            <div class="color-picker-container">
+                                <input type="color" id="clock-color-picker" value="#ffffff">
+                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </div>
                             <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false">
                         </div>
                         <span>Pick Color</span>
@@ -217,7 +247,10 @@
                     
                     <div class="color-picker-wrapper" id="search-color-wrapper" style="margin-top: 10px; display: none;">
                         <div class="color-input-group">
-                            <input type="color" id="search-color-picker" value="#202124">
+                            <div class="color-picker-container">
+                                <input type="color" id="search-color-picker" value="#202124">
+                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </div>
                             <input type="text" id="search-color-text" class="hex-input" value="#202124" maxlength="7" spellcheck="false">
                         </div>
                         <span>Pick Color</span>
@@ -298,7 +331,10 @@
                     
                     <div class="color-picker-wrapper" id="shortcut-color-wrapper" style="margin-top: 10px; display: none;">
                         <div class="color-input-group">
-                            <input type="color" id="shortcut-color-picker" value="#303134">
+                            <div class="color-picker-container">
+                                <input type="color" id="shortcut-color-picker" value="#303134">
+                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </div>
                             <input type="text" id="shortcut-color-text" class="hex-input" value="#303134" maxlength="7" spellcheck="false">
                         </div>
                         <span>Pick Color</span>
@@ -367,7 +403,10 @@
                 
                 <div class="color-picker-wrapper" id="scrollbar-color-wrapper" style="margin-top: 10px; display: none;">
                     <div class="color-input-group">
-                        <input type="color" id="scrollbar-color-picker" value="#8ab4f8">
+                        <div class="color-picker-container">
+                            <input type="color" id="scrollbar-color-picker" value="#8ab4f8">
+                            <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </div>
                         <input type="text" id="scrollbar-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false">
                     </div>
                     <span>Pick Color</span>
@@ -388,6 +427,10 @@
                 <button id="export-btn" class="panel-btn">Export Settings</button>
                 <button id="import-btn" class="panel-btn" style="margin-bottom: 0;">Import Settings</button>
                 <input type="file" id="import-input" accept=".json" style="display: none;">
+            </div>
+            
+            <div class="panel-section" style="border-top: 1px solid #3c4043; padding-top: 20px;">
+                <button id="reset-all-btn" class="panel-btn" style="color: #ff6b6b; border-color: rgba(255,107,107,0.5); margin-bottom: 0;">Reset all settings</button>
             </div>
 
         </div>

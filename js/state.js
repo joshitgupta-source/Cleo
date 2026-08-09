@@ -1,5 +1,5 @@
 export const defaultSettings = Object.freeze({
-    shortcuts: [], showShortcuts: true, showLabels: true, shortcutType: 'topSites', maxShortcuts: 50,
+    shortcuts: [], hiddenTopSites: [], showShortcuts: true, showLabels: true, shortcutType: 'topSites', maxShortcuts: 50,
     accentColor: '#8ab4f8', bgType: 'color', bgValue: '#F0EEE9', 
     showSearch: true, showSearchBorder: true, searchEngine: 'https://www.google.com/search?q=', 
     searchMode: 'custom', searchColor: '#F6EBC8', searchRadius: '10', searchOpacity: '100', searchGlass: true, searchPadY: '14',
@@ -48,21 +48,54 @@ export async function updateStorage(updates, callback) {
     }
 }
 
-export async function exportSettings() {
-    try {
-        const items = await chrome.storage.local.get(null);
-        const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `cleo_backup_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (err) {}
+export function exportSettings() {
+    return new Promise(async (resolve) => {
+        try {
+            const items = await chrome.storage.local.get(null);
+            const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const filename = `cleo_backup_${new Date().toISOString().split('T')[0]}.json`;
+            
+            if (chrome.downloads) {
+                chrome.downloads.download({
+                    url: url,
+                    filename: filename,
+                    saveAs: true
+                }, (downloadId) => {
+                    if (chrome.runtime.lastError || !downloadId) {
+                        URL.revokeObjectURL(url);
+                        return resolve(false);
+                    }
+                    
+                    const listener = (delta) => {
+                        if (delta.id === downloadId && delta.state) {
+                            if (delta.state.current === 'complete') {
+                                chrome.downloads.onChanged.removeListener(listener);
+                                URL.revokeObjectURL(url);
+                                resolve(true);
+                            } else if (delta.state.current === 'interrupted') {
+                                chrome.downloads.onChanged.removeListener(listener);
+                                URL.revokeObjectURL(url);
+                                resolve(false);
+                            }
+                        }
+                    };
+                    chrome.downloads.onChanged.addListener(listener);
+                });
+            } else {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                resolve(true);
+            }
+        } catch (err) {
+            resolve(false);
+        }
+    });
 }
 
 export function importSettings(file, callback) {

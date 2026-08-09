@@ -117,7 +117,6 @@ document.getElementById('bg-image-input')?.addEventListener('change', (e) => {
         reader.readAsDataURL(file);
     }
 });
-document.getElementById('bg-reset-btn')?.addEventListener('click', () => saveAndApply({ bgType: 'color', bgValue: '#F0EEE9' }));
 
 document.getElementById('lock-btn')?.addEventListener('click', () => {
     chrome.storage.local.get({ isLocked: false }, ({ isLocked }) => {
@@ -127,15 +126,79 @@ document.getElementById('lock-btn')?.addEventListener('click', () => {
     });
 });
 
-document.getElementById('export-btn')?.addEventListener('click', exportSettings);
+document.getElementById('export-btn')?.addEventListener('click', async () => {
+    const success = await exportSettings();
+    if (success && window.showToast) {
+        window.showToast('Backup downloaded successfully');
+    }
+});
+
 document.getElementById('import-btn')?.addEventListener('click', () => document.getElementById('import-input').click());
 document.getElementById('import-input')?.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
         importSettings(file, (success) => {
-            if (success) window.location.reload();
-            else alert('Error: Invalid backup file.');
+            if (success) {
+                if (window.showToast) window.showToast('Settings restored');
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                if (window.showToast) window.showToast('Error: Invalid backup file');
+            }
         });
     }
     e.target.value = '';
+});
+
+document.getElementById('reset-all-btn')?.addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset all settings and shortcuts to default? This cannot be undone.')) {
+        chrome.storage.local.clear(() => {
+            localStorage.clear();
+            if (window.showToast) window.showToast('All settings reset to default');
+            setTimeout(() => window.location.reload(), 1000);
+        });
+    }
+});
+
+const themePresets = {
+    default: {
+        bgType: 'color', bgValue: '#F0EEE9', accentColor: '#8ab4f8', 
+        searchMode: 'custom', searchColor: '#F6EBC8', 
+        shortcutMode: 'custom', shortcutColor: '#8ab4f8', 
+        scrollbarMode: 'custom', scrollbarColor: '#8ab4f8', 
+        clockColorMode: 'dynamic', clockColor: '#ffffff'
+    },
+    slate: { 
+        bgType: 'color', bgValue: '#0F172A', accentColor: '#8AB4F8', 
+        searchMode: 'custom', searchColor: '#1E293B', 
+        shortcutMode: 'custom', shortcutColor: '#8AB4F8', 
+        scrollbarMode: 'custom', scrollbarColor: '#8AB4F8', 
+        clockColorMode: 'custom', clockColor: '#F8FAFC' 
+    },
+    obsidian: { 
+        bgType: 'color', bgValue: '#1C1917', accentColor: '#D97706', 
+        searchMode: 'custom', searchColor: '#292524', 
+        shortcutMode: 'custom', shortcutColor: '#D97706', 
+        scrollbarMode: 'custom', scrollbarColor: '#D97706', 
+        clockColorMode: 'custom', clockColor: '#F6EBC8' 
+    },
+    oled: { 
+        bgType: 'color', bgValue: '#000000', accentColor: '#C58AF9', 
+        searchMode: 'custom', searchColor: '#121212', 
+        shortcutMode: 'custom', shortcutColor: '#C58AF9', 
+        scrollbarMode: 'custom', scrollbarColor: '#C58AF9', 
+        clockColorMode: 'custom', clockColor: '#E8EAED' 
+    }
+};
+
+document.querySelectorAll('.theme-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const themeKey = btn.dataset.theme;
+        if (themePresets[themeKey]) {
+            saveAndApply(themePresets[themeKey]);
+            if (window.showToast) {
+                const themeName = btn.querySelector('span:last-child').textContent;
+                window.showToast(`${themeName} applied`);
+            }
+        }
+    });
 });

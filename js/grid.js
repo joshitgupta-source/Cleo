@@ -23,27 +23,49 @@ export function initContextMenu(onEdit, onDelete) {
         e.preventDefault();
         e.stopPropagation();
         globalMenu.style.display = 'none';
-        if (activeTileIndex !== null) onEdit(activeTileIndex);
+        document.querySelectorAll('.shortcut-container').forEach(c => c.classList.remove('menu-active'));
+        if (activeTileIndex !== null) {
+            const tile = document.querySelector(`.shortcut-container[data-index="${activeTileIndex}"]`);
+            if (tile) onEdit(tile.dataset.url, tile.dataset.name, tile.dataset.isTopSite === 'true');
+        }
     });
 
     removeOpt.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         globalMenu.style.display = 'none';
-        if (activeTileIndex !== null) onDelete(activeTileIndex);
+        document.querySelectorAll('.shortcut-container').forEach(c => c.classList.remove('menu-active'));
+        if (activeTileIndex !== null) {
+            const tile = document.querySelector(`.shortcut-container[data-index="${activeTileIndex}"]`);
+            if (tile) onDelete(tile.dataset.url, tile.dataset.isTopSite === 'true');
+        }
     });
 
     document.addEventListener('click', (e) => {
-        if (!globalMenu.contains(e.target)) globalMenu.style.display = 'none';
+        const isMenuBtn = e.target.classList.contains('menu-btn');
         
-        if (e.target.classList.contains('menu-btn')) {
+        if (!isMenuBtn && !globalMenu.contains(e.target)) {
+            globalMenu.style.display = 'none';
+            document.querySelectorAll('.shortcut-container').forEach(c => c.classList.remove('menu-active'));
+        }
+        
+        if (isMenuBtn) {
             e.preventDefault();
             e.stopPropagation();
             const tile = e.target.closest('.shortcut-container');
             if (tile) {
-                activeTileIndex = parseInt(tile.dataset.index, 10);
-                e.target.parentElement.appendChild(globalMenu);
-                globalMenu.style.display = 'flex';
+                const isAlreadyOpenHere = globalMenu.parentElement === e.target.parentElement && globalMenu.style.display === 'flex';
+                
+                document.querySelectorAll('.shortcut-container').forEach(c => c.classList.remove('menu-active'));
+                
+                if (isAlreadyOpenHere) {
+                    globalMenu.style.display = 'none';
+                } else {
+                    activeTileIndex = parseInt(tile.dataset.index, 10);
+                    e.target.parentElement.appendChild(globalMenu);
+                    globalMenu.style.display = 'flex';
+                    tile.classList.add('menu-active');
+                }
             }
         }
     });
@@ -51,6 +73,7 @@ export function initContextMenu(onEdit, onDelete) {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && globalMenu.style.display === 'flex') {
             globalMenu.style.display = 'none';
+            document.querySelectorAll('.shortcut-container').forEach(c => c.classList.remove('menu-active'));
         }
     });
 }
@@ -62,6 +85,11 @@ export function initGrid(onReorder, onDropFromAdd, onAddClick) {
     if (!gridContainer) return;
 
     gridContainer.addEventListener('dragstart', (e) => {
+        if (document.body.classList.contains('is-locked')) {
+            e.preventDefault();
+            return;
+        }
+
         const item = e.target.closest('.draggable-item');
         if (!item || item.id === 'add-btn-container') return;
         
@@ -79,6 +107,8 @@ export function initGrid(onReorder, onDropFromAdd, onAddClick) {
 
     gridContainer.addEventListener('dragenter', (e) => {
         e.preventDefault();
+        if (document.body.classList.contains('is-locked')) return;
+        
         const target = e.target.closest('.shortcut-container, .add-shortcut-container');
         if (target && target !== draggedEl) target.classList.add('drag-over');
     });
@@ -96,6 +126,8 @@ export function initGrid(onReorder, onDropFromAdd, onAddClick) {
 
     gridContainer.addEventListener('drop', (e) => {
         e.preventDefault();
+        if (document.body.classList.contains('is-locked')) return;
+        
         const target = e.target.closest('.shortcut-container, .add-shortcut-container');
         if (target) target.classList.remove('drag-over');
         
@@ -131,6 +163,9 @@ export function renderGrid(sites, isEditable, currentMaxShortcuts) {
         if (isEditable) {
             container.draggable = true;
             container.dataset.index = index;
+            container.dataset.url = siteData.url;
+            container.dataset.name = siteData.name;
+            container.dataset.isTopSite = siteData.isTopSite ? 'true' : 'false';
         }
 
         const link = document.createElement('a');
