@@ -1,6 +1,6 @@
 import { getSettings, updateStorage } from './state.js';
 import { initClock } from './clock.js';
-import { initSearch } from './search.js';
+import { initSearch, updateSearchIcon, initSettingsSearch, populateEngineDropdown } from './search.js';
 import { initGrid, initContextMenu } from './grid.js';
 import { initUI, openModal, closeModal } from './ui.js';
 import { applySettings, saveAndApply } from './theme.js';
@@ -47,6 +47,8 @@ export function showToast(msg, actionText = null, onAction = null) {
 window.showToast = showToast;
 
 initClock();
+populateEngineDropdown();
+initSettingsSearch();
 initSearch((newEngine) => saveAndApply({ searchEngine: newEngine }));
 initUI(() => { editingSiteData = null; });
 
@@ -266,6 +268,7 @@ const initDynamicPlaceholder = () => {
         "Up for a quick task?", "Let's make today count.", "Stay focused and keep building.",
         "Every problem solved is a step closer to cracking JEE Main.", "Small steps every day.", "What will you discover today?",
         "Wait a minute! who are you?", "have to work again, money plant doesn't work", "Drink Water!!", "What's up cutie patootie?",
+        "Don't forget to schedule that ITI Chandkheda document verification!",
         "Hello, my little starfish!", "Hey there, my little jellybean!", "Greetings and felicitations to you too!", "Hello, my little marshmallow!", "Hey there, my little gummy bear!", "What's the haps, perhaps?", "Hello, my little peanut butter cup!", "Hey there, my little chocolate chip cookie!",
         "Greetings and salutations to you too!", "Hello, my little cinnamon roll!", "Hey there, my little sugarplum!", "What's the buzz, cuz?", "Hello, my little honeybun!",
         "Hey there, my little snickerdoodle!", "Greetings and felicitations to you too!", "Hello, my little cupcake!", "Hey there, my little brownie!", 

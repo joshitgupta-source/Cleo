@@ -53,11 +53,26 @@
 
     <div id="side-panel">
         <div class="panel-header">
-            <h2 id="panel-title">Customize</h2>
+            <h2 id="panel-title">Customize Cleo</h2>
             <button id="close-panel-btn">&times;</button>
         </div>
-        <div class="panel-content">
             
+        <div class="search-pill-container">
+            <input type="text" id="panel-search-input" placeholder="Search..." autocomplete="off" spellcheck="false">
+            <span id="search-match-count" class="match-count">0/0</span>
+            <div class="pill-divider"></div>
+            <button id="search-prev-btn" class="pill-btn" disabled title="Previous match">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+            </button>
+            <button id="search-next-btn" class="pill-btn" disabled title="Next match">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <button id="search-clear-btn" class="pill-btn" disabled title="Clear search">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <div class="panel-content">
             <div class="panel-section">
                 <h3>Theme Presets</h3>
                 <div class="theme-preset-grid">

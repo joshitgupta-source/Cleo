@@ -212,3 +212,78 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
     opacity: 1;
     transform: scale(1);
 }
+
+.search-pill-container {
+    display: flex;
+    align-items: center;
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin: 15px 20px 20px 20px;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.search-pill-container input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e8eaed;
+    font-size: 13px;
+    padding: 4px 0;
+    width: 100%;
+}
+
+.search-pill-container input::placeholder {
+    color: #9aa0a6;
+}
+
+.match-count {
+    font-size: 11px;
+    color: #9aa0a6;
+    font-family: monospace;
+}
+
+.pill-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.pill-btn {
+    background: transparent;
+    border: none;
+    color: #9aa0a6;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+
+.pill-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.pill-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+mark.panel-highlight {
+    background-color: rgba(217, 119, 6, 0.4);
+    color: #ffffff;
+    border-radius: 2px;
+    padding: 0 2px;
+}
+
+mark.panel-highlight.active-highlight {
+    background-color: #d97706;
+    color: #000000;
+    font-weight: bold;
+}
