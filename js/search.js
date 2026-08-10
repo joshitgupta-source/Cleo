@@ -1,5 +1,6 @@
 const ENGINES = [
     { name: 'Google', url: 'https://www.google.com/search?q=', domain: 'https://www.google.com' },
+    { name: 'Google Web', url: 'https://www.google.com/search?udm=14&q=', domain: 'https://www.google.com' },
     { name: 'Bing', url: 'https://www.bing.com/search?q=', domain: 'https://www.bing.com' },
     { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=', domain: 'https://duckduckgo.com' },
     { name: 'Yahoo', url: 'https://search.yahoo.com/search?p=', domain: 'https://search.yahoo.com' },
