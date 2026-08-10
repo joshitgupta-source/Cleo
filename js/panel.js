@@ -159,6 +159,11 @@ document.getElementById('reset-all-btn')?.addEventListener('click', () => {
     }
 });
 
+document.getElementById('restore-hidden-btn')?.addEventListener('click', () => {
+    saveAndApply({ hiddenTopSites: [] });
+    if (window.showToast) window.showToast('Hidden sites restored');
+});
+
 const themePresets = {
     default: {
         bgType: 'color', bgValue: '#F0EEE9', accentColor: '#8ab4f8', 

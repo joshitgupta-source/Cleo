@@ -10,7 +10,7 @@ let editingSiteData = null;
 
 const getEl = (id) => document.getElementById(id);
 
-export function showToast(msg) {
+export function showToast(msg, actionText = null, onAction = null) {
     let toast = getEl('cleo-toast');
     if (!toast) {
         toast = document.createElement('div');
@@ -18,14 +18,30 @@ export function showToast(msg) {
         toast.className = 'toast-message';
         document.body.appendChild(toast);
     }
-    toast.textContent = msg;
+    
+    toast.innerHTML = '';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = msg;
+    toast.appendChild(textSpan);
+
+    if (actionText && onAction) {
+        const btn = document.createElement('button');
+        btn.textContent = actionText;
+        btn.className = 'toast-undo-btn';
+        btn.onclick = () => {
+            onAction();
+            toast.classList.remove('show');
+        };
+        toast.appendChild(btn);
+    }
+
     toast.classList.add('show');
     
     if (toast.timeoutId) clearTimeout(toast.timeoutId);
     
     toast.timeoutId = setTimeout(() => {
         toast.classList.remove('show');
-    }, 3000);
+    }, actionText ? 5000 : 3000);
 }
 
 window.showToast = showToast;
@@ -46,14 +62,29 @@ initContextMenu(
             hidden.push(url);
             updateStorage({ hiddenTopSites: hidden }, () => {
                 applySettings();
-                showToast('Shortcut removed');
+                showToast('Shortcut removed', 'Undo', () => {
+                    getSettings().then(latest => {
+                        let currHidden = latest.hiddenTopSites || [];
+                        currHidden = currHidden.filter(h => h !== url);
+                        updateStorage({ hiddenTopSites: currHidden }, applySettings);
+                    });
+                });
             });
         } else {
             const shortcuts = data.shortcuts || [];
+            const deletedIdx = shortcuts.findIndex(s => s.url === url);
+            const deletedItem = shortcuts[deletedIdx];
             const newShortcuts = shortcuts.filter(s => s.url !== url);
+            
             updateStorage({ shortcuts: newShortcuts }, () => {
                 applySettings();
-                showToast('Shortcut removed');
+                showToast('Shortcut removed', 'Undo', () => {
+                    getSettings().then(latest => {
+                        let curr = latest.shortcuts || [];
+                        curr.splice(deletedIdx > -1 ? deletedIdx : curr.length, 0, deletedItem);
+                        updateStorage({ shortcuts: curr }, applySettings);
+                    });
+                });
             });
         }
     }
