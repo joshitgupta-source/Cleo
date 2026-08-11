@@ -13,6 +13,19 @@
 <body>
     <div id="main-content">
         
+        <div id="pomodoro-widget" class="pos-top-left">
+            <button id="pomodoro-toggle-btn" aria-label="Start/Pause Timer">
+                <svg id="pomodoro-icon-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M7 4.512c0-1.745 1.884-2.839 3.39-1.97l9.467 5.467c1.517.876 1.517 3.096 0 3.972l-9.467 5.467c-1.506.87-3.39-.225-3.39-1.97V4.512z"/>
+                </svg>
+                <svg id="pomodoro-icon-pause" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="display: none;">
+                    <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                    <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                </svg>
+            </button>
+            <span id="pomodoro-time">25:00</span>
+        </div>
+
         <div id="clock-widget">
             <div id="time-display"></div>
             <div id="date-display"></div>
@@ -53,7 +66,7 @@
 
     <div id="side-panel">
         <div class="panel-header">
-            <h2 id="panel-title">Customize Cleo</h2>
+            <h2 id="panel-title">Customize</h2>
             <button id="close-panel-btn">&times;</button>
         </div>
             
@@ -221,6 +234,99 @@
                             <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false">
                         </div>
                         <span>Pick Color</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Pomodoro Timer</h3>
+                <div class="toggle-row">
+                    <h3>Enable Timer</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="show-pomodoro-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div id="pomodoro-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+                    <div class="input-group">
+                        <label>Position</label>
+                        <select id="pomodoro-position-select" class="panel-select">
+                            <option value="top-left">Top Left</option>
+                            <option value="top-right">Top Right</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Background Color Theme</label>
+                        <select id="pomodoro-color-mode-select" class="panel-select">
+                            <option value="monochrome">Monochrome Auto (Black/White)</option>
+                            <option value="accent">Matches Accent Color</option>
+                            <option value="custom">Custom Color...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-picker-wrapper" id="pomodoro-bg-picker-wrapper" style="margin-top: 15px; display: none;">
+                        <div class="color-input-group">
+                            <div class="color-picker-container">
+                                <input type="color" id="pomodoro-bg-picker" value="#f0eee9">
+                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </div>
+                            <input type="text" id="pomodoro-bg-text" class="hex-input" value="#f0eee9" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Background Color</span>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Text & Icon Color Theme</label>
+                        <select id="pomodoro-text-mode-select" class="panel-select">
+                            <option value="monochrome">Monochrome Auto (Black/White)</option>
+                            <option value="dynamic">Dynamic Auto (Complementary Color)</option>
+                            <option value="custom">Custom Color...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-picker-wrapper" id="pomodoro-text-picker-wrapper" style="margin-top: 15px; display: none;">
+                        <div class="color-input-group">
+                            <div class="color-picker-container">
+                                <input type="color" id="pomodoro-text-picker" value="#1c1917">
+                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </div>
+                            <input type="text" id="pomodoro-text-text" class="hex-input" value="#1c1917" maxlength="7" spellcheck="false">
+                        </div>
+                        <span>Text & Icon Color</span>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin-bottom: 0;">Background Opacity (%)</label>
+                            <input type="number" id="pomodoro-opacity-num" min="0" max="100" value="100" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                        </div>
+                        <input type="range" id="pomodoro-opacity-slider" min="0" max="100" value="100" style="width: 100%; margin-top: 10px;">
+                    </div>
+                    
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Frosted glass effect (Blur)</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="pomodoro-glass-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Show border outline</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="pomodoro-border-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin-bottom: 0;">Corner Radius (px)</label>
+                            <input type="number" id="pomodoro-radius-num" min="0" max="40" value="12" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                        </div>
+                        <input type="range" id="pomodoro-radius-slider" min="0" max="40" value="12" style="width: 100%; margin-top: 10px;">
                     </div>
                 </div>
             </div>

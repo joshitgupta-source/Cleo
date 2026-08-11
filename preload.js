@@ -48,12 +48,28 @@ try {
     doc.classList.toggle('light-bg', bgL);
     doc.classList.toggle('dark-bg', !bgL); 
 
+    const pShow = getV('showPomodoro', 'true');
+    const pPos = getV('pomodoroPosition', 'top-left');
+    const pRad = getV('pomodoroRadius', '12');
+
+    doc.style.setProperty('--pomo-left', pPos === 'top-right' ? 'auto' : '25px');
+    doc.style.setProperty('--pomo-right', pPos === 'top-right' ? '25px' : 'auto');
+
     const s = document.createElement('style');
+    let css = '';
+
     if (bT === 'color') {
-        s.textContent = `body{background-color:${bV}!important;background-image:none!important;transition:none!important;}`;
+        css += `body{background-color:${bV}!important;background-image:none!important;transition:none!important;}`;
     } else if (bT === 'image') {
-        s.textContent = `body{background-color:#000!important;background-image:url("${bV}")!important;background-size:cover!important;background-position:center!important;transition:none!important;}`;
+        css += `body{background-color:#000!important;background-image:url("${bV}")!important;background-size:cover!important;background-position:center!important;transition:none!important;}`;
     }
+
+    if (pShow === 'false') {
+        css += '#pomodoro-widget{display:none!important;}';
+    }
+    doc.style.setProperty('--pomo-radius', pRad + 'px');
+
+    s.textContent = css;
     doc.appendChild(s);
 
     document.addEventListener('DOMContentLoaded', () => {

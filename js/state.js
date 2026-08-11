@@ -1,5 +1,5 @@
 export const defaultSettings = Object.freeze({
-    shortcuts: [], hiddenTopSites: [], showShortcuts: true, showLabels: true, shortcutType: 'topSites', maxShortcuts: 50,
+    shortcuts: [], hiddenTopSites: [], pinnedSites: [], showShortcuts: true, showLabels: true, shortcutType: 'topSites', maxShortcuts: 50,
     accentColor: '#8ab4f8', bgType: 'color', bgValue: '#F0EEE9', 
     showSearch: true, showSearchBorder: true, searchEngine: 'https://www.google.com/search?q=', 
     searchMode: 'custom', searchColor: '#F6EBC8', searchRadius: '10', searchOpacity: '100', searchGlass: true, searchPadY: '14',
@@ -8,13 +8,27 @@ export const defaultSettings = Object.freeze({
     clockColorMode: 'dynamic', clockColor: '#ffffff',
     showShadows: true, globalFont: 'system-ui, -apple-system, sans-serif',
     scrollbarVis: 'always', scrollbarMode: 'auto', scrollbarColor: '#8ab4f8',
-    showLockBtn: true, isLocked: false
+    showLockBtn: true, isLocked: false,
+    showPomodoro: true,
+    pomodoroPosition: 'top-left',
+    pomodoroColorMode: 'custom',
+    pomodoroTextMode: 'monochrome',
+    pomodoroBg: '#f0eee9',
+    pomodoroText: '#1c1917',
+    pomodoroOpacity: 100,
+    pomodoroGlass: true,
+    pomodoroBorder: false,
+    pomodoroRadius: 12
 });
 
 function syncToLocalStorage(key, value) {
-    if (value === undefined || value === null || typeof value === 'object') return;
+    if (value === undefined || value === null) return;
     try {
-        localStorage.setItem(key, String(value));
+        if (typeof value === 'object') {
+            localStorage.setItem(key, JSON.stringify(value));
+        } else {
+            localStorage.setItem(key, String(value));
+        }
     } catch (e) {}
 }
 

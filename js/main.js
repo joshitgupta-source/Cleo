@@ -4,7 +4,8 @@ import { initSearch, updateSearchIcon, initSettingsSearch, populateEngineDropdow
 import { initGrid, initContextMenu } from './grid.js';
 import { initUI, openModal, closeModal } from './ui.js';
 import { applySettings, saveAndApply } from './theme.js';
-import './panel.js'; 
+import './panel.js';
+import { initPomodoro } from './pomodoro.js'; 
 
 let editingSiteData = null;
 
@@ -46,6 +47,7 @@ export function showToast(msg, actionText = null, onAction = null) {
 
 window.showToast = showToast;
 
+initPomodoro();
 initClock();
 populateEngineDropdown();
 initSettingsSearch();
@@ -89,6 +91,38 @@ initContextMenu(
                 });
             });
         }
+    },
+    async (url, name, isPinned) => {
+        const data = await getSettings();
+        let pinned = data.pinnedSites || [];
+
+        if (isPinned) {
+            pinned = pinned.filter(s => s.url !== url);
+            showToast('Shortcut unpinned');
+        } else {
+            pinned.push({ name, url });
+            showToast('Shortcut pinned');
+        }
+
+        updateStorage({ pinnedSites: pinned }, () => {
+            const tile = document.querySelector(`.shortcut-container[data-url="${url}"]`);
+            if (tile) {
+                tile.dataset.pinned = isPinned ? 'false' : 'true';
+                const link = tile.querySelector('.shortcut-tile');
+                
+                if (isPinned) {
+                    const icon = link.querySelector('.pin-indicator');
+                    if (icon) icon.remove();
+                } else {
+                    const pinSvgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.68V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3v4.68a2 2 0 0 1-1.11 1.87l-1.78.89A2 2 0 0 0 5 15.24Z"></path></svg>`;
+                    const pinIcon = document.createElement('div');
+                    pinIcon.className = 'pin-indicator';
+                    pinIcon.innerHTML = pinSvgStr;
+                    link.appendChild(pinIcon);
+                }
+            }
+            applySettings();
+        });
     }
 );
 
@@ -266,15 +300,17 @@ const initDynamicPlaceholder = () => {
         "Good to see you!", "Long time no see.", "Lovely to see you.", "Welcome back!",
         "Looking sharp today!", "Ready to create?", "What's the plan today?", "Let's dive in!",
         "Up for a quick task?", "Let's make today count.", "Stay focused and keep building.",
-        "Every problem solved is a step closer to cracking JEE Main.", "Small steps every day.", "What will you discover today?",
+        "Small steps every day.", "What will you discover today?",
         "Wait a minute! who are you?", "have to work again, money plant doesn't work", "Drink Water!!", "What's up cutie patootie?",
         "Don't forget to schedule that ITI Chandkheda document verification!",
-        "Hello, my little starfish!", "Hey there, my little jellybean!", "Greetings and felicitations to you too!", "Hello, my little marshmallow!", "Hey there, my little gummy bear!", "What's the haps, perhaps?", "Hello, my little peanut butter cup!", "Hey there, my little chocolate chip cookie!",
+        "Hello, my little starfish!", "Hey there, my little jellybean!", "Greetings and felicitations to you too!", "Hello, my little marshmallow!", "Hey there, my little gummy bear!",
+        "What's the haps, perhaps?", "Hello, my little peanut butter cup!", "Hey there, my little chocolate chip cookie!",
         "Greetings and salutations to you too!", "Hello, my little cinnamon roll!", "Hey there, my little sugarplum!", "What's the buzz, cuz?", "Hello, my little honeybun!",
         "Hey there, my little snickerdoodle!", "Greetings and felicitations to you too!", "Hello, my little cupcake!", "Hey there, my little brownie!", 
         "What's the haps, perhaps?", "Hello, my little tartlet!", "Hey there, my little eclair!", "Greetings and salutations to you too!", 
         "Hello, my little profiterole!", "Hey there, my little cannoli!", "What's the buzz, cuz?", "Hello, my little macaroon!", 
-        "Hey there, my little madeleine!", "Greetings and felicitations to you too!", "Hello, my little palmiers!", "Hey there, my little financiers!", "What's the haps, perhaps?", "Hello, my little tarts!", "Hey there, my little gateaux!", "Greetings and salutations to you too!", "Hello, my little mille-feuille!", 
+        "Hey there, my little madeleine!", "Greetings and felicitations to you too!", "Hello, my little palmiers!", "Hey there, my little financiers!", "What's the haps, perhaps?",
+        "Hello, my little tarts!", "Hey there, my little gateaux!", "Greetings and salutations to you too!", "Hello, my little mille-feuille!", 
         "Hey there, my little religieuse!", "What's the buzz, cuz?", "Hello, my little chouquettes!", "Hey there, my little beignets!", 
         "Greetings and felicitations to you too!", "Hello, my little croissants!", "Hey there, my little pain au chocolat!", "What's the haps, perhaps?", "Hello, my little brioche!", "Hello, my Cute lil red flags", 
     ];

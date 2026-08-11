@@ -3,7 +3,7 @@
   "name": "Cleo - Custom New Tab",
   "short_name": "Cleo",
   "description": "A lightning-fast, highly customizable, and private new tab page.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "offline_enabled": true,
   "chrome_url_overrides": {
     "newtab": "newtab.html"
@@ -12,8 +12,13 @@
     "storage",
     "topSites",
     "favicon",
-    "downloads"
+    "downloads",
+    "alarms",
+    "notifications"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

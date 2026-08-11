@@ -574,3 +574,73 @@ html.light-bg #customize-btn svg, html.light-bg #animated-lock {
 .toast-undo-btn:hover {
   text-decoration: underline;
 }
+
+#pomodoro-widget {
+    position: fixed;
+    top: 25px;
+    left: var(--pomo-left, 25px);
+    right: var(--pomo-right, auto);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px 10px 15px;
+    background-color: #f0eee9;
+    color: #1c1917;
+    border-radius: var(--pomo-radius, 12px);
+    font-size: 1.45rem;
+    font-weight: 700;
+    z-index: 100;
+    line-height: 1;
+    transition: background-color 0.3s, color 0.3s, border-radius 0.3s, opacity 0.3s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(0px);
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: 0.5px;
+}
+
+#pomodoro-time {
+    display: block;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+#pomodoro-widget:hover {
+    transform: scale(1.03);
+}
+
+#pomodoro-widget.pos-top-right.panel-open-shift {
+    right: 360px !important;
+    left: auto !important;
+}
+
+#pomodoro-widget.has-border {
+    border-color: rgba(255, 255, 255, 0.15); 
+}
+
+#pomodoro-toggle-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.show-shadows #pomodoro-widget {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.pin-indicator {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  color: var(--shortcut-text); 
+  opacity: 0.75;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
