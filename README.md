@@ -1,6 +1,41 @@
 # Cleo
 
+<p align="center">
+  <img src="assets/Cleo%20Default.jpeg" alt="Cleo Default Dashboard" width="850">
+</p>
+
 Cleo is a lightning-fast, privacy-focused, and highly customizable New Tab extension designed for Chromium and Firefox-based browsers (Chrome, Edge, Brave, Vivaldi, Firefox, etc.). It transforms the standard browser startup screen into a clean, distraction-free dashboard equipped with essential productivity tools, smart shortcut management, and deep aesthetic controls.
+
+---
+
+## 🎨 Theme Presets & Adaptive Styling
+
+Switch between high-contrast presets or adapt the UI dynamically to any uploaded wallpaper.
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="50%">
+        <img src="assets/Midnight%20Slate.jpeg" alt="Midnight Slate Preset" width="100%"><br>
+        <b>Midnight Slate</b>
+      </td>
+      <td align="center" width="50%">
+        <img src="assets/Warm%20Obsidian.jpeg" alt="Warm Obsidian Preset" width="100%"><br>
+        <b>Warm Obsidian</b>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" width="50%">
+        <img src="assets/OLED%20Void.jpeg" alt="OLED Void Preset" width="100%"><br>
+        <b>OLED Void</b>
+      </td>
+      <td align="center" width="50%">
+        <img src="assets/Custom%20Wallpaper.jpeg" alt="Adaptive Custom Wallpaper" width="100%"><br>
+        <b>Adaptive Custom Wallpaper</b>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
