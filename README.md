@@ -1,27 +1,69 @@
 # Cleo
 
-## About Cleo
+Cleo is a lightning-fast, privacy-focused, and highly customizable New Tab extension designed for Chromium and Firefox-based browsers (Chrome, Edge, Brave, Vivaldi, Firefox, etc.). It transforms the standard browser startup screen into a clean, distraction-free dashboard equipped with essential productivity tools, smart shortcut management, and deep aesthetic controls.
 
-Cleo is a lightning-fast, privacy-focused New Tab page extension designed for Chromium-based browsers (Chrome, Edge, Brave, Vivaldi, etc.). It replaces the default, cluttered new tab screen with a highly customizable, glassmorphic dashboard. Built entirely with a focus on minimalism and performance, Cleo allows users to tailor their browsing experience—from dynamic color themes to personalized shortcut grids—without sacrificing speed or data privacy.
+---
 
-## How it Works
+## Key Features
 
-Cleo is built using strict, vanilla web technologies (HTML, CSS, and JavaScript) and operates entirely locally on your machine. It utilizes the modern Chrome Extension API (Manifest V3) for maximum security and compliance.
+### ⏱️ Integrated Pomodoro Focus Timer
 
-All user settings, preferences, and custom shortcuts are serialized and saved directly to the browser's native `chrome.storage.local` database. Cleo makes absolutely zero external API calls (with the sole exception of securely routing your query to your chosen search engine) and performs all mathematical color-contrast calculations natively in the browser. Because it does not rely on third-party servers, web hosting, or analytics trackers, your data never leaves your device.
+* **Custom Intervals:** Adjust focus sessions (25–120 min) and break intervals (5–30 min) with real-time numeric and slider controls.
+* **Persistent Background Timing:** Operates via Manifest V3 alarms and service workers to track sessions even when tabs are closed.
+* **Audio-Visual Notifications:** Native desktop notifications alert you when sessions start, pause, or complete.
+* **Flexible UI:** Position the timer in the top-left or top-right corner, toggle borders, and choose between custom, accent-matched, or high-contrast monochrome styles.
 
-## Features
+### 🔍 Unified Search Hub
 
-* **Dynamic Search Integration:** Search the web using 9 built-in engines, including privacy-focused options like DuckDuckGo, Startpage, Kagi, and Ecosia. The search bar features a custom glassmorphic dropdown, adjustable corner radii, and dynamic shadow toggling.
-* **Smart Shortcut Grid:** Curate your favorite websites or let Cleo automatically display your top visited sites. Shortcuts can be easily added, edited, removed, and rearranged via a smooth drag-and-drop interface. Icons are fetched natively using the browser's built-in high-resolution `_favicon` API.
-* **Advanced Theming Engine:** Complete control over the dashboard's aesthetic. Users can set custom background colors, upload local image wallpapers, and choose global fonts. UI elements feature an "Auto" mode that intelligently calculates text contrast (switching between dark and light text) based on the current background.
-* **Data Portability (Backup & Restore):** Never lose your layout. Cleo includes a built-in JSON exporter that packages your entire local database into a downloadable file, allowing you to seamlessly restore your settings across different devices or profiles.
-* **Modular Widgets:** Toggleable time (12-hour or 24-hour) and date displays with adjustable positioning, alongside deeply customizable scrollbar visibility and color modes.
+* **10 Built-In Search Providers:** Google, Google Web (Clean / UDM=14), DuckDuckGo, Brave, Startpage, Kagi, Bing, Yahoo, Qwant, and Ecosia.
+* **Instant Engine Switcher:** Rapidly toggle engines directly from the search bar dropdown without entering settings.
+* **Smart URL Navigation:** Detects valid domain structures and routes directly to URLs, bypassing standard search redirects.
+* **Dynamic Greetings:** Displays contextual, time-aware greetings and clean search placeholders.
 
-## Resource Consumption
+### ⚡ Smart Shortcut Grid
 
-Cleo was engineered from the ground up to have a microscopic performance footprint.
+* **Hybrid Data Sources:** Switch between your browser's most visited sites (`topSites`) or a fully custom curated bookmark grid.
+* **Drag-and-Drop Reordering:** Reorder shortcut tiles with fluid drag interactions.
+* **Pinning & Menu Actions:** Pin essential shortcuts to keep them fixed at the front of the grid; edit or delete items on the fly.
+* **Smart Favicon Contrast Inversion:** Built-in canvas contrast engine analyzes favicon pixel luminance to intelligently invert dark-on-dark or light-on-light monochromatic icons while leaving multi-colored logos untouched.
+* **Accidental Deletion Recovery:** Built-in undo toasts let you restore removed shortcuts immediately.
+* **Configurable Density:** Adjust grid sizes from 1 to 5 rows (10 to 50 max shortcuts) with optional text labels.
 
-* **Zero Frameworks:** By completely avoiding heavy JavaScript frameworks (like React or Vue) and avoiding external library dependencies, Cleo parses and paints in the browser almost instantly.
-* **Hardware Accelerated UI:** All visual transitions, glassmorphic blurs (`backdrop-filter`), and drag-and-drop animations rely on CSS 2D transforms and opacity shifts. This offloads the rendering to the GPU, guaranteeing a butter-smooth 60FPS experience without taxing the CPU.
-* **Memory Efficiency:** Cleo contains zero background scripts or active service workers. It only consumes memory while the New Tab page is actively open. By utilizing native browser APIs to fetch favicons dynamically, it avoids bloating your local storage with cached image data.
+### 🎨 Advanced Theming & Layout Engine
+
+* **One-Click Presets:** Instant access to curated themes: *Cleo Default*, *Midnight Slate*, *Warm Obsidian*, and *OLED Void*.
+* **Custom Backgrounds & Wallpapers:** Set solid hex colors or upload local image wallpapers with automatic palette detection.
+* **Global Master Controls:** Adjust corner roundness (0–50px), widget opacity (0–100%), and frosted glass blur (`backdrop-filter`) across the entire interface.
+* **Typography Selector:** Choose across clean Sans-Serif, elegant Serif, Monospace, or System Default font stacks without page reloads.
+* **Adaptive Clock & Date:** 12-hour/24-hour modes, optional seconds display, four date format conventions, and dynamic complementary color calculations.
+* **Scrollbar Customization:** Set visibility to persistent or hover-only, with automatic, accent, or custom color modes.
+* **Layout Lock:** One-click lock toggle prevents accidental drag movements or layout changes.
+
+### ⚙️ Settings Panel Search & Data Portability
+
+* **In-Panel Full-Text Search:** Find setting toggles and controls using a real-time search filter with keyword highlighting and match navigation.
+* **Zero-FOUC Startup:** Preload engine initializes CSS variables and layout states synchronously from storage before the DOM renders, preventing screen flashes.
+* **Clean-Slate Backup & Restore:** Export all dashboard configurations, shortcuts, and timers to a single JSON file, or restore backups cleanly without leaving legacy configuration artifacts.
+
+---
+
+## Technical Specifications
+
+| Parameter | Specification |
+| --- | --- |
+| **Manifest Version** | Manifest V3 |
+| **Frameworks / Libraries** | 100% Vanilla ES6+ JavaScript, CSS3, HTML5 (0 external runtime dependencies) |
+| **Storage Architecture** | Synchronous `localStorage` cache backed by `chrome.storage.local` persistence |
+| **Browser Compatibility** | Google Chrome, Microsoft Edge, Brave, Opera, Vivaldi, Mozilla Firefox (v109+) |
+| **Rendering Strategy** | Hardware-accelerated CSS GPU compositing (`transform`, `opacity`, `backdrop-filter`) |
+| **Network Requests** | 0 external telemetry, analytics, or CDN calls; operates 100% offline |
+
+---
+
+## Privacy & Security
+
+Cleo is engineered to operate strictly within the client sandbox:
+
+* **No Remote Telemetry:** Cleo does not collect, log, or transmit personal data, browsing history, or search queries.
+* **Local Data Execution:** All configurations, custom shortcuts, and timer states remain stored exclusively inside your browser's local sandbox database.
+* **Direct Search Routing:** Outgoing search queries route straight from your client to your selected search provider with zero intermediary proxies.
