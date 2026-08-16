@@ -2,7 +2,6 @@ import { applySmartInvert } from './icon-utils.js';
 
 const getEl = (id) => document.getElementById(id);
 
-// --- Global Context Menu Construction ---
 const globalMenu = document.createElement('div');
 globalMenu.className = 'dropdown-menu';
 globalMenu.style.display = 'none';
@@ -34,9 +33,6 @@ const hideMenu = () => {
 
 const getActiveTile = () => activeTileIndex !== null ? document.querySelector(`.shortcut-container[data-index="${activeTileIndex}"]`) : null;
 
-/**
- * Initializes the shortcut context menu actions and click dismissal.
- */
 export function initContextMenu(onEdit, onDelete, onTogglePin) {
   if (isContextMenuInitialized) return;
   isContextMenuInitialized = true;
@@ -106,9 +102,6 @@ export function initContextMenu(onEdit, onDelete, onTogglePin) {
   });
 }
 
-/**
- * Initializes drag-and-drop reordering and add-button triggers.
- */
 export function initGrid(onReorder, onDropFromAdd, onAddClick) {
   if (isGridInitialized) return;
   isGridInitialized = true;
@@ -184,9 +177,6 @@ export function initGrid(onReorder, onDropFromAdd, onAddClick) {
   });
 }
 
-/**
- * Renders shortcut items into the grid and triggers smart inversion on icons.
- */
 export function renderGrid(sites = [], isEditable = true, currentMaxShortcuts = 10) {
   const gridContainer = getEl('grid-container');
   const addBtnContainer = getEl('add-btn-container');

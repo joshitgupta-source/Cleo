@@ -18,16 +18,19 @@ let isSearchInitialized = false;
 let isSettingsSearchInitialized = false;
 
 function getEngineFaviconUrl(domain) {
+  if (typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
+    try {
+      return `${chrome.runtime.getURL('/_favicon/')}?pageUrl=${encodeURIComponent(domain)}&size=32`;
+    } catch (e) {}
+  }
   try {
-    return `${chrome.runtime.getURL('/_favicon/')}?pageUrl=${encodeURIComponent(domain)}&size=32`;
+    const host = new URL(domain).hostname;
+    return `https://icons.duckduckgo.com/ip3/${host}.ico`;
   } catch (e) {
     return FALLBACK_SVG;
   }
 }
 
-/**
- * Populates options inside the settings panel search engine dropdown.
- */
 export function populateEngineDropdown() {
   const selectEl = getEl('search-engine-select');
   if (!selectEl) return;
@@ -37,9 +40,6 @@ export function populateEngineDropdown() {
   ).join('');
 }
 
-/**
- * Initializes the main search bar, quick engine switch menu, and navigation.
- */
 export function initSearch(onEngineChange) {
   if (isSearchInitialized) return;
   isSearchInitialized = true;
@@ -118,9 +118,6 @@ export function initSearch(onEngineChange) {
   });
 }
 
-/**
- * Updates the search bar engine favicon.
- */
 export function updateSearchIcon(engineUrl) {
   const engineIcon = getEl('current-engine-icon');
   if (!engineIcon) return;
@@ -131,9 +128,6 @@ export function updateSearchIcon(engineUrl) {
   engineIcon.onerror = () => { engineIcon.src = FALLBACK_SVG; };
 }
 
-/**
- * Initializes full-text in-panel settings search with match highlighting.
- */
 export function initSettingsSearch() {
   if (isSettingsSearchInitialized) return;
   isSettingsSearchInitialized = true;
