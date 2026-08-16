@@ -1,7 +1,58 @@
+:root {
+  --layout-max-width: 1080px;
+  --transition-layout: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --clock-top: 22%;
+  --clock-transform: translate3d(-50%, -50%, 0);
+  --search-top: 38%;
+  --grid-top: 50%;
+  --grid-margin: 30px;
+  --grid-transform: translate3d(-50%, 0, 0);
+  --grid-max-height: calc(50vh - 60px);
+}
+
+/* --- Layout Dynamic Positions --- */
+body.search-off {
+  --clock-top: 28%;
+  --grid-margin: 10px;
+}
+
+body.clock-off {
+  --search-top: 25%;
+  --grid-margin: -10px;
+}
+
+body.grid-off {
+  --clock-top: 35%;
+  --search-top: 55%;
+}
+
+body.search-off.grid-off {
+  --clock-top: 50%;
+}
+
+body.grid-off.clock-off {
+  --search-top: 50%;
+}
+
+body.search-off.clock-off {
+  --grid-top: 50%;
+  --grid-margin: 0;
+  --grid-transform: translate3d(-50%, -50%, 0);
+  --grid-max-height: 90vh;
+}
+
+/* --- Widget Visibility Toggles --- */
+body.search-off #search-container,
+body.clock-off #clock-widget,
+body.grid-off #grid-container {
+  display: none !important;
+}
+
+/* --- Structural Containers --- */
 #main-content {
   position: relative;
   width: 100%;
-  max-width: 1056px;
+  max-width: var(--layout-max-width);
   height: 100vh;
   margin: 0 auto;
   overflow: hidden;
@@ -9,37 +60,37 @@
 
 #clock-widget {
   position: absolute;
-  top: 22%;
+  top: var(--clock-top);
   left: 50%;
-  transform: translate3d(-50%, -50%, 0);
+  transform: var(--clock-transform);
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: top var(--transition-layout);
   white-space: nowrap;
   will-change: top;
 }
 
 #search-container {
   position: absolute;
-  top: 38%;
+  top: var(--search-top);
   left: 50%;
   transform: translate3d(-50%, -50%, 0);
   width: 100%;
-  max-width: 1056px;
+  max-width: var(--layout-max-width);
   z-index: 50;
   padding: 0 20px;
   box-sizing: border-box;
-  transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: top var(--transition-layout);
   will-change: top;
 }
 
 #grid-container {
   position: absolute;
-  top: 50%;
-  margin-top: 30px;
+  top: var(--grid-top);
+  margin-top: var(--grid-margin);
   left: 50%;
-  transform: translate3d(-50%, 0, 0);
+  transform: var(--grid-transform);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -47,65 +98,23 @@
   align-content: flex-start;
   gap: 30px 24px;
   width: 100%;
-  max-width: 1056px;
-  max-height: calc(50vh - 60px);
+  max-width: var(--layout-max-width);
+  max-height: var(--grid-max-height);
   padding: 10px 20px 100px;
   box-sizing: border-box;
   overflow-y: auto;
-  transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: top, margin-top, transform, max-height;
+  scrollbar-gutter: stable;
+  transition: top var(--transition-layout), margin-top var(--transition-layout), transform var(--transition-layout), max-height var(--transition-layout);
+  will-change: top, transform;
 }
 
 #modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 3000;
   transform: translateZ(0);
-}
-
-body.search-off #search-container {
-  display: none;
-}
-
-body.search-off #clock-widget {
-  top: 28%;
-}
-
-body.search-off.grid-off #clock-widget {
-  top: 50%;
-}
-
-body.clock-off #search-container {
-  top: 25%;
-}
-
-body.grid-off #clock-widget {
-  top: 35%;
-}
-
-body.grid-off #search-container {
-  top: 55%;
-}
-
-body.grid-off.clock-off #search-container {
-  top: 50%;
-}
-
-body.search-off #grid-container {
-  margin-top: 10px;
-}
-
-body.clock-off #grid-container {
-  margin-top: -10px;
-}
-
-body.search-off.clock-off #grid-container {
-  top: 50%;
-  margin-top: 0;
-  transform: translate3d(-50%, -50%, 0);
-  max-height: 90vh;
 }

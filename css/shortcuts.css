@@ -1,0 +1,227 @@
+/* --- Grid Scrollbar Styling --- */
+#grid-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#grid-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#grid-container::-webkit-scrollbar-thumb {
+  background: var(--sc-thumb, rgba(255, 255, 255, 0.2));
+  border-radius: 3px;
+}
+
+#grid-container::-webkit-scrollbar-thumb:hover {
+  background: var(--sc-thumb-hover, rgba(255, 255, 255, 0.4));
+}
+
+/* Hover-only Scrollbar State */
+:is(html, body).hover-scrollbar #grid-container::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+:is(html, body).hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb {
+  background: var(--sc-thumb, rgba(255, 255, 255, 0.2));
+}
+
+:is(html, body).hover-scrollbar #grid-container:hover::-webkit-scrollbar-thumb:hover {
+  background: var(--sc-thumb-hover, rgba(255, 255, 255, 0.4));
+}
+
+/* --- Shortcut Item Containers --- */
+.shortcut-container, 
+.add-shortcut-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 80px;
+}
+
+.shortcut-container:hover, 
+.add-shortcut-container:hover {
+  z-index: 100;
+}
+
+.shortcut-container.menu-active {
+  z-index: 99999;
+}
+
+/* --- Shortcut Tiles --- */
+.shortcut-tile, 
+.add-shortcut-btn {
+  width: 60px;
+  height: 60px;
+  background-color: color-mix(in srgb, var(--shortcut-bg, #303134) var(--shortcut-opacity, 80%), transparent);
+  border-radius: var(--shortcut-radius, 12px);
+  backdrop-filter: var(--glass-shortcut, blur(12px));
+  -webkit-backdrop-filter: var(--glass-shortcut, blur(12px));
+  box-shadow: var(--shadow-base, 0 2px 6px rgba(0, 0, 0, 0.2));
+  transform: translateZ(0);
+  will-change: transform;
+  transition: background-color var(--transition-standard, 0.2s ease), 
+              transform var(--transition-standard, 0.2s ease), 
+              box-shadow var(--transition-standard, 0.2s ease);
+}
+
+.shortcut-tile {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+.add-shortcut-btn {
+  border: none;
+  color: var(--shortcut-text, #ffffff);
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.shortcut-tile:hover, 
+.add-shortcut-btn:hover {
+  background-color: color-mix(in srgb, var(--shortcut-text, #ffffff) 15%, color-mix(in srgb, var(--shortcut-bg, #303134) var(--shortcut-opacity, 80%), transparent));
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 0 0 1px var(--accent-color, #8ab4f8), 
+              0 6px 16px color-mix(in srgb, var(--accent-color, #8ab4f8) 40%, transparent);
+}
+
+.shortcut-tile img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* --- Labels --- */
+.shortcut-text, 
+.add-shortcut-text {
+  font-size: 12px;
+  color: #ffffff;
+  white-space: nowrap;
+  text-shadow: var(--text-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.6));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+/* --- Context Menu & Buttons --- */
+.menu-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: transparent;
+  color: var(--shortcut-text, #ffffff);
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: none;
+  z-index: 10;
+  padding: 0 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.menu-btn:hover {
+  background-color: color-mix(in srgb, var(--shortcut-text, #ffffff) 10%, transparent);
+}
+
+.shortcut-tile:hover .menu-btn,
+.shortcut-tile:focus-within .menu-btn {
+  display: block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 28px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #202124;
+  border: var(--border-menu, 1px solid rgba(255, 255, 255, 0.1));
+  border-radius: 6px;
+  box-shadow: var(--shadow-menu, 0 8px 24px rgba(0, 0, 0, 0.3));
+  display: flex;
+  flex-direction: column;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  color: #e8eaed;
+  padding: 10px 15px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background-color var(--transition-standard, 0.2s ease);
+}
+
+.dropdown-menu button:hover {
+  background-color: #3c4043;
+}
+
+/* --- Drag and Drop States --- */
+.draggable-item {
+  cursor: grab;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+}
+
+.draggable-item .shortcut-tile {
+  cursor: pointer;
+}
+
+.shortcut-container.dragging {
+  opacity: 0.4;
+}
+
+.shortcut-container.drag-over > .shortcut-tile, 
+.add-shortcut-container.drag-over > .add-shortcut-btn {
+  background-color: color-mix(in srgb, var(--accent-color, #8ab4f8) 40%, transparent);
+  transform: scale(1.08) translateZ(0);
+  border: 2px solid var(--accent-color, #8ab4f8);
+}
+
+.pin-indicator {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  color: var(--shortcut-text, #ffffff); 
+  opacity: 0.75;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Conditional Toggles & Overrides --- */
+:is(html, body).hide-labels .shortcut-text, 
+:is(html, body).hide-labels .add-shortcut-text {
+  display: none;
+}
+
+:is(html, body).light-bg .shortcut-text, 
+:is(html, body).light-bg .add-shortcut-text {
+  color: #000000;
+  text-shadow: none;
+}
+
+:is(html, body).is-locked .shortcut-container .menu-btn {
+  display: none !important;
+}
+
+:is(html, body).is-locked .draggable-item {
+  cursor: default;
+}

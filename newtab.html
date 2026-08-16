@@ -2,28 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Tab</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' data-name='Layer 1' viewBox='0 0 24 24' fill='%23ffffff'><path d='M12 14.685c-1.149 0-2.085.985-2.085 2.196v6.076a50 50 0 0 0 4.17 0v-6.076c0-1.211-.936-2.196-2.085-2.196'/><path d='M21.085 6.758a1 1 0 0 0-.308-.377l-.564-.418V3.505a1.5 1.5 0 1 0-3 0v.315C14.939 2.26 12.842 1 12 1c-1.299 0-5.49 2.927-8.778 5.382-.133.1-.24.231-.31.383-.047.102-1.154 2.562-1.154 7.578 0 2.165.202 5.37.432 6.858a1 1 0 0 0 .698.804c.098.03 1.842.548 5.027.825v-5.948c0-2.314 1.832-4.196 4.085-4.196s4.085 1.882 4.085 4.196v5.948c3.185-.276 4.928-.795 5.025-.824a1 1 0 0 0 .697-.804c.231-1.498.435-4.703.435-6.858 0-5.059-1.11-7.483-1.157-7.584Z'/></svg>">
+
+    <link rel="stylesheet" href="css/variables.css">
+
     <script src="preload.js"></script>
-    <link rel="stylesheet" href="css/main.css">
+
     <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/ui.css">
+
+    <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="css/shortcuts.css">
+    <link rel="stylesheet" href="css/pomodoro.css">
     <link rel="stylesheet" href="css/panel.css">
 </head>
 <body>
     <div id="main-content">
-        
         <div id="pomodoro-widget" class="pos-top-left">
-            <button id="pomodoro-toggle-btn" aria-label="Start/Pause Timer">
-                <svg id="pomodoro-icon-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                    <path d="M7 4.512c0-1.745 1.884-2.839 3.39-1.97l9.467 5.467c1.517.876 1.517 3.096 0 3.972l-9.467 5.467c-1.506.87-3.39-.225-3.39-1.97V4.512z"/>
-                </svg>
-                <svg id="pomodoro-icon-pause" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="display: none;">
-                    <rect x="6" y="4" width="4" height="16" rx="1"></rect>
-                    <rect x="14" y="4" width="4" height="16" rx="1"></rect>
-                </svg>
-            </button>
-            <span id="pomodoro-time">25:00</span>
+            <div class="pomodoro-top-row">
+                <button id="pomo-minus-btn" aria-label="Decrease Time">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 13H5v-2h14v2z"/></svg>
+                </button>
+                <span id="pomodoro-time">25:00</span>
+                <button id="pomo-plus-btn" aria-label="Increase Time">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                </button>
+            </div>
+            <div class="pomodoro-bottom-row">
+                <button id="pomodoro-toggle-btn" aria-label="Start/Pause Timer">
+                    <svg id="pomodoro-icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M7 4.512c0-1.745 1.884-2.839 3.39-1.97l9.467 5.467c1.517.876 1.517 3.096 0 3.972l-9.467 5.467c-1.506.87-3.39-.225-3.39-1.97V4.512z"/>
+                    </svg>
+                    <svg id="pomodoro-icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: none;">
+                        <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                        <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                    </svg>
+                </button>
+                <button id="pomo-restart-btn" aria-label="Restart Timer">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                </button>
+                <button id="pomo-skip-btn" aria-label="Skip Session">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+                </button>
+            </div>
         </div>
 
         <div id="clock-widget">
@@ -34,7 +58,7 @@
         <div id="search-container">
             <div id="search-box">
                 <div class="engine-selector-wrapper">
-                    <button id="search-engine-btn" title="Change Search Engine">
+                    <button id="search-engine-btn" title="Change Search Engine" aria-label="Change Search Engine">
                         <img id="current-engine-icon" src="" alt="Engine">
                         <span class="engine-dropdown-icon">▼</span>
                     </button>
@@ -44,10 +68,10 @@
                 <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off" spellcheck="false" autofocus>
             </div>
         </div>
-        
+
         <div id="grid-container">
             <div class="add-shortcut-container" id="add-btn-container">
-                <button class="add-shortcut-btn" id="add-btn">+</button>
+                <button class="add-shortcut-btn" id="add-btn" aria-label="Add Shortcut">+</button>
                 <span class="add-shortcut-text">Add shortcut</span>
             </div>
         </div>
@@ -60,32 +84,33 @@
         </svg>
     </button>
 
-    <button id="customize-btn" title="Customize this page">
+    <button id="customize-btn" title="Customize this page" aria-label="Open Settings">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
     </button>
 
     <div id="side-panel">
         <div class="panel-header">
-            <h2 id="panel-title">Customize</h2>
-            <button id="close-panel-btn">&times;</button>
+            <h2 id="panel-title">Customize Cleo</h2>
+            <button id="close-panel-btn" aria-label="Close Panel">&times;</button>
         </div>
-            
+
         <div class="search-pill-container">
-            <input type="text" id="panel-search-input" placeholder="Search..." autocomplete="off" spellcheck="false">
+            <input type="text" id="panel-search-input" placeholder="Search settings..." autocomplete="off" spellcheck="false">
             <span id="search-match-count" class="match-count">0/0</span>
             <div class="pill-divider"></div>
-            <button id="search-prev-btn" class="pill-btn" disabled title="Previous match">
+            <button id="search-prev-btn" class="pill-btn" disabled title="Previous match" aria-label="Previous Match">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
             </button>
-            <button id="search-next-btn" class="pill-btn" disabled title="Next match">
+            <button id="search-next-btn" class="pill-btn" disabled title="Next match" aria-label="Next Match">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
             </button>
-            <button id="search-clear-btn" class="pill-btn" disabled title="Clear search">
+            <button id="search-clear-btn" class="pill-btn" disabled title="Clear search" aria-label="Clear Search">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
 
         <div class="panel-content">
+
             <div class="panel-section">
                 <h3>Theme Presets</h3>
                 <div class="theme-preset-grid">
@@ -109,35 +134,63 @@
             </div>
 
             <div class="panel-section">
-                <h3>Global Theme</h3>
+                <h3>Global UI Styling</h3>
+
+                <div class="toggle-row">
+                    <h3>Frosted Glass Effect</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="global-glass-toggle" checked aria-label="Toggle Global Glass">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="input-group" style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="global-radius-num" style="margin-bottom: 0;">Corner Roundness (px)</label>
+                        <input type="number" id="global-radius-num" min="0" max="50" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                    </div>
+                    <input type="range" id="global-radius-slider" min="0" max="50" style="width: 100%; margin-top: 10px;">
+                </div>
+
+                <div class="input-group" style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="global-opacity-num" style="margin-bottom: 0;">Widget Transparency (%)</label>
+                        <input type="number" id="global-opacity-num" min="0" max="100" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                    </div>
+                    <input type="range" id="global-opacity-slider" min="0" max="100" style="width: 100%; margin-top: 10px;">
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Global Colors</h3>
                 <div class="bg-options">
                     <div class="color-picker-wrapper">
                         <div class="color-input-group">
                             <div class="color-picker-container">
-                                <input type="color" id="bg-color-picker" value="#000000">
+                                <input type="color" id="bg-color-picker" value="#000000" aria-label="Background Color">
                                 <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                             </div>
-                            <input type="text" id="bg-color-text" class="hex-input" value="#000000" maxlength="7" spellcheck="false">
+                            <input type="text" id="bg-color-text" class="hex-input" value="#000000" maxlength="7" spellcheck="false" aria-label="Background Hex">
                         </div>
                         <span>Background</span>
                     </div>
                     <button id="bg-image-btn" class="panel-btn" style="margin-bottom: 20px;">Change wallpaper</button>
                     <input type="file" id="bg-image-input" accept="image/*" style="display: none;">
                 </div>
-                
+
                 <div class="color-picker-wrapper">
                     <div class="color-input-group">
                         <div class="color-picker-container">
-                            <input type="color" id="accent-color-picker" value="#8ab4f8">
+                            <input type="color" id="accent-color-picker" value="#8ab4f8" aria-label="Accent Color">
                             <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                         </div>
-                        <input type="text" id="accent-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false">
+                        <input type="text" id="accent-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false" aria-label="Accent Hex">
                     </div>
                     <span>Accent Color</span>
                 </div>
-                
+
                 <div class="input-group" style="margin-top: 15px;">
-                    <label>Font Style</label>
+                    <label for="global-font-select">Font Style</label>
                     <select id="global-font-select" class="panel-select">
                         <optgroup label="Modern & Clean (Sans-Serif)">
                             <option value="system-ui, -apple-system, sans-serif">System Default</option>
@@ -168,24 +221,24 @@
                 <div class="toggle-row">
                     <h3>Enable Clock</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-clock-toggle" checked>
+                        <input type="checkbox" id="show-clock-toggle" checked aria-label="Toggle Clock">
                         <span class="slider"></span>
                     </label>
                 </div>
-                
-                <div id="clock-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+
+                <div id="clock-options-group" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
                     <div class="input-group">
-                        <label>Time Format</label>
+                        <label for="time-format-select">Time Format</label>
                         <select id="time-format-select" class="panel-select">
                             <option value="12hr">12-hour</option>
                             <option value="24hr">24-hour</option>
                         </select>
                     </div>
-                    
+
                     <div class="toggle-row" style="margin-top: 15px;">
                         <h3>Show seconds</h3>
                         <label class="switch">
-                            <input type="checkbox" id="show-seconds-toggle">
+                            <input type="checkbox" id="show-seconds-toggle" aria-label="Toggle Seconds">
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -193,13 +246,13 @@
                     <div class="toggle-row" id="show-date-row" style="margin-top: 15px;">
                         <h3>Show date</h3>
                         <label class="switch">
-                            <input type="checkbox" id="show-date-toggle" checked>
+                            <input type="checkbox" id="show-date-toggle" checked aria-label="Toggle Date">
                             <span class="slider"></span>
                         </label>
                     </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
-                        <label>Date Format</label>
+                        <label for="date-format-select">Date Format</label>
                         <select id="date-format-select" class="panel-select">
                             <option value="full">Weekday, Month Date (Friday, August 7)</option>
                             <option value="short">Short (Aug 7, 2026)</option>
@@ -207,31 +260,31 @@
                             <option value="mmdd">MM/DD/YYYY (08/07/2026)</option>
                         </select>
                     </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
-                        <label>Date Position</label>
+                        <label for="date-position-select">Date Position</label>
                         <select id="date-position-select" class="panel-select">
                             <option value="below">Below clock</option>
                             <option value="above">Above clock</option>
                         </select>
                     </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
-                        <label>Clock Color Theme</label>
+                        <label for="clock-color-mode-select">Clock Color Theme</label>
                         <select id="clock-color-mode-select" class="panel-select">
                             <option value="monochrome">Monochrome Auto (Black/White)</option>
                             <option value="dynamic">Dynamic Auto (Complementary Color)</option>
                             <option value="custom">Custom Color...</option>
                         </select>
                     </div>
-                    
+
                     <div class="color-picker-wrapper" id="clock-color-wrapper" style="margin-top: 10px; display: none;">
                         <div class="color-input-group">
                             <div class="color-picker-container">
-                                <input type="color" id="clock-color-picker" value="#ffffff">
+                                <input type="color" id="clock-color-picker" value="#ffffff" aria-label="Clock Color">
                                 <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                             </div>
-                            <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false">
+                            <input type="text" id="clock-color-text" class="hex-input" value="#ffffff" maxlength="7" spellcheck="false" aria-label="Clock Hex">
                         </div>
                         <span>Pick Color</span>
                     </div>
@@ -243,107 +296,79 @@
                 <div class="toggle-row">
                     <h3>Enable Timer</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-pomodoro-toggle" checked>
+                        <input type="checkbox" id="show-pomodoro-toggle" checked aria-label="Toggle Pomodoro">
                         <span class="slider"></span>
                     </label>
                 </div>
-                
-                <div id="pomodoro-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+
+                <div id="pomodoro-options-group" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
                     <div class="input-group">
-                        <label>Position</label>
+                        <label for="pomodoro-position-select">Position</label>
                         <select id="pomodoro-position-select" class="panel-select">
                             <option value="top-left">Top Left</option>
                             <option value="top-right">Top Right</option>
                         </select>
                     </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
-                        <label>Background Color Theme</label>
+                        <label for="pomodoro-color-mode-select">Background Color Theme</label>
                         <select id="pomodoro-color-mode-select" class="panel-select">
                             <option value="monochrome">Monochrome Auto (Black/White)</option>
                             <option value="accent">Matches Accent Color</option>
                             <option value="custom">Custom Color...</option>
                         </select>
                     </div>
-                    
+
                     <div class="color-picker-wrapper" id="pomodoro-bg-picker-wrapper" style="margin-top: 15px; display: none;">
                         <div class="color-input-group">
                             <div class="color-picker-container">
-                                <input type="color" id="pomodoro-bg-picker" value="#f0eee9">
+                                <input type="color" id="pomodoro-bg-picker" value="#f0eee9" aria-label="Pomodoro Background">
                                 <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                             </div>
-                            <input type="text" id="pomodoro-bg-text" class="hex-input" value="#f0eee9" maxlength="7" spellcheck="false">
+                            <input type="text" id="pomodoro-bg-text" class="hex-input" value="#f0eee9" maxlength="7" spellcheck="false" aria-label="Pomodoro Background Hex">
                         </div>
                         <span>Background Color</span>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label>Text & Icon Color Theme</label>
-                        <select id="pomodoro-text-mode-select" class="panel-select">
-                            <option value="monochrome">Monochrome Auto (Black/White)</option>
-                            <option value="dynamic">Dynamic Auto (Complementary Color)</option>
-                            <option value="custom">Custom Color...</option>
-                        </select>
-                    </div>
-                    
-                    <div class="color-picker-wrapper" id="pomodoro-text-picker-wrapper" style="margin-top: 15px; display: none;">
-                        <div class="color-input-group">
-                            <div class="color-picker-container">
-                                <input type="color" id="pomodoro-text-picker" value="#1c1917">
-                                <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                            </div>
-                            <input type="text" id="pomodoro-text-text" class="hex-input" value="#1c1917" maxlength="7" spellcheck="false">
-                        </div>
-                        <span>Text & Icon Color</span>
+                    <div class="toggle-row" style="margin-top: 15px;">
+                        <h3>Show border outline</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="pomodoro-border-toggle" aria-label="Toggle Pomodoro Border">
+                            <span class="slider"></span>
+                        </label>
                     </div>
 
                     <div class="input-group" style="margin-top: 15px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="margin-bottom: 0;">Background Opacity (%)</label>
-                            <input type="number" id="pomodoro-opacity-num" min="0" max="100" value="100" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                            <label for="pomodoro-focus-num" style="margin-bottom: 0;">Focus Time (minutes)</label>
+                            <input type="number" id="pomodoro-focus-num" min="25" max="120" value="25" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
                         </div>
-                        <input type="range" id="pomodoro-opacity-slider" min="0" max="100" value="100" style="width: 100%; margin-top: 10px;">
+                        <input type="range" id="pomodoro-focus-slider" min="25" max="120" value="25" style="width: 100%; margin-top: 10px;">
                     </div>
-                    
-                    <div class="toggle-row" style="margin-top: 15px;">
-                        <h3>Frosted glass effect (Blur)</h3>
-                        <label class="switch">
-                            <input type="checkbox" id="pomodoro-glass-toggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="toggle-row" style="margin-top: 15px;">
-                        <h3>Show border outline</h3>
-                        <label class="switch">
-                            <input type="checkbox" id="pomodoro-border-toggle">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="margin-bottom: 0;">Corner Radius (px)</label>
-                            <input type="number" id="pomodoro-radius-num" min="0" max="40" value="12" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
+                            <label for="pomodoro-break-num" style="margin-bottom: 0;">Break Time (minutes)</label>
+                            <input type="number" id="pomodoro-break-num" min="5" max="30" value="5" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
                         </div>
-                        <input type="range" id="pomodoro-radius-slider" min="0" max="40" value="12" style="width: 100%; margin-top: 10px;">
+                        <input type="range" id="pomodoro-break-slider" min="5" max="30" value="5" style="width: 100%; margin-top: 10px;">
                     </div>
                 </div>
             </div>
-            
+
             <div class="panel-section">
                 <h3>Search Bar</h3>
                 <div class="toggle-row">
                     <h3>Enable Search</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-search-toggle" checked>
+                        <input type="checkbox" id="show-search-toggle" checked aria-label="Toggle Search">
                         <span class="slider"></span>
                     </label>
                 </div>
-                
-                <div id="search-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+
+                <div id="search-options-group" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
                     <div class="input-group">
-                        <label>Search Engine</label>
+                        <label for="search-engine-select">Search Engine</label>
                         <select id="search-engine-select" class="panel-select">
                             <option value="https://www.google.com/search?q=">Google</option>
                             <option value="https://www.google.com/search?udm=14&q=">Google Web (Clean)</option>
@@ -357,57 +382,33 @@
                             <option value="https://www.ecosia.org/search?q=">Ecosia</option>
                         </select>
                     </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
-                        <label>Bar Color Theme</label>
+                        <label for="search-color-mode-select">Bar Color Theme</label>
                         <select id="search-color-mode-select" class="panel-select">
                             <option value="auto">Auto (Matches Background)</option>
                             <option value="accent">Matches Accent Color</option>
                             <option value="custom">Custom Color...</option>
                         </select>
                     </div>
-                    
+
                     <div class="color-picker-wrapper" id="search-color-wrapper" style="margin-top: 10px; display: none;">
                         <div class="color-input-group">
                             <div class="color-picker-container">
-                                <input type="color" id="search-color-picker" value="#202124">
+                                <input type="color" id="search-color-picker" value="#202124" aria-label="Search Color">
                                 <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                             </div>
-                            <input type="text" id="search-color-text" class="hex-input" value="#202124" maxlength="7" spellcheck="false">
+                            <input type="text" id="search-color-text" class="hex-input" value="#202124" maxlength="7" spellcheck="false" aria-label="Search Hex">
                         </div>
                         <span>Pick Color</span>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="margin-bottom: 0;">Background Opacity (%)</label>
-                            <input type="number" id="search-opacity-num" min="0" max="100" value="100" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
-                        </div>
-                        <input type="range" id="search-opacity-slider" min="0" max="100" value="100" style="width: 100%; margin-top: 10px;">
-                    </div>
-                    
-                    <div class="toggle-row" style="margin-top: 15px;">
-                        <h3>Frosted glass effect (Blur)</h3>
-                        <label class="switch">
-                            <input type="checkbox" id="search-glass-toggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
                     <div class="toggle-row" style="margin-top: 15px;">
                         <h3>Show border outline</h3>
                         <label class="switch">
-                            <input type="checkbox" id="show-search-border-toggle" checked>
+                            <input type="checkbox" id="show-search-border-toggle" checked aria-label="Toggle Search Border">
                             <span class="slider"></span>
                         </label>
-                    </div>
-                    
-                    <div class="input-group" style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="margin-bottom: 0;">Corner Radius (px)</label>
-                            <input type="number" id="search-radius-num" min="0" max="40" value="24" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
-                        </div>
-                        <input type="range" id="search-radius-slider" min="0" max="40" value="24" style="width: 100%; margin-top: 10px;">
                     </div>
                 </div>
             </div>
@@ -417,22 +418,22 @@
                 <div class="toggle-row">
                     <h3>Enable Shortcuts</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-shortcuts-toggle" checked>
+                        <input type="checkbox" id="show-shortcuts-toggle" checked aria-label="Toggle Shortcuts">
                         <span class="slider"></span>
                     </label>
                 </div>
-                
-                <div id="shortcut-options-group" style="border-top: 1px solid #3c4043; padding-top: 15px; margin-top: 15px;">
+
+                <div id="shortcut-options-group" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
                     <div class="input-group">
-                        <label>Shortcut Source</label>
+                        <label for="shortcut-type-select">Shortcut Source</label>
                         <select id="shortcut-type-select" class="panel-select">
                             <option value="custom">My Curated Shortcuts</option>
                             <option value="topSites">Most Visited Sites</option>
                         </select>
                     </div>
-                    
+
                     <div class="input-group" id="max-shortcuts-group" style="margin-top: 15px;">
-                        <label>Grid Size Limit</label>
+                        <label for="max-shortcuts-select">Grid Size Limit</label>
                         <select id="max-shortcuts-select" class="panel-select">
                             <option value="10">1 Row (10 max)</option>
                             <option value="20">2 Rows (20 max)</option>
@@ -441,60 +442,36 @@
                             <option value="50">5 Rows (50 max)</option>
                         </select>
                     </div>
-                    
+
                     <div class="input-group" style="margin-top: 15px;">
-                        <label>Tile Color Theme</label>
+                        <label for="shortcut-color-mode-select">Tile Color Theme</label>
                         <select id="shortcut-color-mode-select" class="panel-select">
                             <option value="auto">Auto (Matches Background)</option>
                             <option value="accent">Matches Accent Color</option>
                             <option value="custom">Custom Color...</option>
                         </select>
                     </div>
-                    
+
                     <div class="color-picker-wrapper" id="shortcut-color-wrapper" style="margin-top: 10px; display: none;">
                         <div class="color-input-group">
                             <div class="color-picker-container">
-                                <input type="color" id="shortcut-color-picker" value="#303134">
+                                <input type="color" id="shortcut-color-picker" value="#303134" aria-label="Shortcut Color">
                                 <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                             </div>
-                            <input type="text" id="shortcut-color-text" class="hex-input" value="#303134" maxlength="7" spellcheck="false">
+                            <input type="text" id="shortcut-color-text" class="hex-input" value="#303134" maxlength="7" spellcheck="false" aria-label="Shortcut Hex">
                         </div>
                         <span>Pick Color</span>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="margin-bottom: 0;">Background Opacity (%)</label>
-                            <input type="number" id="shortcut-opacity-num" min="0" max="100" value="80" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
-                        </div>
-                        <input type="range" id="shortcut-opacity-slider" min="0" max="100" value="80" style="width: 100%; margin-top: 10px;">
-                    </div>
-                    
-                    <div class="toggle-row" style="margin-top: 15px;">
-                        <h3>Frosted glass effect (Blur)</h3>
-                        <label class="switch">
-                            <input type="checkbox" id="shortcut-glass-toggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
                     <div class="toggle-row" id="show-labels-row" style="margin-top: 15px;">
                         <h3>Show shortcut names</h3>
                         <label class="switch">
-                            <input type="checkbox" id="show-labels-toggle" checked>
+                            <input type="checkbox" id="show-labels-toggle" checked aria-label="Toggle Shortcut Labels">
                             <span class="slider"></span>
                         </label>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label style="margin-bottom: 0;">Corner Radius (px)</label>
-                            <input type="number" id="shortcut-radius-num" min="0" max="30" value="12" class="panel-input" style="width: 60px; padding: 4px 8px; text-align: center;">
-                        </div>
-                        <input type="range" id="shortcut-radius-slider" min="0" max="30" value="12" style="width: 100%; margin-top: 10px;">
-                    </div>
-                    
-                    <div class="input-group" style="margin-top: 15px; border-top: 1px solid #3c4043; padding-top: 15px;">
+                    <div class="input-group" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                         <button id="restore-hidden-btn" class="panel-btn" style="margin-bottom: 0;">Restore hidden sites</button>
                     </div>
                 </div>
@@ -505,43 +482,43 @@
                 <div class="toggle-row" style="margin-bottom: 20px;">
                     <h3>Show UI shadows</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-shadows-toggle" checked>
+                        <input type="checkbox" id="show-shadows-toggle" checked aria-label="Toggle UI Shadows">
                         <span class="slider"></span>
                     </label>
                 </div>
 
                 <div class="input-group">
-                    <label>Scrollbar Visibility</label>
+                    <label for="scrollbar-visibility-select">Scrollbar Visibility</label>
                     <select id="scrollbar-visibility-select" class="panel-select">
                         <option value="always">Always Show</option>
                         <option value="hover">Show on Hover</option>
                     </select>
                 </div>
-                
+
                 <div class="input-group" style="margin-top: 15px;">
-                    <label>Scrollbar Color Theme</label>
+                    <label for="scrollbar-color-mode-select">Scrollbar Color Theme</label>
                     <select id="scrollbar-color-mode-select" class="panel-select">
-                        <option value="auto">Auto (Matches Background)</option>
+                        <option value="auto" selected>Auto (Matches Background)</option>
                         <option value="accent">Matches Accent Color</option>
                         <option value="custom">Custom Color...</option>
                     </select>
                 </div>
-                
+
                 <div class="color-picker-wrapper" id="scrollbar-color-wrapper" style="margin-top: 10px; display: none;">
                     <div class="color-input-group">
                         <div class="color-picker-container">
-                            <input type="color" id="scrollbar-color-picker" value="#8ab4f8">
+                            <input type="color" id="scrollbar-color-picker" value="#8ab4f8" aria-label="Scrollbar Color">
                             <svg class="color-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                         </div>
-                        <input type="text" id="scrollbar-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false">
+                        <input type="text" id="scrollbar-color-text" class="hex-input" value="#8ab4f8" maxlength="7" spellcheck="false" aria-label="Scrollbar Hex">
                     </div>
                     <span>Pick Color</span>
                 </div>
-                
-                <div class="toggle-row" style="margin-top: 20px; border-top: 1px solid #3c4043; padding-top: 15px;">
+
+                <div class="toggle-row" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                     <h3>Show layout lock button</h3>
                     <label class="switch">
-                        <input type="checkbox" id="show-lock-btn-toggle" checked>
+                        <input type="checkbox" id="show-lock-btn-toggle" checked aria-label="Toggle Lock Button">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -549,16 +526,15 @@
 
             <div class="panel-section">
                 <h3>Backup & Restore</h3>
-                <p style="font-size: 12px; color: #9aa0a6; margin-bottom: 15px; line-height: 1.4;">Export your layout, shortcuts, and colors to a file, or restore them from a previous backup.</p>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.4;">Export your layout, shortcuts, and colors to a file, or restore them from a previous backup.</p>
                 <button id="export-btn" class="panel-btn">Export Settings</button>
                 <button id="import-btn" class="panel-btn" style="margin-bottom: 0;">Import Settings</button>
-                <input type="file" id="import-input" accept=".json" style="display: none;">
-            </div>
-            
-            <div class="panel-section" style="border-top: 1px solid #3c4043; padding-top: 20px;">
-                <button id="reset-all-btn" class="panel-btn" style="color: #ff6b6b; border-color: rgba(255,107,107,0.5); margin-bottom: 0;">Reset all settings</button>
+                <input type="file" id="import-input" accept=".json" style="display: none;" aria-hidden="true">
             </div>
 
+            <div class="panel-section">
+                <button id="reset-all-btn" class="panel-btn" style="color: #ff6b6b; border-color: rgba(255,107,107,0.5); margin-bottom: 0;">Reset all settings</button>
+            </div>
         </div>
     </div>
 

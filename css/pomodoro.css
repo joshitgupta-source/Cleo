@@ -1,0 +1,106 @@
+#pomodoro-widget {
+  position: fixed;
+  top: 25px;
+  left: var(--pomo-left, 25px);
+  right: var(--pomo-right, auto);
+  width: fit-content;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--pomo-bg-color, rgba(32, 33, 36, 0.85));
+  color: var(--pomo-text-color, #ffffff);
+  border-radius: var(--pomo-radius, 16px);
+  padding: 12px 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  user-select: none;
+  gap: 6px;
+  z-index: 1000;
+  border: 1px solid transparent;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              left 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#pomodoro-widget:hover {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent-color) 35%, transparent);
+}
+
+#pomodoro-widget.has-border {
+  border: 1px solid color-mix(in srgb, var(--pomo-text-color) 25%, transparent);
+}
+
+/* Side panel avoidance offset */
+#pomodoro-widget.pos-top-right.panel-open-shift {
+  right: calc(var(--panel-width, 340px) + 25px) !important;
+}
+
+/* --- Layout Rows --- */
+.pomodoro-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.pomodoro-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+#pomodoro-time {
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+/* --- Controls & Buttons --- */
+#pomodoro-widget button {
+  background: none;
+  border: none;
+  color: inherit;
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  border-radius: 50%;
+  transition: opacity 0.2s, transform 0.1s, background-color 0.2s;
+}
+
+#pomodoro-widget button:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.dark-bg #pomodoro-widget button:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+#pomodoro-widget button:active {
+  transform: scale(0.9);
+}
+
+/* --- Conditional Body Overrides --- */
+body.no-shadows #pomodoro-widget {
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 0 transparent) !important;
+}
+
+body.glass-off #pomodoro-widget,
+body.search-glass-off #pomodoro-widget {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}

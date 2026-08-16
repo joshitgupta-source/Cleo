@@ -1,0 +1,92 @@
+:root {
+  /* --- Core Colors & Backgrounds --- */
+  --accent-color: #8ab4f8;
+  --bg-color: #000000;
+  --clock-color: #ffffff;
+  --date-color: #e8eaed;
+
+  /* --- Search Tokens --- */
+  --search-bg: #202124;
+  --search-text: #ffffff;
+  --search-radius: 24px;
+  --search-opacity: 100%;
+  --glass-search: blur(16px);
+  --border-search: 1px solid rgba(255, 255, 255, 0.15);
+
+  /* --- Shortcut Tokens --- */
+  --shortcut-bg: #303134;
+  --shortcut-text: #ffffff;
+  --shortcut-radius: 12px;
+  --shortcut-opacity: 80%;
+  --glass-shortcut: blur(16px);
+
+  /* --- Scrollbar Tokens --- */
+  --sc-thumb: rgba(255, 255, 255, 0.2);
+  --sc-thumb-hover: rgba(255, 255, 255, 0.4);
+  --custom-sc-color: rgba(255, 255, 255, 0.2);
+
+  /* --- Shadows & Elevation --- */
+  --shadow-base: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.3);
+  --shadow-menu: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --border-menu: 1px solid #3c4043;
+  --text-shadow-lg: 0 2px 5px rgba(0, 0, 0, 0.7);
+  --text-shadow-md: 0 1px 4px rgba(0, 0, 0, 0.7);
+  --text-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
+  --icon-filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+
+  /* --- Transitions --- */
+  --transition-standard: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55);
+}
+
+/* --- Scrollbar Mode Overrides --- */
+:is(html, body).light-bg {
+  --sc-thumb: rgba(0, 0, 0, 0.2);
+  --sc-thumb-hover: rgba(0, 0, 0, 0.4);
+}
+
+:is(html, body).accent-scrollbar {
+  --sc-thumb: var(--accent-color);
+  --sc-thumb-hover: var(--accent-color);
+}
+
+:is(html, body).custom-scrollbar {
+  --sc-thumb: var(--custom-sc-color);
+  --sc-thumb-hover: var(--custom-sc-color);
+}
+
+/* --- User Toggle Overrides --- */
+:is(html, body).no-shadows {
+  --shadow-base: none;
+  --shadow-hover: none;
+  --shadow-menu: none;
+  --text-shadow-lg: none;
+  --text-shadow-md: none;
+  --text-shadow-sm: none;
+  --icon-filter: none;
+  --border-search: 1px solid rgba(255, 255, 255, 0.2);
+  --border-menu: 1px solid #5f6368;
+}
+
+:is(html, body).search-glass-off {
+  --glass-search: none;
+}
+
+:is(html, body).shortcut-glass-off {
+  --glass-shortcut: none;
+}
+
+:is(html, body).search-border-off {
+  --border-search: 1px solid transparent;
+}
+
+:is(html, body).dark-search-text {
+  --border-search: 1px solid rgba(0, 0, 0, 0.15);
+  --shadow-menu: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:is(html, body).dark-search-text.no-shadows {
+  --border-search: 1px solid rgba(0, 0, 0, 0.2);
+}

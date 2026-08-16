@@ -1,77 +1,104 @@
 import { getTextColorForBackground } from './utils.js';
 
 const getEl = (id) => document.getElementById(id);
+let isUIInitialized = false;
 
+/**
+ * Initializes modal backdrop dismissals and side-panel triggers.
+ */
 export function initUI(onModalClose) {
-    getEl('customize-btn')?.addEventListener('click', () => {
-        getEl('side-panel')?.classList.add('open');
-    });
+  if (isUIInitialized) return;
+  isUIInitialized = true;
 
-    getEl('close-panel-btn')?.addEventListener('click', () => {
-        getEl('side-panel')?.classList.remove('open');
-    });
+  getEl('customize-btn')?.addEventListener('click', () => {
+    getEl('side-panel')?.classList.add('open');
+  });
 
-    const handleClose = () => {
-        closeModal();
-        if (onModalClose) onModalClose();
-    };
+  getEl('close-panel-btn')?.addEventListener('click', () => {
+    getEl('side-panel')?.classList.remove('open');
+  });
 
-    getEl('cancel-btn')?.addEventListener('click', handleClose);
+  const handleClose = () => {
+    closeModal();
+    if (typeof onModalClose === 'function') onModalClose();
+  };
 
-    getEl('modal-backdrop')?.addEventListener('click', (e) => {
-        if (e.target === getEl('modal-backdrop')) {
-            handleClose();
-        }
-    });
+  getEl('cancel-btn')?.addEventListener('click', handleClose);
+
+  getEl('modal-backdrop')?.addEventListener('click', (e) => {
+    if (e.target === getEl('modal-backdrop')) handleClose();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = getEl('modal-backdrop');
+      if (modal && !modal.classList.contains('hidden')) {
+        handleClose();
+      }
+    }
+  });
 }
 
+/**
+ * Opens shortcut modal dialog and focuses the title field.
+ */
 export function openModal(title, name = '', url = '') {
-    const titleEl = getEl('modal-title');
-    const nameEl = getEl('site-name');
-    const urlEl = getEl('site-url');
-    const modal = getEl('modal-backdrop');
+  const titleEl = getEl('modal-title');
+  const nameEl = getEl('site-name');
+  const urlEl = getEl('site-url');
+  const modal = getEl('modal-backdrop');
 
-    if (titleEl) titleEl.textContent = title;
-    if (nameEl) nameEl.value = name;
-    if (urlEl) urlEl.value = url;
-    if (modal) modal.classList.remove('hidden');
-    
-    requestAnimationFrame(() => nameEl?.focus());
+  if (titleEl) titleEl.textContent = title;
+  if (nameEl) nameEl.value = name;
+  if (urlEl) urlEl.value = url;
+  if (modal) modal.classList.remove('hidden');
+  
+  requestAnimationFrame(() => nameEl?.focus());
 }
 
+/**
+ * Closes modal dialog and resets field inputs.
+ */
 export function closeModal() {
-    getEl('modal-backdrop')?.classList.add('hidden');
-    const nameEl = getEl('site-name');
-    const urlEl = getEl('site-url');
-    if (nameEl) nameEl.value = '';
-    if (urlEl) urlEl.value = '';
+  getEl('modal-backdrop')?.classList.add('hidden');
+  const nameEl = getEl('site-name');
+  const urlEl = getEl('site-url');
+  if (nameEl) nameEl.value = '';
+  if (urlEl) urlEl.value = '';
 }
 
+/**
+ * Applies wallpaper/solid color background and calculates light/dark theme classes.
+ */
 export function applyBackground(type, value) {
-    const root = document.documentElement;
-    const body = document.body;
+  const root = document.documentElement;
+  const body = document.body;
 
-    requestAnimationFrame(() => {
-        root.style.setProperty('--bg-color', value);
+  const setClass = (addCls, removeCls) => {
+    root.classList.add(addCls);
+    root.classList.remove(removeCls);
+    if (body) {
+      body.classList.add(addCls);
+      body.classList.remove(removeCls);
+    }
+  };
 
-        if (type === 'image') {
-            body.style.setProperty('background-image', `url("${value}")`, 'important');
-            body.style.setProperty('background-color', '#000000', 'important');
-            
-            root.classList.add('dark-bg');
-            root.classList.remove('light-bg');
-        } else {
-            body.style.setProperty('background-image', 'none', 'important');
-            body.style.setProperty('background-color', value, 'important');
-            
-            const textColor = getTextColorForBackground(value);
-            if (textColor === 'dark-text') {
-                root.classList.add('light-bg');
-                root.classList.remove('dark-bg');
-            } else {
-                root.classList.add('dark-bg');
-                root.classList.remove('light-bg');
-            }
-        }
-    });
+  requestAnimationFrame(() => {
+    if (type === 'image') {
+      root.style.setProperty('--bg-color', '#000000');
+      root.style.setProperty('--bg-image', `url("${value}")`);
+      setClass('dark-bg', 'light-bg');
+    } else {
+      const bgVal = value || '#000000';
+      root.style.setProperty('--bg-color', bgVal);
+      root.style.setProperty('--bg-image', 'none');
+      
+      const textColor = getTextColorForBackground(bgVal);
+      if (textColor === 'dark-text') {
+        setClass('light-bg', 'dark-bg');
+      } else {
+        setClass('dark-bg', 'light-bg');
+      }
+    }
+  });
 }

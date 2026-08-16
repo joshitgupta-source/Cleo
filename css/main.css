@@ -1,56 +1,27 @@
 *, *::before, *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-:root {
-    --accent-color: #8ab4f8;
-    --sc-thumb: rgba(255, 255, 255, 0.2);
-    --sc-thumb-hover: rgba(255, 255, 255, 0.4);
-    --search-bg: #202124;
-    --search-text: #ffffff;
-    --search-radius: 24px;
-    --shortcut-bg: #303134;
-    --shortcut-text: #ffffff;
-    --bg-color: #000000;
-    --accent-color: #8ab4f8;
-}
-
-html.light-bg {
-    --sc-thumb: rgba(0, 0, 0, 0.2);
-    --sc-thumb-hover: rgba(0, 0, 0, 0.4);
-}
-
-html.accent-scrollbar {
-    --sc-thumb: var(--accent-color);
-    --sc-thumb-hover: var(--accent-color);
-}
-
-html.custom-scrollbar {
-    --sc-thumb: var(--custom-sc-color);
-    --sc-thumb-hover: var(--custom-sc-color);
-}
-
+/* Base Body Styles */
 body {
-    background-color: #000000;
-    color: #e8eaed;
-    font-family: system-ui, -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    display: flex;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transition: background-color 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    background-color: var(--bg-color);
-    transition: background-color 0.15s ease-out;
+  background-color: var(--bg-color, #000000);
+  color: #e8eaed;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Global Utilities */
 .hidden {
-    display: none !important;
+  display: none !important;
 }
