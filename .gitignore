@@ -1,4 +1,4 @@
-# OS generated files
+# OS Metadata & System Files
 .DS_Store
 .DS_Store?
 ._*
@@ -6,11 +6,39 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+Desktop.ini
 
-# User exported backups
-cleo_backup_*.json
-
-# Minification / Node files (for when we build the production code)
+# Node Dependencies & Package Locks
 node_modules/
-dist/
 package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build Outputs & Store Release Bundles
+dist/
+build/
+out/
+*.zip
+*.crx
+*.xpi
+.web-extension-artifacts/
+web-ext-artifacts/
+
+# User Exported Backups & JSON Dumps
+[Cc]leo_[Bb]ackup_*.json
+*.backup.json
+
+# IDE & Editor Workspace Configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Environment & Local Secrets
+.env
+.env.local
+.env.*.local
