@@ -11,13 +11,12 @@
   "permissions": [
     "storage",
     "topSites",
+    "favicon",
     "alarms",
-    "notifications",
-    "favicon"
+    "notifications"
   ],
   "background": {
-    "service_worker": "background.js",
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
   "icons": {
     "16": "icons/icon16.png",
