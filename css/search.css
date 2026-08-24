@@ -90,7 +90,7 @@
   pointer-events: none;
 }
 
-/* --- Dropdown Menu --- */
+/* --- Dropdown Menu (Hardcoded Frosted Blur + Transparency Controlled) --- */
 #engine-dropdown-menu {
   position: absolute;
   top: calc(100% + 10px);
@@ -105,8 +105,8 @@
   z-index: 100;
   overflow: hidden;
   padding: 8px 0;
-  backdrop-filter: var(--glass-search, blur(12px));
-  -webkit-backdrop-filter: var(--glass-search, blur(12px));
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   transform: translateZ(0);
 }
 

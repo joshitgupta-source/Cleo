@@ -54,7 +54,7 @@ export const defaultSettings = Object.freeze({
   // Pomodoro Timer
   showPomodoro: true,
   pomodoroPosition: 'top-left',
-  pomodoroColorMode: 'custom',
+  pomodoroColorMode: 'accent',
   pomodoroTextMode: 'monochrome',
   pomodoroBg: '#f0eee9',
   pomodoroBorder: true,

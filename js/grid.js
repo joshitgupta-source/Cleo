@@ -1,4 +1,4 @@
-import { applySmartInvert } from './icon-utils.js';
+import { applySmartInvert, getFaviconUrl } from './icon-utils.js';
 
 const getEl = (id) => document.getElementById(id);
 
@@ -36,6 +36,11 @@ const getActiveTile = () => activeTileIndex !== null ? document.querySelector(`.
 export function initContextMenu(onEdit, onDelete, onTogglePin) {
   if (isContextMenuInitialized) return;
   isContextMenuInitialized = true;
+
+  // Append to document.body once to act as a detached floating layer
+  if (!document.body.contains(globalMenu)) {
+    document.body.appendChild(globalMenu);
+  }
 
   pinOpt.addEventListener('click', (e) => {
     e.preventDefault();
@@ -81,19 +86,38 @@ export function initContextMenu(onEdit, onDelete, onTogglePin) {
       const tile = menuBtn.closest('.shortcut-container');
       if (!tile) return;
 
-      const isAlreadyOpenHere = globalMenu.parentElement === tile && globalMenu.style.display === 'flex';
+      const targetIndex = parseInt(tile.dataset.index, 10);
+      const isAlreadyOpenHere = activeTileIndex === targetIndex && globalMenu.style.display === 'flex';
       
       hideMenu();
       
       if (!isAlreadyOpenHere) {
-        activeTileIndex = parseInt(tile.dataset.index, 10);
+        activeTileIndex = targetIndex;
         pinOpt.textContent = tile.dataset.pinned === 'true' ? 'Unpin shortcut' : 'Pin shortcut';
-        tile.appendChild(globalMenu);
+        
+        // Compute floating coordinates directly against the viewport
+        const rect = menuBtn.getBoundingClientRect();
+        
+        globalMenu.style.position = 'fixed';
+        globalMenu.style.top = `${rect.bottom + 6}px`;
+        
+        // Prevent menu from overflowing past right viewport edge
+        const menuWidth = 150;
+        if (rect.left + menuWidth > window.innerWidth) {
+          globalMenu.style.left = `${window.innerWidth - menuWidth - 16}px`;
+        } else {
+          globalMenu.style.left = `${rect.left}px`;
+        }
+
+        globalMenu.style.zIndex = '99999';
         globalMenu.style.display = 'flex';
         tile.classList.add('menu-active');
       }
     }
   });
+
+  window.addEventListener('resize', hideMenu);
+  window.addEventListener('scroll', hideMenu, true);
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && globalMenu.style.display === 'flex') {
@@ -247,13 +271,29 @@ export function renderGrid(sites = [], isEditable = true, currentMaxShortcuts = 
 
     const img = document.createElement('img');
     img.className = 'shortcut-icon'; 
-    img.crossOrigin = 'anonymous';
-    img.src = `${chrome.runtime.getURL('/_favicon/')}?pageUrl=${encodeURIComponent(siteData.url)}&size=32`;
+
+    const resolvedUrl = getFaviconUrl(siteData.url, 32);
+    img.src = resolvedUrl || fallbackSvg;
     
-    img.onload = () => applySmartInvert(img);
+    img.onload = () => {
+      applySmartInvert(img);
+    };
+
     img.onerror = () => { 
-      img.src = fallbackSvg; 
-      img.onload = () => applySmartInvert(img);
+      if (!img.dataset.hasFallback) {
+        img.dataset.hasFallback = 'true';
+        try {
+          const validUrl = siteData.url.startsWith('http://') || siteData.url.startsWith('https://') 
+            ? siteData.url 
+            : `https://${siteData.url}`;
+          const domain = new URL(validUrl).hostname;
+          img.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+        } catch {
+          img.src = fallbackSvg;
+        }
+      } else {
+        img.src = fallbackSvg;
+      }
     };
     
     link.appendChild(img);

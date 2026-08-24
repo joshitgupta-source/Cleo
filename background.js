@@ -1,5 +1,5 @@
 /**
- * Cleo Service Worker - Pomodoro & Background Task Engine
+ * Cleo Background Engine - Pomodoro & Notification Management
  */
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -54,68 +54,86 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 /**
+ * Creates cross-browser desktop notifications for Chromium and Firefox
+ */
+function triggerNotification(title, message) {
+  try {
+    const notifId = `cleo-pomo-${Date.now()}`;
+    const iconUrl = typeof chrome !== 'undefined' && chrome.runtime?.getURL 
+      ? chrome.runtime.getURL('icons/icon128.png') 
+      : 'icons/icon128.png';
+
+    chrome.notifications.create(notifId, {
+      type: 'basic',
+      iconUrl: iconUrl,
+      title: title,
+      message: message,
+      priority: 2
+    }, () => {
+      if (chrome.runtime.lastError) {
+        console.warn('Cleo: Notification error:', chrome.runtime.lastError.message);
+      }
+    });
+  } catch (err) {
+    console.error('Cleo: Failed to trigger notification:', err);
+  }
+}
+
+/**
  * Handles phase transitions (Focus <-> Break) and triggers system notifications.
  */
 function handleTimerComplete() {
   chrome.storage.local.get({ focusTime: 25, breakTime: 5, pomodoro: {} }, (data) => {
     const currentMode = data.pomodoro?.mode || 'focus';
-    const notifId = 'cleoPomodoroDone';
-    
-    chrome.notifications.clear(notifId, () => {
-      if (currentMode === 'focus') {
-        const breakMs = (data.breakTime || 5) * 60 * 1000;
-        const newEndTime = Date.now() + breakMs;
-        
-        chrome.storage.local.set({
-          pomodoro: {
-            ...data.pomodoro,
-            isRunning: true,
-            endTime: newEndTime,
-            timeLeft: breakMs,
-            mode: 'break'
-          }
-        }, () => {
-          chrome.alarms.create('pomodoroAlarm', { when: newEndTime });
-          
-          chrome.notifications.create(notifId, {
-            type: 'basic',
-            iconUrl: 'icons/icon128.png',
-            title: 'Focus Session Complete! ☕',
-            message: 'Great job! Your break timer has started automatically.',
-            priority: 2,
-            requireInteraction: true
-          });
-        });
-      } else {
-        const focusMs = (data.focusTime || 25) * 60 * 1000;
-        
-        chrome.storage.local.set({
-          pomodoro: {
-            ...data.pomodoro,
-            isRunning: false,
-            endTime: null,
-            timeLeft: focusMs,
-            mode: 'focus'
-          }
-        }, () => {
-          chrome.notifications.create(notifId, {
-            type: 'basic',
-            iconUrl: 'icons/icon128.png',
-            title: 'Break Finished! 🎯',
-            message: 'Ready to dive back in? Click play when you are ready to focus.',
-            priority: 2,
-            requireInteraction: true
-          });
-        });
-      }
 
-      // Safely notify active tabs
-      try {
-        chrome.runtime.sendMessage({ action: 'timerComplete' }).catch(() => {});
-      } catch (e) {
-        // Tab not currently listening; ignore
-      }
-    });
+    if (currentMode === 'focus') {
+      const breakMs = (data.breakTime || 5) * 60 * 1000;
+      const newEndTime = Date.now() + breakMs;
+
+      chrome.storage.local.set({
+        pomodoro: {
+          ...data.pomodoro,
+          isRunning: true,
+          endTime: newEndTime,
+          timeLeft: breakMs,
+          mode: 'break'
+        }
+      }, () => {
+        chrome.alarms.create('pomodoroAlarm', { when: newEndTime });
+        triggerNotification(
+          'Focus Session Complete! ☕',
+          'Great job! Your break timer has started automatically.'
+        );
+      });
+    } else {
+      const focusMs = (data.focusTime || 25) * 60 * 1000;
+
+      chrome.storage.local.set({
+        pomodoro: {
+          ...data.pomodoro,
+          isRunning: false,
+          endTime: null,
+          timeLeft: focusMs,
+          mode: 'focus'
+        }
+      }, () => {
+        triggerNotification(
+          'Break Finished! 🎯',
+          'Ready to dive back in? Click play when you are ready to focus.'
+        );
+      });
+    }
+
+    // Safely broadcast message to active tabs
+    try {
+      chrome.runtime.sendMessage({ action: 'timerComplete' }, () => {
+        if (chrome.runtime.lastError) {
+          // No active tabs listening; safe to ignore
+        }
+      });
+    } catch (e) {
+      // Catch synchronous dispatch errors if browser is closing
+    }
   });
 }
 
@@ -128,7 +146,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // Dismiss notification on click
 chrome.notifications.onClicked.addListener((notificationId) => {
-  if (notificationId === 'cleoPomodoroDone') {
+  if (notificationId.startsWith('cleo-pomo-')) {
     chrome.notifications.clear(notificationId);
   }
 });

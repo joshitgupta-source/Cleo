@@ -167,7 +167,7 @@ const stopHold = (e) => {
   if (holdTimeout) clearTimeout(holdTimeout);
 };
 
-export function applyPomodoroTheme(settings) {
+export function applyPomodoroTheme(settings = {}) {
   if (!widget) return;
 
   if (settings.showPomodoro === false) {
@@ -184,34 +184,30 @@ export function applyPomodoroTheme(settings) {
   document.documentElement.style.setProperty('--pomo-left', isRight ? 'auto' : '25px');
   document.documentElement.style.setProperty('--pomo-right', isRight ? '25px' : 'auto');
   
-  const gRadius = settings.globalRadius !== undefined ? settings.globalRadius : 12;
+  const gRadius = settings.globalRadius !== undefined ? settings.globalRadius : 16;
   document.documentElement.style.setProperty('--pomo-radius', `${gRadius}px`);
 
   widget.classList.toggle('pos-top-right', isRight);
   widget.classList.toggle('pos-top-left', !isRight);
   widget.classList.toggle('has-border', Boolean(settings.pomodoroBorder));
 
-  const bgMode = settings.pomodoroColorMode || 'custom';
-  
-  let baseBg = '#f0eee9';
+  // Defaults to Accent Color across presets
+  const bgMode = settings.pomodoroColorMode || 'accent';
+  let baseBg = settings.accentColor || '#8ab4f8';
+
   if (bgMode === 'accent') {
     baseBg = settings.accentColor || '#8ab4f8';
   } else if (bgMode === 'monochrome') {
     const dashboardBg = settings.bgValue || '#000000';
     baseBg = getContrastColor(dashboardBg);
-  } else {
-    baseBg = settings.pomodoroBg || '#f0eee9';
+  } else if (bgMode === 'custom') {
+    baseBg = settings.pomodoroBg || '#8ab4f8';
   }
 
   const op = settings.globalOpacity !== undefined ? settings.globalOpacity : 100;
-  
-  let autoText;
-  if (op < 10) {
-    const dashboardBg = settings.bgType === 'color' ? (settings.bgValue || '#000000') : (settings.accentColor || '#000000');
-    autoText = getContrastColor(dashboardBg);
-  } else {
-    autoText = getContrastColor(baseBg);
-  }
+  document.documentElement.style.setProperty('--pomo-opacity', `${op}%`);
+
+  const autoText = getContrastColor(baseBg);
 
   const bgPickerWrapper = document.getElementById('pomodoro-bg-picker-wrapper');
   if (bgPickerWrapper) bgPickerWrapper.style.display = (bgMode === 'custom') ? 'flex' : 'none';
@@ -219,18 +215,24 @@ export function applyPomodoroTheme(settings) {
   let hex = baseBg.replace('#', '');
   if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
   
-  const r = parseInt(hex.slice(0, 2), 16) || 240;
-  const g = parseInt(hex.slice(2, 4), 16) || 238;
-  const b = parseInt(hex.slice(4, 6), 16) || 233;
+  const r = parseInt(hex.slice(0, 2), 16) || 138;
+  const g = parseInt(hex.slice(2, 4), 16) || 180;
+  const b = parseInt(hex.slice(4, 6), 16) || 248;
   
   const rgbaBg = `rgba(${r}, ${g}, ${b}, ${op / 100})`;
 
   document.documentElement.style.setProperty('--pomo-bg-color', rgbaBg);
   document.documentElement.style.setProperty('--pomo-text-color', autoText);
+  document.documentElement.style.setProperty('--glass-pomodoro', settings.globalGlass !== false ? 'blur(12px)' : 'none');
   
   widget.style.backgroundColor = rgbaBg;
   widget.style.color = autoText;
-  widget.style.backdropFilter = settings.globalGlass !== false ? 'blur(12px)' : 'none';
+}
+
+function fetchAndApplyTheme() {
+  getSettings((data) => {
+    if (data) applyPomodoroTheme(data);
+  });
 }
 
 export function initPomodoro() {
@@ -319,10 +321,10 @@ export function initPomodoro() {
 
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.accentColor || changes.bgValue || changes.bgType || changes.globalOpacity || changes.globalGlass || changes.globalRadius || changes.pomodoroBg || changes.pomodoroPosition || changes.pomodoroColorMode || changes.pomodoroBorder || changes.showPomodoro) {
-      getSettings().then(applyPomodoroTheme);
+      fetchAndApplyTheme();
     }
   });
 
   syncWithBackground();
-  getSettings().then(applyPomodoroTheme);
+  fetchAndApplyTheme();
 }

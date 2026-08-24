@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Cleo - Custom New Tab",
+  "version": "1.0.1",
+  "chrome_url_overrides": { "newtab": "newtab.html" },
+  "permissions": ["storage", "topSites", "alarms", "notifications"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cleo-new-tab@joshitgupta-source.com",
+      "strict_min_version": "109.0"
+    }
+  }
+}

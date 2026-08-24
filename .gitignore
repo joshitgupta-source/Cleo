@@ -6,7 +6,23 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
-Desktop.ini
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Python Build, Bytecode & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
 
 # Node Dependencies & Package Locks
 node_modules/
@@ -14,20 +30,24 @@ package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Build Outputs & Store Release Bundles
+# Build Outputs, Packaging & Key Files (Covers Python & WebExtension dist)
 dist/
 build/
 out/
+package/
 *.zip
 *.crx
 *.xpi
+*.pem
 .web-extension-artifacts/
 web-ext-artifacts/
 
 # User Exported Backups & JSON Dumps
 [Cc]leo_[Bb]ackup_*.json
 *.backup.json
+*.export.json
 
 # IDE & Editor Workspace Configs
 .vscode/
@@ -37,6 +57,10 @@ web-ext-artifacts/
 *.swp
 *.swo
 *~
+
+# Temporary & Cache Files
+.cache/
+*.tmp
 
 # Environment & Local Secrets
 .env

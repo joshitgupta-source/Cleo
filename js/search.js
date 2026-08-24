@@ -1,3 +1,5 @@
+import { applySmartInvert, getFaviconUrl } from './icon-utils.js';
+
 export const ENGINES = [
   { name: 'Google', url: 'https://www.google.com/search?q=', domain: 'https://www.google.com' },
   { name: 'Google Web', url: 'https://www.google.com/search?udm=14&q=', domain: 'https://www.google.com' },
@@ -16,20 +18,6 @@ const FALLBACK_SVG = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"
 
 let isSearchInitialized = false;
 let isSettingsSearchInitialized = false;
-
-function getEngineFaviconUrl(domain) {
-  if (typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
-    try {
-      return `${chrome.runtime.getURL('/_favicon/')}?pageUrl=${encodeURIComponent(domain)}&size=32`;
-    } catch (e) {}
-  }
-  try {
-    const host = new URL(domain).hostname;
-    return `https://icons.duckduckgo.com/ip3/${host}.ico`;
-  } catch (e) {
-    return FALLBACK_SVG;
-  }
-}
 
 export function populateEngineDropdown() {
   const selectEl = getEl('search-engine-select');
@@ -60,9 +48,24 @@ export function initSearch(onEngineChange) {
     btn.dataset.url = eng.url;
 
     const img = document.createElement('img');
-    img.src = getEngineFaviconUrl(eng.domain);
+    img.src = getFaviconUrl(eng.domain, 32) || FALLBACK_SVG;
     img.alt = eng.name;
-    img.onerror = () => { img.src = FALLBACK_SVG; };
+
+    img.onload = () => applySmartInvert(img);
+
+    img.onerror = () => {
+      if (!img.dataset.hasFallback) {
+        img.dataset.hasFallback = 'true';
+        try {
+          const host = new URL(eng.domain).hostname;
+          img.src = `https://icons.duckduckgo.com/ip3/${host}.ico`;
+        } catch (e) {
+          img.src = FALLBACK_SVG;
+        }
+      } else {
+        img.src = FALLBACK_SVG;
+      }
+    };
 
     const span = document.createElement('span');
     span.textContent = eng.name;
@@ -123,9 +126,26 @@ export function updateSearchIcon(engineUrl) {
   if (!engineIcon) return;
 
   const activeEngine = ENGINES.find(e => e.url === engineUrl) || ENGINES[0];
-  engineIcon.src = getEngineFaviconUrl(activeEngine.domain);
+  delete engineIcon.dataset.hasFallback;
+  
+  engineIcon.src = getFaviconUrl(activeEngine.domain, 32) || FALLBACK_SVG;
   engineIcon.alt = activeEngine.name;
-  engineIcon.onerror = () => { engineIcon.src = FALLBACK_SVG; };
+
+  engineIcon.onload = () => applySmartInvert(engineIcon);
+
+  engineIcon.onerror = () => {
+    if (!engineIcon.dataset.hasFallback) {
+      engineIcon.dataset.hasFallback = 'true';
+      try {
+        const host = new URL(activeEngine.domain).hostname;
+        engineIcon.src = `https://icons.duckduckgo.com/ip3/${host}.ico`;
+      } catch (e) {
+        engineIcon.src = FALLBACK_SVG;
+      }
+    } else {
+      engineIcon.src = FALLBACK_SVG;
+    }
+  };
 }
 
 export function initSettingsSearch() {

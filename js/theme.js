@@ -6,6 +6,89 @@ import { renderGrid } from './grid.js';
 import { applyThemeColors } from './utils.js';
 import { applyPomodoroTheme } from './pomodoro.js';
 
+export const THEME_PRESETS = {
+  default: {
+    bgType: 'color',
+    bgValue: '#F0EEE9',
+    accentColor: '#3B82F6',
+    searchColor: '#FFFFFF',
+    searchMode: 'auto',
+    shortcutColor: '#FFFFFF',
+    shortcutMode: 'auto',
+    scrollbarColor: '#3B82F6',
+    scrollbarMode: 'auto',
+    clockColorMode: 'dynamic',
+    globalFont: 'system-ui, -apple-system, sans-serif',
+    globalRadius: 20,
+    globalOpacity: 85,
+    globalGlass: true,
+    showShadows: true,
+    // Pomodoro defaults to Accent Color
+    pomodoroColorMode: 'accent',
+    pomodoroBorder: false
+  },
+  slate: {
+    bgType: 'color',
+    bgValue: '#0F172A',
+    accentColor: '#8AB4F8',
+    searchColor: '#1E293B',
+    searchMode: 'auto',
+    shortcutColor: '#1E293B',
+    shortcutMode: 'auto',
+    scrollbarColor: '#8AB4F8',
+    scrollbarMode: 'auto',
+    clockColorMode: 'dynamic',
+    globalFont: 'system-ui, -apple-system, sans-serif',
+    globalRadius: 16,
+    globalOpacity: 85,
+    globalGlass: true,
+    showShadows: true,
+    // Pomodoro defaults to Accent Color
+    pomodoroColorMode: 'accent',
+    pomodoroBorder: false
+  },
+  obsidian: {
+    bgType: 'color',
+    bgValue: '#1C1917',
+    accentColor: '#D97706',
+    searchColor: '#292524',
+    searchMode: 'auto',
+    shortcutColor: '#292524',
+    shortcutMode: 'auto',
+    scrollbarColor: '#D97706',
+    scrollbarMode: 'auto',
+    clockColorMode: 'dynamic',
+    globalFont: 'system-ui, -apple-system, sans-serif',
+    globalRadius: 14,
+    globalOpacity: 85,
+    globalGlass: true,
+    showShadows: true,
+    // Pomodoro defaults to Accent Color
+    pomodoroColorMode: 'accent',
+    pomodoroBorder: false
+  },
+  oled: {
+    bgType: 'color',
+    bgValue: '#000000',
+    accentColor: '#C58AF9',
+    searchColor: '#121212',
+    searchMode: 'auto',
+    shortcutColor: '#121212',
+    shortcutMode: 'auto',
+    scrollbarColor: '#C58AF9',
+    scrollbarMode: 'auto',
+    clockColorMode: 'dynamic',
+    globalFont: 'system-ui, -apple-system, sans-serif',
+    globalRadius: 12,
+    globalOpacity: 90,
+    globalGlass: false,
+    showShadows: false,
+    // Pomodoro defaults to Accent Color
+    pomodoroColorMode: 'accent',
+    pomodoroBorder: false
+  }
+};
+
 export function getAverageColor(imgElement) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -35,6 +118,23 @@ export function getAverageColor(imgElement) {
 
 export function saveAndApply(updates) {
   updateStorage(updates, applySettings);
+}
+
+export function applyThemePreset(presetKey) {
+  const preset = THEME_PRESETS[presetKey];
+  if (!preset) return;
+  saveAndApply(preset);
+}
+
+export function initThemePresets() {
+  document.querySelectorAll('.theme-preset-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const themeKey = btn.dataset.theme;
+      if (themeKey) {
+        applyThemePreset(themeKey);
+      }
+    });
+  });
 }
 
 const syncInput = (id, value) => {
@@ -114,11 +214,13 @@ export function applySettings() {
     syncInput('global-opacity-num', gOpacity);
     document.documentElement.style.setProperty('--search-opacity', `${gOpacity}%`);
     document.documentElement.style.setProperty('--shortcut-opacity', `${gOpacity}%`);
+    document.documentElement.style.setProperty('--pomo-opacity', `${gOpacity}%`);
 
     const gGlass = result.globalGlass !== false;
     syncInput('global-glass-toggle', gGlass);
     toggleClass(!gGlass, 'search-glass-off');
     toggleClass(!gGlass, 'shortcut-glass-off');
+    toggleClass(!gGlass, 'glass-off');
 
     // --- Search Widget ---
     syncInput('show-search-toggle', result.showSearch);
@@ -180,12 +282,13 @@ export function applySettings() {
       clockWidget.style.flexDirection = result.datePosition === 'above' ? 'column-reverse' : 'column';
     }
 
-    // --- Pomodoro Settings & Live Synchronization ---
+    // --- Pomodoro Settings & Live Synchronization (Defaults to Accent) ---
+    const pomoMode = result.pomodoroColorMode || 'accent';
     syncInput('show-pomodoro-toggle', result.showPomodoro !== false);
     syncInput('pomodoro-position-select', result.pomodoroPosition || 'top-left');
-    syncInput('pomodoro-color-mode-select', result.pomodoroColorMode || 'custom');
-    syncInput('pomodoro-bg-picker', result.pomodoroBg || '#f0eee9');
-    syncInput('pomodoro-bg-text', safeUpper(result.pomodoroBg, '#F0EEE9'));
+    syncInput('pomodoro-color-mode-select', pomoMode);
+    syncInput('pomodoro-bg-picker', result.pomodoroBg || '#8ab4f8');
+    syncInput('pomodoro-bg-text', safeUpper(result.pomodoroBg, '#8AB4F8'));
     syncInput('pomodoro-border-toggle', Boolean(result.pomodoroBorder));
     
     const focusVal = result.focusTime || 25;
@@ -196,7 +299,7 @@ export function applySettings() {
     syncInput('pomodoro-break-slider', breakVal);
     syncInput('pomodoro-break-num', breakVal);
 
-    toggleDisplay('pomodoro-bg-picker-wrapper', (result.pomodoroColorMode || 'custom') === 'custom', 'flex');
+    toggleDisplay('pomodoro-bg-picker-wrapper', pomoMode === 'custom', 'flex');
     toggleDisplay('pomodoro-options-group', result.showPomodoro !== false);
     
     applyPomodoroTheme(result);
