@@ -191,7 +191,6 @@ export function applyPomodoroTheme(settings = {}) {
   widget.classList.toggle('pos-top-left', !isRight);
   widget.classList.toggle('has-border', Boolean(settings.pomodoroBorder));
 
-  // Defaults to Accent Color across presets
   const bgMode = settings.pomodoroColorMode || 'accent';
   let baseBg = settings.accentColor || '#8ab4f8';
 

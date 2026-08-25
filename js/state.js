@@ -2,7 +2,6 @@
  * Master immutable baseline settings schema.
  */
 export const defaultSettings = Object.freeze({
-  // Core Layout & Shortcuts
   shortcuts: Object.freeze([]),
   hiddenTopSites: Object.freeze([]),
   pinnedSites: Object.freeze([]),
@@ -11,30 +10,25 @@ export const defaultSettings = Object.freeze({
   shortcutType: 'topSites',
   maxShortcuts: 50,
   
-  // Global Colors & Backgrounds
   accentColor: '#8ab4f8',
   bgType: 'color',
   bgValue: '#F0EEE9', 
   
-  // Global UI Master Controls
   globalRadius: 12,
   globalOpacity: 100,
   globalGlass: true,
   globalFont: 'system-ui, -apple-system, sans-serif',
   showShadows: true,
   
-  // Search
   showSearch: true,
   showSearchBorder: true,
   searchEngine: 'https://www.google.com/search?q=', 
   searchMode: 'custom',
   searchColor: '#F6EBC8',
   
-  // Shortcuts Style
   shortcutMode: 'custom',
   shortcutColor: '#D3E4F1',
   
-  // Clock
   showClock: true,
   showDate: true,
   timeFormat: '12hr',
@@ -44,14 +38,12 @@ export const defaultSettings = Object.freeze({
   clockColorMode: 'dynamic',
   clockColor: '#ffffff',
   
-  // Misc UI
   scrollbarVis: 'always',
   scrollbarMode: 'auto',
   scrollbarColor: '#8ab4f8',
   showLockBtn: true,
   isLocked: false,
   
-  // Pomodoro Timer
   showPomodoro: true,
   pomodoroPosition: 'top-left',
   pomodoroColorMode: 'accent',
@@ -62,9 +54,6 @@ export const defaultSettings = Object.freeze({
   breakTime: 5
 });
 
-/**
- * Mirror critical keys to localStorage for preload.js zero-FOUC access.
- */
 function syncToLocalStorage(key, value) {
   if (value === undefined || value === null) return;
   try {
@@ -74,9 +63,6 @@ function syncToLocalStorage(key, value) {
   }
 }
 
-/**
- * Retrieves current settings with guaranteed fallbacks to defaultSettings.
- */
 export async function getSettings(callback) {
   try {
     const result = await chrome.storage.local.get(defaultSettings);
@@ -89,9 +75,6 @@ export async function getSettings(callback) {
   }
 }
 
-/**
- * Updates chrome.storage.local and mirrors values into localStorage.
- */
 export async function updateStorage(updates, callback) {
   if (!updates || typeof updates !== 'object') return;
 
@@ -112,9 +95,6 @@ export async function updateStorage(updates, callback) {
   }
 }
 
-/**
- * Exports full extension configuration as a downloadable JSON file.
- */
 export function exportSettings() {
   return new Promise(async (resolve) => {
     try {
@@ -143,9 +123,6 @@ export function exportSettings() {
   });
 }
 
-/**
- * Imports settings with clean-slate wiping to eliminate legacy ghost keys.
- */
 export function importSettings(file, callback) {
   if (!file) {
     if (typeof callback === 'function') callback(false);
@@ -160,27 +137,22 @@ export function importSettings(file, callback) {
         throw new Error('Invalid JSON structure');
       }
 
-      // 1. Start from a fresh deep clone of baseline defaults
       const freshState = JSON.parse(JSON.stringify(defaultSettings));
       const validKeys = new Set(Object.keys(defaultSettings));
 
-      // 2. Overlay only recognized keys from the imported backup
       for (const [key, value] of Object.entries(parsedData)) {
         if (validKeys.has(key) && value !== undefined) {
           freshState[key] = value;
         }
       }
 
-      // 3. Clean-slate wipe both storage layers
       localStorage.clear();
       await chrome.storage.local.clear();
 
-      // 4. Mirror all validated keys back to localStorage
       for (const [key, value] of Object.entries(freshState)) {
         syncToLocalStorage(key, value);
       }
 
-      // 5. Commit clean baseline to chrome.storage.local
       await chrome.storage.local.set(freshState);
       
       if (typeof callback === 'function') callback(true);

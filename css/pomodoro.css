@@ -39,12 +39,10 @@
   border: 1px solid color-mix(in srgb, var(--pomo-text-color, #ffffff) 25%, transparent);
 }
 
-/* Side panel avoidance offset */
 #pomodoro-widget.pos-top-right.panel-open-shift {
   right: calc(var(--panel-width, 340px) + 25px) !important;
 }
 
-/* --- Layout Rows --- */
 .pomodoro-top-row {
   display: flex;
   align-items: center;
@@ -69,7 +67,6 @@
   color: inherit;
 }
 
-/* --- Controls & Buttons --- */
 #pomodoro-widget button {
   background: none;
   border: none;
@@ -104,7 +101,6 @@
   background-color: color-mix(in srgb, currentColor 22%, transparent);
 }
 
-/* --- Conditional Body Overrides --- */
 body.no-shadows #pomodoro-widget {
   box-shadow: none !important;
   filter: drop-shadow(0 0 0 transparent) !important;

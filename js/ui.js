@@ -3,9 +3,6 @@ import { getTextColorForBackground } from './utils.js';
 const getEl = (id) => document.getElementById(id);
 let isUIInitialized = false;
 
-/**
- * Initializes modal backdrop dismissals and side-panel triggers.
- */
 export function initUI(onModalClose) {
   if (isUIInitialized) return;
   isUIInitialized = true;
@@ -39,9 +36,6 @@ export function initUI(onModalClose) {
   });
 }
 
-/**
- * Opens shortcut modal dialog and focuses the title field.
- */
 export function openModal(title, name = '', url = '') {
   const titleEl = getEl('modal-title');
   const nameEl = getEl('site-name');
@@ -56,9 +50,6 @@ export function openModal(title, name = '', url = '') {
   requestAnimationFrame(() => nameEl?.focus());
 }
 
-/**
- * Closes modal dialog and resets field inputs.
- */
 export function closeModal() {
   getEl('modal-backdrop')?.classList.add('hidden');
   const nameEl = getEl('site-name');
@@ -67,9 +58,6 @@ export function closeModal() {
   if (urlEl) urlEl.value = '';
 }
 
-/**
- * Applies wallpaper/solid color background and calculates light/dark theme classes.
- */
 export function applyBackground(type, value) {
   const root = document.documentElement;
   const body = document.body;

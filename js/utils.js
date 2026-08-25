@@ -1,6 +1,3 @@
-/**
- * Converts 3 or 6 digit hex string to RGB object with numerical safety fallbacks.
- */
 export function hexToRgb(hex) {
   if (!hex || typeof hex !== 'string') return { r: 0, g: 0, b: 0 };
   let h = hex.startsWith('#') ? hex.slice(1) : hex;
@@ -16,17 +13,11 @@ export function hexToRgb(hex) {
   };
 }
 
-/**
- * Converts RGB components back to 6-digit hex color.
- */
 export function rgbToHex(r, g, b) {
   const clamp = (v) => Math.max(0, Math.min(255, Math.round(v) || 0));
   return '#' + ((1 << 24) + (clamp(r) << 16) + (clamp(g) << 8) + clamp(b)).toString(16).slice(1);
 }
 
-/**
- * Determines whether light or dark text yields optimal contrast for a given background hex.
- */
 export function getTextColorForBackground(hexColor) {
   if (!hexColor || typeof hexColor !== 'string') return 'light-text';
   let h = hexColor.startsWith('#') ? hexColor.slice(1) : hexColor;
@@ -37,9 +28,6 @@ export function getTextColorForBackground(hexColor) {
   return yiq >= 128 ? 'dark-text' : 'light-text';
 }
 
-/**
- * Calculates a complementary dynamic HSL color with optimal brightness contrast.
- */
 export function getDynamicColorForBackground(hex) {
   const rgb = hexToRgb(hex);
   const r = rgb.r / 255;
@@ -69,9 +57,6 @@ export function getDynamicColorForBackground(hex) {
   return `hsl(${newH}, ${newS}%, ${newL}%)`;
 }
 
-/**
- * Mathematically blends foreground color over background based on opacity percentage.
- */
 export function blendColors(fgHex, bgHex, opacityPercent) {
   const fg = hexToRgb(fgHex);
   const bg = hexToRgb(bgHex);
@@ -84,9 +69,6 @@ export function blendColors(fgHex, bgHex, opacityPercent) {
   return rgbToHex(r, g, b);
 }
 
-/**
- * Calculates and applies derived theme colors, CSS variables, and root contrast classes.
- */
 export function applyThemeColors(result) {
   const root = document.documentElement;
   const body = document.body;
@@ -101,7 +83,6 @@ export function applyThemeColors(result) {
   const globalBgHex = (result.bgType === 'color' && result.bgValue) ? result.bgValue : '#000000';
   const isBgLight = result.bgType === 'color' && getTextColorForBackground(globalBgHex) === 'dark-text';
 
-  // --- Search Color Calculations ---
   let searchBg = '#202124';
   if (result.searchMode === 'accent') {
     searchBg = result.accentColor || '#8ab4f8';
@@ -123,7 +104,6 @@ export function applyThemeColors(result) {
   root.style.setProperty('--search-dropdown-text', searchDropdownIsDark ? '#000000' : '#ffffff');
   setClass('dark-search-text', searchIsDark);
 
-  // --- Shortcut Color Calculations ---
   let shortcutBg = '#303134';
   if (result.shortcutMode === 'accent') {
     shortcutBg = result.accentColor || '#8ab4f8';
@@ -141,7 +121,6 @@ export function applyThemeColors(result) {
   root.style.setProperty('--shortcut-text', shortcutIsDark ? '#000000' : '#ffffff');
   setClass('dark-shortcut-text', shortcutIsDark);
 
-  // --- Clock Color Calculations ---
   let clockColor = '#ffffff';
   let dateColor = '#e8eaed'; 
   const clockMode = result.clockColorMode || 'dynamic';
@@ -164,7 +143,6 @@ export function applyThemeColors(result) {
   root.style.setProperty('--clock-color', clockColor);
   root.style.setProperty('--date-color', dateColor);
 
-  // --- Scrollbar Custom Properties ---
   if (result.scrollbarMode === 'custom') {
     root.style.setProperty('--custom-sc-color', result.scrollbarColor || '#8ab4f8');
   } else {

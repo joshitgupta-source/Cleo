@@ -23,7 +23,6 @@ export const THEME_PRESETS = {
     globalOpacity: 85,
     globalGlass: true,
     showShadows: true,
-    // Pomodoro defaults to Accent Color
     pomodoroColorMode: 'accent',
     pomodoroBorder: false
   },
@@ -43,7 +42,6 @@ export const THEME_PRESETS = {
     globalOpacity: 85,
     globalGlass: true,
     showShadows: true,
-    // Pomodoro defaults to Accent Color
     pomodoroColorMode: 'accent',
     pomodoroBorder: false
   },
@@ -63,7 +61,6 @@ export const THEME_PRESETS = {
     globalOpacity: 85,
     globalGlass: true,
     showShadows: true,
-    // Pomodoro defaults to Accent Color
     pomodoroColorMode: 'accent',
     pomodoroBorder: false
   },
@@ -83,7 +80,6 @@ export const THEME_PRESETS = {
     globalOpacity: 90,
     globalGlass: false,
     showShadows: false,
-    // Pomodoro defaults to Accent Color
     pomodoroColorMode: 'accent',
     pomodoroBorder: false
   }
@@ -164,15 +160,11 @@ const safeUpper = (val, fallback = '#FFFFFF') => {
   return typeof val === 'string' ? val.toUpperCase() : fallback;
 };
 
-/**
- * Master dispatcher: maps stored settings to DOM, CSS variables, and widgets.
- */
 export function applySettings() {
   getSettings((result) => {
     applyThemeColors(result);
     applyBackground(result.bgType, result.bgValue); 
 
-    // --- Color Pickers & Hex Inputs ---
     syncInput('accent-color-picker', result.accentColor);
     syncInput('accent-color-text', safeUpper(result.accentColor, '#8AB4F8'));
 
@@ -192,7 +184,6 @@ export function applySettings() {
     syncInput('clock-color-picker', clockCustom);
     syncInput('clock-color-text', safeUpper(clockCustom, '#FFFFFF'));
 
-    // --- Global UI & Live Font Controls ---
     syncInput('show-shadows-toggle', result.showShadows);
     toggleClass(!result.showShadows, 'no-shadows');
 
@@ -222,7 +213,6 @@ export function applySettings() {
     toggleClass(!gGlass, 'shortcut-glass-off');
     toggleClass(!gGlass, 'glass-off');
 
-    // --- Search Widget ---
     syncInput('show-search-toggle', result.showSearch);
     toggleClass(!result.showSearch, 'search-off');
     toggleDisplay('search-options-group', result.showSearch);
@@ -237,7 +227,6 @@ export function applySettings() {
 
     updateSearchIcon(result.searchEngine);
 
-    // --- Shortcuts & Grid ---
     syncInput('shortcut-type-select', result.shortcutType);
     syncInput('shortcut-color-mode-select', result.shortcutMode);
     toggleDisplay('shortcut-color-wrapper', result.shortcutMode === 'custom', 'flex');
@@ -251,7 +240,6 @@ export function applySettings() {
     toggleClass(scrollMode === 'custom', 'custom-scrollbar');
     toggleDisplay('scrollbar-color-wrapper', scrollMode === 'custom', 'flex');
 
-    // --- Clock & Date ---
     syncInput('show-clock-toggle', result.showClock);
     toggleClass(!result.showClock, 'clock-off');
 
@@ -282,7 +270,6 @@ export function applySettings() {
       clockWidget.style.flexDirection = result.datePosition === 'above' ? 'column-reverse' : 'column';
     }
 
-    // --- Pomodoro Settings & Live Synchronization (Defaults to Accent) ---
     const pomoMode = result.pomodoroColorMode || 'accent';
     syncInput('show-pomodoro-toggle', result.showPomodoro !== false);
     syncInput('pomodoro-position-select', result.pomodoroPosition || 'top-left');
@@ -304,13 +291,11 @@ export function applySettings() {
     
     applyPomodoroTheme(result);
 
-    // --- Lock Control ---
     const showLock = result.showLockBtn !== undefined ? result.showLockBtn : true;
     syncInput('show-lock-btn-toggle', showLock);
     toggleDisplay('lock-btn', showLock, 'grid');
     toggleClass(Boolean(result.isLocked), 'is-locked');
 
-    // --- Shortcuts Grid Rendering ---
     const currentMaxShortcuts = parseInt(result.maxShortcuts, 10) || 50;
     syncInput('max-shortcuts-select', currentMaxShortcuts);
     syncInput('show-shortcuts-toggle', result.showShortcuts);

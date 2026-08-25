@@ -4,16 +4,12 @@ import { syncWithBackground } from './pomodoro.js';
 
 const getEl = (id) => document.getElementById(id);
 
-// --- Throttling Utility ---
 let saveRaf;
 const throttledSave = (payload) => {
   if (saveRaf) cancelAnimationFrame(saveRaf);
   saveRaf = requestAnimationFrame(() => saveAndApply(payload));
 };
 
-/**
- * Synchronizes color pickers with hex text inputs.
- */
 function syncColorPicker(pickerId, textId, settingKey) {
   const picker = getEl(pickerId);
   const text = getEl(textId);
@@ -44,9 +40,6 @@ function syncColorPicker(pickerId, textId, settingKey) {
   });
 }
 
-/**
- * Synchronizes range sliders with numeric inputs without breaking manual typing.
- */
 function syncSlider(sliderId, numId, settingKey, min, max, defaultVal) {
   const slider = getEl(sliderId);
   const numInput = getEl(numId);
@@ -63,7 +56,6 @@ function syncSlider(sliderId, numId, settingKey, min, max, defaultVal) {
     numInput.value = num;
     throttledSave({ [settingKey]: num });
 
-    // Update live timer duration if adjusted while paused
     if (settingKey === 'focusTime' || settingKey === 'breakTime') {
       chrome.storage.local.get(['pomodoro'], (res) => {
         const state = res.pomodoro || { isRunning: false, mode: 'focus' };
@@ -96,7 +88,6 @@ function syncSlider(sliderId, numId, settingKey, min, max, defaultVal) {
   });
 }
 
-// --- Color Pickers ---
 syncColorPicker('bg-color-picker', 'bg-color-text', 'bgValue');
 syncColorPicker('accent-color-picker', 'accent-color-text', 'accentColor');
 syncColorPicker('search-color-picker', 'search-color-text', 'searchColor');
@@ -105,15 +96,12 @@ syncColorPicker('scrollbar-color-picker', 'scrollbar-color-text', 'scrollbarColo
 syncColorPicker('clock-color-picker', 'clock-color-text', 'clockColor');
 syncColorPicker('pomodoro-bg-picker', 'pomodoro-bg-text', 'pomodoroBg');
 
-// --- Global Sliders ---
 syncSlider('global-radius-slider', 'global-radius-num', 'globalRadius', 0, 50, 12);
 syncSlider('global-opacity-slider', 'global-opacity-num', 'globalOpacity', 0, 100, 100);
 
-// --- Pomodoro Sliders ---
 syncSlider('pomodoro-focus-slider', 'pomodoro-focus-num', 'focusTime', 25, 120, 25);
 syncSlider('pomodoro-break-slider', 'pomodoro-break-num', 'breakTime', 5, 30, 5);
 
-// --- Complete Settings Map ---
 const settingsMap = [
   ['global-font-select', 'globalFont', false],
   ['global-glass-toggle', 'globalGlass', false],
@@ -138,7 +126,6 @@ const settingsMap = [
   ['date-position-select', 'datePosition', false],
   ['clock-color-mode-select', 'clockColorMode', false],
   
-  // Pomodoro Controls
   ['show-pomodoro-toggle', 'showPomodoro', false],
   ['pomodoro-position-select', 'pomodoroPosition', false],
   ['pomodoro-color-mode-select', 'pomodoroColorMode', false],
@@ -155,7 +142,6 @@ settingsMap.forEach(([id, key, isNumber]) => {
   });
 });
 
-// --- Background Image Upload & Processing ---
 getEl('bg-image-btn')?.addEventListener('click', () => getEl('bg-image-input')?.click());
 
 getEl('bg-image-input')?.addEventListener('change', (e) => {
@@ -216,7 +202,6 @@ getEl('bg-image-input')?.addEventListener('change', (e) => {
   e.target.value = '';
 });
 
-// --- Lock & System Controls ---
 getEl('lock-btn')?.addEventListener('click', async () => {
   const settings = await getSettings();
   const newLockState = !settings.isLocked;
@@ -226,7 +211,6 @@ getEl('lock-btn')?.addEventListener('click', async () => {
   if (window.showToast) window.showToast(newLockState ? 'Layout locked' : 'Layout unlocked');
 });
 
-// --- Import / Export / Reset ---
 getEl('export-btn')?.addEventListener('click', () => {
   exportSettings();
 });
@@ -263,7 +247,6 @@ getEl('restore-hidden-btn')?.addEventListener('click', () => {
   if (window.showToast) window.showToast('Hidden sites restored');
 });
 
-// --- Theme Presets ---
 const themePresets = {
   default: {
     bgType: 'color', bgValue: '#F0EEE9', accentColor: '#8ab4f8', 

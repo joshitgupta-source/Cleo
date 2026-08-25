@@ -46,7 +46,6 @@
   color: color-mix(in srgb, var(--search-text, #ffffff) 60%, transparent);
 }
 
-/* --- Engine Selector --- */
 .engine-selector-wrapper {
   position: relative;
   display: flex;
@@ -90,7 +89,6 @@
   pointer-events: none;
 }
 
-/* --- Dropdown Menu (Hardcoded Frosted Blur + Transparency Controlled) --- */
 #engine-dropdown-menu {
   position: absolute;
   top: calc(100% + 10px);

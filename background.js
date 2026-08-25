@@ -1,7 +1,3 @@
-/**
- * Cleo Background Engine - Pomodoro & Notification Management
- */
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.action) {
     case 'startTimer': {
@@ -53,9 +49,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-/**
- * Creates cross-browser desktop notifications for Chromium and Firefox
- */
 function triggerNotification(title, message) {
   try {
     const notifId = `cleo-pomo-${Date.now()}`;
@@ -79,9 +72,6 @@ function triggerNotification(title, message) {
   }
 }
 
-/**
- * Handles phase transitions (Focus <-> Break) and triggers system notifications.
- */
 function handleTimerComplete() {
   chrome.storage.local.get({ focusTime: 25, breakTime: 5, pomodoro: {} }, (data) => {
     const currentMode = data.pomodoro?.mode || 'focus';
@@ -124,27 +114,25 @@ function handleTimerComplete() {
       });
     }
 
-    // Safely broadcast message to active tabs
     try {
       chrome.runtime.sendMessage({ action: 'timerComplete' }, () => {
-        if (chrome.runtime.lastError) {
-          // No active tabs listening; safe to ignore
+        const err = chrome.runtime.lastError;
+        if (err && !err.message.includes('Receiving end does not exist')) {
+          console.warn('Cleo: Error sending timerComplete message:', err.message);
         }
       });
     } catch (e) {
-      // Catch synchronous dispatch errors if browser is closing
+      console.error('Cleo: Failed to send message to active tabs:', e);
     }
   });
 }
 
-// Alarm listener
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'pomodoroAlarm') {
     handleTimerComplete();
   }
 });
 
-// Dismiss notification on click
 chrome.notifications.onClicked.addListener((notificationId) => {
   if (notificationId.startsWith('cleo-pomo-')) {
     chrome.notifications.clear(notificationId);

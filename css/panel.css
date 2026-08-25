@@ -13,7 +13,6 @@
   --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Container & Structure --- */
 #side-panel { 
   position: fixed; 
   top: 0; 
@@ -64,7 +63,6 @@ html.no-shadows #side-panel {
   background: var(--text-secondary); 
 }
 
-/* --- Headers & Section Titles --- */
 .panel-header { 
   display: flex; 
   justify-content: space-between; 
@@ -86,7 +84,6 @@ html.no-shadows #side-panel {
   border-bottom: 1px solid var(--border-color); 
 }
 
-/* Direct section headers */
 .panel-section > h3 { 
   margin: 0 0 15px 0;
   padding: 0;
@@ -110,7 +107,6 @@ html.no-shadows #side-panel {
   color: var(--accent-color); 
 }
 
-/* --- Toggles & Alignment Fix --- */
 .toggle-row { 
   display: flex; 
   align-items: center; 
@@ -189,7 +185,6 @@ input:focus-visible + .slider {
   outline-offset: 2px; 
 }
 
-/* --- Form Controls & Buttons --- */
 .panel-btn { 
   width: 100%; 
   background-color: transparent; 
@@ -267,7 +262,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   pointer-events: none; 
 }
 
-/* --- Color Pickers & Swatches --- */
 .color-picker-wrapper { 
   display: flex; 
   align-items: center; 
@@ -352,7 +346,6 @@ input[type="color"]:focus-visible::-webkit-color-swatch {
   transform: scale(1);
 }
 
-/* --- Theme Preset Grid --- */
 .theme-preset-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -399,7 +392,6 @@ input[type="color"]:focus-visible::-webkit-color-swatch {
   height: 100%;
 }
 
-/* --- Panel Search & Highlight --- */
 .search-pill-container {
   display: flex;
   align-items: center;

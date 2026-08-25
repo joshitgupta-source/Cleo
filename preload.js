@@ -1,6 +1,3 @@
-/**
- * Cleo Zero-FOUC Vanguard Engine
- */
 (() => {
   try {
     const doc = document.documentElement;
@@ -13,11 +10,9 @@
       }
     };
     
-    // --- Font Token ---
     const gFont = getV('globalFont', 'system-ui, -apple-system, sans-serif');
     doc.style.setProperty('--global-font', gFont);
 
-    // --- Background & Core Variables ---
     const bT = getV('bgType', 'color');
     const bV = getV('bgValue', '#F0EEE9');
     const aC = getV('accentColor', '#8ab4f8');
@@ -42,7 +37,6 @@
 
     doc.style.setProperty('--accent-color', aC);
     
-    // --- Layout & Opacity Variables ---
     const gRadius = getV('globalRadius', '12'); 
     doc.style.setProperty('--search-radius', `${gRadius}px`);
     doc.style.setProperty('--shortcut-radius', `${gRadius}px`);
@@ -57,7 +51,6 @@
     doc.style.setProperty('--shortcut-bg', actSt);
     doc.style.setProperty('--shortcut-text', stL ? '#000000' : '#ffffff');
 
-    // --- Pomodoro Variables ---
     const pomoBgStr = getV('pomodoroBg', '#f0eee9');
     let pomoHex = pomoBgStr.replace('#', '');
     if (pomoHex.length === 3) pomoHex = pomoHex.split('').map(c => c + c).join('');
@@ -89,7 +82,6 @@
       doc.style.setProperty('--bg-image', `url("${bV}")`);
     }
 
-    // --- Scrollbar States ---
     const scV = getV('scrollbarVis', 'always');
     const scM = getV('scrollbarMode', 'auto'); 
     
@@ -103,7 +95,6 @@
     doc.classList.toggle('light-bg', bgL);
     doc.classList.toggle('dark-bg', !bgL); 
 
-    // --- Layout Classes ---
     if (srL) doc.classList.add('dark-search-text');
     if (stL) doc.classList.add('dark-shortcut-text');
     if (getV('showShadows', 'true') === 'false') doc.classList.add('no-shadows');
@@ -119,7 +110,6 @@
     if (getV('isLocked', 'false') === 'true') doc.classList.add('is-locked');
     if (getV('showPomodoro', 'true') === 'false') doc.classList.add('pomo-off');
 
-    // --- Dynamic Base Stylesheet ---
     const s = document.createElement('style');
     s.textContent = `
       body {

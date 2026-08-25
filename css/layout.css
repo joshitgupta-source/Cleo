@@ -10,7 +10,6 @@
   --grid-max-height: calc(50vh - 60px);
 }
 
-/* --- Layout Dynamic Positions --- */
 body.search-off {
   --clock-top: 28%;
   --grid-margin: 10px;
@@ -41,14 +40,12 @@ body.search-off.clock-off {
   --grid-max-height: 90vh;
 }
 
-/* --- Widget Visibility Toggles --- */
 body.search-off #search-container,
 body.clock-off #clock-widget,
 body.grid-off #grid-container {
   display: none !important;
 }
 
-/* --- Structural Containers --- */
 #main-content {
   position: relative;
   width: 100%;

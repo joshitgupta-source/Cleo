@@ -12,9 +12,6 @@ let toastTimeout = null;
 
 const getEl = (id) => document.getElementById(id);
 
-/**
- * Global toast notification system with optional undo actions.
- */
 export function showToast(msg, actionText = null, onAction = null) {
   let toast = getEl('cleo-toast');
   if (!toast) {
@@ -53,7 +50,6 @@ export function showToast(msg, actionText = null, onAction = null) {
 
 window.showToast = showToast;
 
-// --- Widget & Feature Bootstrapping ---
 initPomodoro();
 initClock();
 populateEngineDropdown();
@@ -61,7 +57,6 @@ initSettingsSearch();
 initSearch((newEngine) => saveAndApply({ searchEngine: newEngine }));
 initUI(() => { editingSiteData = null; });
 
-// --- Context Menu Actions ---
 initContextMenu(
   (url, name, isTopSite) => {
     editingSiteData = { url, isTopSite };
@@ -116,7 +111,6 @@ initContextMenu(
   }
 );
 
-// --- Grid Actions (Drag, Reorder & Drop) ---
 initGrid(
   async (fromIndex, toIndex) => {
     const data = await getSettings();
@@ -171,7 +165,6 @@ initGrid(
   }
 );
 
-// --- Global Key & Drag Listeners ---
 document.addEventListener('dragstart', (e) => {
   if (document.body.classList.contains('is-locked')) e.preventDefault();
 });
@@ -255,7 +248,6 @@ getEl('lock-btn')?.addEventListener('click', () => {
   }, 10);
 });
 
-// --- Dynamic Search Placeholder ---
 const initDynamicPlaceholder = () => {
   const searchInput = getEl('search-input');
   if (!searchInput) return;

@@ -37,7 +37,6 @@ export function initContextMenu(onEdit, onDelete, onTogglePin) {
   if (isContextMenuInitialized) return;
   isContextMenuInitialized = true;
 
-  // Append to document.body once to act as a detached floating layer
   if (!document.body.contains(globalMenu)) {
     document.body.appendChild(globalMenu);
   }
@@ -95,13 +94,11 @@ export function initContextMenu(onEdit, onDelete, onTogglePin) {
         activeTileIndex = targetIndex;
         pinOpt.textContent = tile.dataset.pinned === 'true' ? 'Unpin shortcut' : 'Pin shortcut';
         
-        // Compute floating coordinates directly against the viewport
         const rect = menuBtn.getBoundingClientRect();
         
         globalMenu.style.position = 'fixed';
         globalMenu.style.top = `${rect.bottom + 6}px`;
         
-        // Prevent menu from overflowing past right viewport edge
         const menuWidth = 150;
         if (rect.left + menuWidth > window.innerWidth) {
           globalMenu.style.left = `${window.innerWidth - menuWidth - 16}px`;

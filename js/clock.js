@@ -10,23 +10,16 @@ let lastDateStr = '';
 let lastDay = -1;
 let timerId = null;
 
-/**
- * Initializes clock DOM references and starts the tick loop.
- */
 export function initClock() {
   timeEl = document.getElementById('time-display');
   dateEl = document.getElementById('date-display');
   
   if (!timeEl && !dateEl) return;
   
-  // Initial immediate draw
   updateClock();
   scheduleNextTick();
 }
 
-/**
- * Stops the ticking loop to save CPU when the widget is hidden.
- */
 export function stopClock() {
   if (timerId) {
     clearTimeout(timerId);
@@ -34,14 +27,10 @@ export function stopClock() {
   }
 }
 
-/**
- * Schedules the next tick aligned precisely to the start of the next second.
- */
 function scheduleNextTick() {
   stopClock();
   
   const now = new Date();
-  // +10ms offset protects against early timer firing
   const msUntilNextSecond = 1000 - now.getMilliseconds() + 10;
   
   timerId = setTimeout(() => {
@@ -50,9 +39,6 @@ function scheduleNextTick() {
   }, msUntilNextSecond);
 }
 
-/**
- * Formats time string and updates DOM only on string change.
- */
 function updateClock() {
   if (!timeEl) return;
   
@@ -81,7 +67,6 @@ function updateClock() {
     lastTimeStr = timeString;
   }
 
-  // Update date only when day changes
   if (dateEl) {
     const currentDay = now.getDate();
     if (currentDay !== lastDay) {
@@ -91,9 +76,6 @@ function updateClock() {
   }
 }
 
-/**
- * Formats date string according to active layout format.
- */
 function forceDateUpdate(dateObj = new Date()) {
   if (!dateEl) return;
   let dateStr = '';
@@ -118,9 +100,6 @@ function forceDateUpdate(dateObj = new Date()) {
   }
 }
 
-/**
- * Format Handlers called by theme.js / state.js
- */
 export function setTimeFormat(format) {
   use24Hour = (format === '24hr');
   updateClock();

@@ -2,7 +2,6 @@
   box-sizing: border-box;
 }
 
-/* Base Body Styles */
 body {
   background-color: var(--bg-color, #000000);
   color: #e8eaed;
@@ -21,7 +20,6 @@ body {
   overflow: hidden;
 }
 
-/* Global Utilities */
 .hidden {
   display: none !important;
 }
