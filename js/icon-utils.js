@@ -39,6 +39,54 @@ function isDarkModeActive() {
          !document.documentElement.classList.contains('light-bg');
 }
 
+function isEffectiveBgDark(imgElement) {
+  let globalOpacity = 100;
+  try {
+    const storedOpacity = localStorage.getItem('globalOpacity');
+    if (storedOpacity !== null) {
+      globalOpacity = parseInt(storedOpacity, 10);
+    }
+  } catch {}
+
+  // 1. Transparency <= 20%: Evaluate purely against the global page background
+  if (globalOpacity <= 20) {
+    return isDarkModeActive();
+  }
+
+  // 2. Transparency > 20%: Evaluate against the shortcut tile's background color
+  const tile = imgElement.closest('.shortcut-tile') || imgElement.closest('.shortcut-container') || imgElement.parentElement;
+  if (tile) {
+    const tileStyle = window.getComputedStyle(tile);
+    const bgMatch = tileStyle.backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+
+    if (bgMatch) {
+      const r = parseInt(bgMatch[1], 10);
+      const g = parseInt(bgMatch[2], 10);
+      const b = parseInt(bgMatch[3], 10);
+      const alpha = bgMatch[4] !== undefined ? parseFloat(bgMatch[4]) : 1;
+
+      if (alpha > 0.05) {
+        return getLuminance(r, g, b) < 128;
+      }
+    }
+  }
+
+  try {
+    const shortcutColor = localStorage.getItem('shortcutColor');
+    if (shortcutColor && shortcutColor.startsWith('#')) {
+      let hex = shortcutColor.slice(1);
+      if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+      const num = parseInt(hex, 16);
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      return getLuminance(r, g, b) < 128;
+    }
+  } catch {}
+
+  return isDarkModeActive();
+}
+
 export function applySmartInvert(imgElement) {
   if (!imgElement) return;
 
@@ -51,24 +99,7 @@ export function applySmartInvert(imgElement) {
 
 function processImage(imgElement) {
   try {
-    let isBgDark = isDarkModeActive();
-    
-    const tile = imgElement.closest('.shortcut-tile') || imgElement.closest('.shortcut-container') || imgElement.parentElement;
-    if (tile) {
-      const tileStyle = window.getComputedStyle(tile);
-      const bgMatch = tileStyle.backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-
-      if (bgMatch) {
-        const r = parseInt(bgMatch[1], 10);
-        const g = parseInt(bgMatch[2], 10);
-        const b = parseInt(bgMatch[3], 10);
-        const alpha = bgMatch[4] !== undefined ? parseFloat(bgMatch[4]) : 1;
-
-        if (alpha >= 0.1) {
-          isBgDark = getLuminance(r, g, b) < 128;
-        }
-      }
-    }
+    const isBgDark = isEffectiveBgDark(imgElement);
 
     ctx.clearRect(0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
     ctx.drawImage(imgElement, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
@@ -126,7 +157,7 @@ function processImage(imgElement) {
 }
 
 let recheckTimeout;
-const recheckAllIcons = () => {
+export const recheckAllIcons = () => {
   clearTimeout(recheckTimeout);
   recheckTimeout = setTimeout(() => {
     document.querySelectorAll('.shortcut-icon').forEach(img => {
