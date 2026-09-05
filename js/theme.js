@@ -184,13 +184,25 @@ export function applySettings() {
     syncInput('clock-color-picker', clockCustom);
     syncInput('clock-color-text', safeUpper(clockCustom, '#FFFFFF'));
 
-    syncInput('show-shadows-toggle', result.showShadows);
-    toggleClass(!result.showShadows, 'no-shadows');
+    // Shadows
+    const hasShadows = result.showShadows !== false;
+    syncInput('show-shadows-toggle', hasShadows);
+    toggleClass(!hasShadows, 'no-shadows');
+    document.documentElement.style.setProperty(
+      '--shadow-base',
+      hasShadows ? '0 2px 6px rgba(0, 0, 0, 0.2)' : 'none'
+    );
+    document.documentElement.style.setProperty(
+      '--shadow-menu',
+      hasShadows ? '0 8px 24px rgba(0, 0, 0, 0.3)' : 'none'
+    );
 
     syncInput('global-font-select', result.globalFont);
     if (result.globalFont) {
       document.documentElement.style.setProperty('--global-font', result.globalFont);
-      document.body.style.setProperty('font-family', result.globalFont, 'important');
+      if (document.body) {
+        document.body.style.setProperty('font-family', result.globalFont, 'important');
+      }
     }
 
     const gRadius = result.globalRadius !== undefined ? result.globalRadius : 12;
@@ -217,9 +229,19 @@ export function applySettings() {
     toggleClass(!result.showSearch, 'search-off');
     toggleDisplay('search-options-group', result.showSearch);
 
+    // Search Border Toggle & Class Application
     const showBorder = result.showSearchBorder !== false;
     syncInput('show-search-border-toggle', showBorder);
     toggleClass(!showBorder, 'search-border-off');
+    document.documentElement.style.setProperty(
+      '--border-search',
+      showBorder ? `1px solid ${result.accentColor || '#8ab4f8'}` : '1px solid transparent'
+    );
+
+    const searchBox = document.getElementById('search-box');
+    if (searchBox) {
+      searchBox.classList.toggle('has-border', showBorder);
+    }
 
     syncInput('search-engine-select', result.searchEngine);
     syncInput('search-color-mode-select', result.searchMode);

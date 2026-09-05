@@ -8,12 +8,16 @@
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; object-src 'self';"
+  },
   "permissions": [
     "storage",
     "topSites",
     "favicon",
     "alarms",
-    "notifications"
+    "notifications",
+    "unlimitedStorage"
   ],
   "background": {
     "service_worker": "background.js"

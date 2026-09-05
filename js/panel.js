@@ -142,63 +142,174 @@ settingsMap.forEach(([id, key, isNumber]) => {
   });
 });
 
+async function transcodeSpecialFormats(file) {
+  const fileName = (file.name || '').toLowerCase();
+  const isHeic = fileName.endsWith('.heic') || fileName.endsWith('.heif') || file.type === 'image/heic' || file.type === 'image/heif';
+  const isTiff = fileName.endsWith('.tif') || fileName.endsWith('.tiff') || file.type === 'image/tiff';
+
+  if (isHeic) {
+    if (window.showToast) window.showToast('Converting HEIC image...');
+    const buffer = await file.arrayBuffer();
+
+    return new Promise((resolve, reject) => {
+      const worker = new Worker('js/heic.worker.js');
+      worker.onmessage = (e) => {
+        worker.terminate();
+        if (e.data.success) {
+          resolve(e.data.blob);
+        } else {
+          reject(new Error(e.data.error || 'HEIC decoding failed'));
+        }
+      };
+      worker.onerror = (err) => {
+        worker.terminate();
+        reject(err);
+      };
+      worker.postMessage(buffer, [buffer]);
+    });
+  }
+
+  if (isTiff) {
+    if (window.showToast) window.showToast('Converting TIFF image...');
+    const utifLib = window.UTIF || (typeof UTIF !== 'undefined' ? UTIF : null);
+    if (!utifLib) throw new Error('UTIF library not found in libs/UTIF.js');
+
+    const buffer = await file.arrayBuffer();
+    const ifds = utifLib.decode(buffer);
+    utifLib.decodeImage(buffer, ifds[0]);
+    const rgba = utifLib.toRGBA8(ifds[0]);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = ifds[0].width;
+    canvas.height = ifds[0].height;
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.createImageData(canvas.width, canvas.height);
+    imgData.data.set(rgba);
+    ctx.putImageData(imgData, 0, 0);
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.92);
+    });
+  }
+
+  return file;
+}
+
 getEl('bg-image-btn')?.addEventListener('click', () => getEl('bg-image-input')?.click());
 
-getEl('bg-image-input')?.addEventListener('change', (e) => {
-  const file = e.target.files[0];
+getEl('bg-image-input')?.addEventListener('change', async (e) => {
+  let file = e.target.files?.[0];
   if (!file) return;
 
-  if (!file.type.startsWith('image/')) {
+  const originalName = file.name || '';
+  const isSupported = (file.type && file.type.startsWith('image/')) || 
+                      /\.(png|jpe?g|webp|avif|svg|bmp|ico|heic|heif|tif|tiff)$/i.test(originalName);
+
+  if (!isSupported) {
     if (window.showToast) window.showToast('Invalid file type');
+    e.target.value = '';
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      const MAX_WIDTH = 1920;
-      const MAX_HEIGHT = 1080;
-      let width = img.width;
-      let height = img.height;
+  let processedBlob;
+  try {
+    processedBlob = await transcodeSpecialFormats(file);
+  } catch (err) {
+    console.error('Cleo Transcoding Error:', err);
+    if (window.showToast) window.showToast('Failed to process image');
+    e.target.value = '';
+    return;
+  }
 
-      if (width > height) {
-        if (width > MAX_WIDTH) {
-          height = Math.round((height * MAX_WIDTH) / width);
-          width = MAX_WIDTH;
+  const isSvg = file.type === 'image/svg+xml' || originalName.toLowerCase().endsWith('.svg');
+  const objectUrl = URL.createObjectURL(processedBlob);
+  const img = new Image();
+
+  try {
+    img.src = objectUrl;
+    await img.decode();
+
+    if (isSvg) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const extractedColor = getAverageColor(img);
+        saveAndApply({
+          bgType: 'image',
+          bgValue: evt.target.result,
+          accentColor: extractedColor
+        });
+        URL.revokeObjectURL(objectUrl);
+        if (window.showToast) window.showToast('Theme adapted to image!');
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+      return;
+    }
+
+    const MAX_WIDTH = 3840;
+    const MAX_HEIGHT = 2160;
+    let width = img.naturalWidth || img.width;
+    let height = img.naturalHeight || img.height;
+
+    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+      const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+      width = Math.round(width * ratio);
+      height = Math.round(height * ratio);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, width, height);
+
+    let targetMime = processedBlob.type || 'image/jpeg';
+    let quality = 0.88;
+
+    if (targetMime === 'image/png') {
+      quality = undefined;
+    } else if (targetMime !== 'image/jpeg' && targetMime !== 'image/webp' && targetMime !== 'image/avif') {
+      targetMime = 'image/jpeg';
+    }
+
+    let compressedBase64;
+    try {
+      compressedBase64 = canvas.toDataURL(targetMime, quality);
+    } catch {
+      compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
+    }
+
+    if (compressedBase64.length > 4 * 1024 * 1024) {
+      try {
+        const webp = canvas.toDataURL('image/webp', 0.90);
+        if (webp.startsWith('data:image/webp')) {
+          compressedBase64 = webp;
+        } else {
+          compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
         }
-      } else {
-        if (height > MAX_HEIGHT) {
-          width = Math.round((width * MAX_HEIGHT) / height);
-          height = MAX_HEIGHT;
-        }
+      } catch {
+        compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
       }
+    }
 
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
+    const extractedColor = getAverageColor(img);
 
-      const compressedBase64 = canvas.toDataURL('image/webp', 0.8);
-      const extractedColor = getAverageColor(img);
+    saveAndApply({ 
+      bgType: 'image', 
+      bgValue: compressedBase64, 
+      accentColor: extractedColor 
+    });
+    
+    URL.revokeObjectURL(objectUrl);
+    if (window.showToast) window.showToast('Theme adapted to image!');
+  } catch (renderErr) {
+    console.error('Cleo Render Error:', renderErr);
+    URL.revokeObjectURL(objectUrl);
+    if (window.showToast) window.showToast('Failed to decode image');
+  }
 
-      saveAndApply({ 
-        bgType: 'image', 
-        bgValue: compressedBase64, 
-        accentColor: extractedColor 
-      });
-      
-      if (window.showToast) window.showToast('Theme adapted to image!');
-    };
-    img.src = event.target.result;
-  };
-  reader.onerror = () => {
-    if (window.showToast) window.showToast('Failed to load image');
-  };
-  reader.readAsDataURL(file);
-  
   e.target.value = '';
 });
 

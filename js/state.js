@@ -59,7 +59,7 @@ function syncToLocalStorage(key, value) {
   try {
     localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
   } catch (e) {
-    console.warn('Cleo: localStorage sync quota exceeded or disabled.', e);
+    console.warn(`Cleo: localStorage quota exceeded for key "${key}". Value remains saved in chrome.storage.local.`);
   }
 }
 
@@ -99,7 +99,8 @@ export function exportSettings() {
   return new Promise(async (resolve) => {
     try {
       const items = await chrome.storage.local.get(null);
-      const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+      const jsonString = JSON.stringify(items, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       
       const d = new Date();
@@ -118,6 +119,7 @@ export function exportSettings() {
       
       resolve(true);
     } catch (err) {
+      console.error('Cleo: Failed to export settings backup.', err);
       resolve(false);
     }
   });
@@ -166,5 +168,5 @@ export function importSettings(file, callback) {
     if (typeof callback === 'function') callback(false);
   };
 
-  reader.readAsText(file);
+  reader.readAsText(file, 'utf-8');
 }
