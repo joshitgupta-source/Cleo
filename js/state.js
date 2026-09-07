@@ -8,6 +8,7 @@ export const defaultSettings = Object.freeze({
   showShortcuts: true,
   showLabels: true,
   shortcutType: 'topSites',
+  shortcutAlign: 'left',
   maxShortcuts: 50,
   
   accentColor: '#8ab4f8',

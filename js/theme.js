@@ -184,7 +184,6 @@ export function applySettings() {
     syncInput('clock-color-picker', clockCustom);
     syncInput('clock-color-text', safeUpper(clockCustom, '#FFFFFF'));
 
-    // Shadows
     const hasShadows = result.showShadows !== false;
     syncInput('show-shadows-toggle', hasShadows);
     toggleClass(!hasShadows, 'no-shadows');
@@ -229,7 +228,6 @@ export function applySettings() {
     toggleClass(!result.showSearch, 'search-off');
     toggleDisplay('search-options-group', result.showSearch);
 
-    // Search Border Toggle & Class Application
     const showBorder = result.showSearchBorder !== false;
     syncInput('show-search-border-toggle', showBorder);
     toggleClass(!showBorder, 'search-border-off');
@@ -250,6 +248,12 @@ export function applySettings() {
     updateSearchIcon(result.searchEngine);
 
     syncInput('shortcut-type-select', result.shortcutType);
+    toggleDisplay('restore-hidden-wrapper', result.shortcutType === 'topSites');
+
+    const sAlign = result.shortcutAlign || 'left';
+    syncInput('shortcut-align-select', sAlign);
+    toggleClass(sAlign === 'center', 'grid-align-center');
+    
     syncInput('shortcut-color-mode-select', result.shortcutMode);
     toggleDisplay('shortcut-color-wrapper', result.shortcutMode === 'custom', 'flex');
 
@@ -272,7 +276,9 @@ export function applySettings() {
     syncInput('show-seconds-toggle', showSecs);
     setSecondsVisible(showSecs);
 
-    syncInput('show-date-toggle', result.showDate);
+    const showDate = result.showDate !== false;
+    syncInput('show-date-toggle', showDate);
+    toggleDisplay('date-options-group', showDate);
 
     const dFmt = result.dateFormat || 'full';
     syncInput('date-format-select', dFmt);
@@ -288,7 +294,7 @@ export function applySettings() {
 
     const clockWidget = document.getElementById('clock-widget');
     if (result.showClock && clockWidget) {
-      toggleDisplay('date-display', result.showDate);
+      toggleDisplay('date-display', showDate);
       clockWidget.style.flexDirection = result.datePosition === 'above' ? 'column-reverse' : 'column';
     }
 

@@ -82,27 +82,37 @@ body.grid-off #grid-container {
   will-change: top;
 }
 
+/* 1. Default Mode: Left Aligned (Column Locked to 10 columns) */
 #grid-container {
   position: absolute;
   top: var(--grid-top);
   margin-top: var(--grid-margin);
   left: 50%;
   transform: var(--grid-transform);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start; 
-  align-content: flex-start;
-  gap: 30px 24px;
+  display: grid;
+  grid-template-columns: repeat(10, 60px);
+  justify-content: space-between;
+  align-content: start;
+  row-gap: 28px;
   width: 100%;
   max-width: var(--layout-max-width);
   max-height: var(--grid-max-height);
   padding: 10px 20px 100px;
   box-sizing: border-box;
   overflow-y: auto;
-  scrollbar-gutter: stable;
   transition: top var(--transition-layout), margin-top var(--transition-layout), transform var(--transition-layout), max-height var(--transition-layout);
   will-change: top, transform;
+}
+
+/* 2. Active Mode: Center Aligned (Incomplete rows center horizontally) */
+body.grid-align-center #grid-container,
+html.grid-align-center #grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  column-gap: max(8px, calc((100% - 600.5px) / 9));
+  row-gap: 28px;
 }
 
 #modal-backdrop {

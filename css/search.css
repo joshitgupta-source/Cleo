@@ -27,20 +27,17 @@
               border-radius var(--transition-standard, 0.2s ease);
 }
 
-/* Enabled Border: Active when toggle is ON */
 body:not(.search-border-off) #search-box.has-border::before,
 body:not(.search-border-off) #search-box::before {
   border: 1px solid var(--accent-color, #8ab4f8) !important;
 }
 
-/* Disabled Border: Strictly transparent when toggle is OFF */
 body.search-border-off #search-box::before,
 html.search-border-off #search-box::before,
 #search-box:not(.has-border)::before {
   border: 1px solid transparent !important;
 }
 
-/* Disabled Shadows: Remove perimeter rings when shadows are OFF */
 body.no-shadows #search-box::before,
 html.no-shadows #search-box::before {
   box-shadow: none !important;
@@ -57,7 +54,7 @@ html.no-shadows #search-box::before {
   border: none !important;
   color: var(--search-text, #ffffff);
   font-size: 15px;
-  font-family: inherit;
+  font-family: var(--global-font, inherit);
   padding: 14px 24px 14px 12px;
   outline: none !important;
   box-shadow: none !important;
@@ -87,6 +84,7 @@ html.no-shadows #search-box::before {
   gap: 8px;
   padding: 8px 12px;
   border-radius: 20px;
+  font-family: var(--global-font, inherit);
   transition: background-color var(--transition-standard, 0.2s ease);
   outline: none;
 }
@@ -123,7 +121,7 @@ html.no-shadows #search-box::before {
   left: 0;
   width: 160px;
   background-color: color-mix(in srgb, var(--search-bg, #202124) var(--search-opacity, 100%), transparent);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--search-dropdown-border, rgba(255, 255, 255, 0.1));
   border-radius: 12px;
   box-shadow: var(--shadow-menu, 0 8px 24px rgba(0, 0, 0, 0.3));
   display: flex;
@@ -131,6 +129,7 @@ html.no-shadows #search-box::before {
   z-index: 100;
   overflow: hidden;
   padding: 8px 0;
+  font-family: var(--global-font, inherit);
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   transform: translateZ(0);
@@ -153,7 +152,12 @@ html.no-shadows #engine-dropdown-menu {
   text-align: left;
   cursor: pointer;
   font-size: 14px;
+  font-family: var(--global-font, inherit);
   transition: background-color var(--transition-standard, 0.2s ease);
+}
+
+.engine-opt span {
+  font-family: inherit;
 }
 
 .engine-opt:hover,

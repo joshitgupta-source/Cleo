@@ -110,6 +110,7 @@ const settingsMap = [
   ['search-engine-select', 'searchEngine', false],
   ['search-color-mode-select', 'searchMode', false],
   ['shortcut-type-select', 'shortcutType', false],
+  ['shortcut-align-select', 'shortcutAlign', false],
   ['shortcut-color-mode-select', 'shortcutMode', false],
   ['show-shortcuts-toggle', 'showShortcuts', false],
   ['show-labels-toggle', 'showLabels', false],

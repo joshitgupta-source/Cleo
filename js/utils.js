@@ -97,12 +97,14 @@ export function applyThemeColors(result) {
   const searchEffectiveBg = blendColors(searchBg, globalBgHex, searchOpac);
   
   const searchIsDark = getTextColorForBackground(searchEffectiveBg) === 'dark-text';
-  const searchDropdownIsDark = getTextColorForBackground(searchBg) === 'dark-text';
+  const searchDropdownIsDark = searchIsDark;
 
   root.style.setProperty('--search-bg', searchBg);
   root.style.setProperty('--search-text', searchIsDark ? '#000000' : '#ffffff');
   root.style.setProperty('--search-dropdown-text', searchDropdownIsDark ? '#000000' : '#ffffff');
+  root.style.setProperty('--search-dropdown-border', searchDropdownIsDark ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.15)');
   setClass('dark-search-text', searchIsDark);
+  setClass('dark-search-dropdown-text', searchDropdownIsDark);
 
   let shortcutBg = '#303134';
   if (result.shortcutMode === 'accent') {

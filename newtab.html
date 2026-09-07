@@ -251,22 +251,24 @@
                         </label>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label for="date-format-select">Date Format</label>
-                        <select id="date-format-select" class="panel-select">
-                            <option value="full">Weekday, Month Date (Friday, August 7)</option>
-                            <option value="short">Short (Aug 7, 2026)</option>
-                            <option value="ddmm">DD/MM/YYYY (07/08/2026)</option>
-                            <option value="mmdd">MM/DD/YYYY (08/07/2026)</option>
-                        </select>
-                    </div>
+                    <div id="date-options-group">
+                        <div class="input-group" style="margin-top: 15px;">
+                            <label for="date-format-select">Date Format</label>
+                            <select id="date-format-select" class="panel-select">
+                                <option value="full">Weekday, Month Date (Friday, August 7)</option>
+                                <option value="short">Short (Aug 7, 2026)</option>
+                                <option value="ddmm">DD/MM/YYYY (07/08/2026)</option>
+                                <option value="mmdd">MM/DD/YYYY (08/07/2026)</option>
+                            </select>
+                        </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label for="date-position-select">Date Position</label>
-                        <select id="date-position-select" class="panel-select">
-                            <option value="below">Below clock</option>
-                            <option value="above">Above clock</option>
-                        </select>
+                        <div class="input-group" style="margin-top: 15px;">
+                            <label for="date-position-select">Date Position</label>
+                            <select id="date-position-select" class="panel-select">
+                                <option value="below">Below clock</option>
+                                <option value="above">Above clock</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="input-group" style="margin-top: 15px;">
@@ -432,6 +434,14 @@
                         </select>
                     </div>
 
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label for="shortcut-align-select">Grid Alignment</label>
+                        <select id="shortcut-align-select" class="panel-select">
+                            <option value="left">Left Aligned (Column Locked)</option>
+                            <option value="center">Center Aligned</option>
+                        </select>
+                    </div>
+
                     <div class="input-group" id="max-shortcuts-group" style="margin-top: 15px;">
                         <label for="max-shortcuts-select">Grid Size Limit</label>
                         <select id="max-shortcuts-select" class="panel-select">
@@ -471,7 +481,7 @@
                         </label>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <div class="input-group" id="restore-hidden-wrapper" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                         <button id="restore-hidden-btn" class="panel-btn" style="margin-bottom: 0;">Restore hidden sites</button>
                     </div>
                 </div>
