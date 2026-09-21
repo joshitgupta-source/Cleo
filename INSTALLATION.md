@@ -1,4 +1,3 @@
-```markdown
 # Installation Guide for Cleo
 
 Pre-packaged release builds are provided in the **[Releases](../../releases)** section:
@@ -84,5 +83,3 @@ When a new version is released:
 * **"Manifest file is missing or unreadable" (Chromium):** You selected an outer enclosing folder instead of the directory where `manifest.json` is located. Point the file picker directly to the folder containing `manifest.json`.
 * **Browser asks to revert new tab:** Chromium browsers occasionally display a security banner confirming whether you want to keep the new tab page. Select **Keep changes** to keep Cleo active.
 * **Settings backup:** Cleo saves configurations locally via `chrome.storage.local` and `localStorage`. Before clearing browser site data or reinstalling, use the **Export Settings** button in Cleo's customize panel to generate a `.json` backup.
-
-```
