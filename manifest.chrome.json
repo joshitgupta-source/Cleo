@@ -1,9 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Cleo - Custom New Tab",
-  "version": "1.0.1",
-  "chrome_url_overrides": { "newtab": "newtab.html" },
-  "permissions": ["storage", "topSites", "favicon", "alarms", "notifications"],
+  "version": "1.0.0",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage",
+    "topSites",
+    "favicon",
+    "alarms",
+    "notifications"
+  ],
   "background": {
     "service_worker": "background.js"
   },
